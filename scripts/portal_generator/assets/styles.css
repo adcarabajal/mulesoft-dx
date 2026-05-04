@@ -758,6 +758,11 @@ code {
     content: url('../assets/icons/api-filter-icon-active.svg');
 }
 
+.hero-tab[data-filter="mcp"]:hover img,
+.hero-tab[data-filter="mcp"].active img {
+    content: url('../assets/icons/mcp-filter-icon-active.svg');
+}
+
 .hero-tab[data-filter="skill"]:hover img,
 .hero-tab[data-filter="skill"].active img {
     content: url('../assets/icons/skill-filter-icon-active.svg');
