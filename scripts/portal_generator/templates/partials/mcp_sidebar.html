@@ -23,7 +23,7 @@
                     aria-controls="group-mcp-tools">
                     <img class="group-toggle expanded" id="toggle-mcp-tools" src="{{ icons_path }}/chevron-right.svg" alt="" aria-hidden="true">
                     <span class="group-name">Tools</span>
-                    <span class="group-count">({{ mcp.tool_count }})</span>
+                    <span class="group-count" title="{{ mcp.tool_count }} tools">({{ mcp.tool_count }})</span>
                 </button>
                 <ul class="nav-group-items" id="group-mcp-tools" style="display: block;">
                     {% for tool in mcp.tools|sort(attribute='name') %}
@@ -43,7 +43,7 @@
                     aria-controls="group-mcp-prompts">
                     <img class="group-toggle expanded" id="toggle-mcp-prompts" src="{{ icons_path }}/chevron-right.svg" alt="" aria-hidden="true">
                     <span class="group-name">Prompts</span>
-                    <span class="group-count">({{ mcp.prompt_count }})</span>
+                    <span class="group-count" title="{{ mcp.prompt_count }} prompts">({{ mcp.prompt_count }})</span>
                 </button>
                 <ul class="nav-group-items" id="group-mcp-prompts" style="display: block;">
                     {% for prompt in mcp.prompts|sort(attribute='name') %}
@@ -63,7 +63,7 @@
                     aria-controls="group-mcp-resources">
                     <img class="group-toggle expanded" id="toggle-mcp-resources" src="{{ icons_path }}/chevron-right.svg" alt="" aria-hidden="true">
                     <span class="group-name">Resources</span>
-                    <span class="group-count">({{ mcp.resource_count }})</span>
+                    <span class="group-count" title="{{ mcp.resource_count }} resources">({{ mcp.resource_count }})</span>
                 </button>
                 <ul class="nav-group-items" id="group-mcp-resources" style="display: block;">
                     {% for group in mcp.resource_groups %}
@@ -73,7 +73,7 @@
                             aria-controls="group-{{ group_id }}">
                             <img class="group-toggle" id="toggle-{{ group_id }}" src="{{ icons_path }}/chevron-right.svg" alt="" aria-hidden="true">
                             <span class="group-name">{{ group.name }}</span>
-                            <span class="group-count">({{ group.resources|length }})</span>
+                            <span class="group-count" title="{{ group.resources|length }} resources">({{ group.resources|length }})</span>
                         </button>
                         <ul class="nav-group-items" id="group-{{ group_id }}" style="display: none;">
                             {% for resource in group.resources %}
@@ -96,7 +96,7 @@
                     aria-controls="group-mcp-resource-templates">
                     <img class="group-toggle expanded" id="toggle-mcp-resource-templates" src="{{ icons_path }}/chevron-right.svg" alt="" aria-hidden="true">
                     <span class="group-name">Resource Templates</span>
-                    <span class="group-count">({{ mcp.resource_template_count }})</span>
+                    <span class="group-count" title="{{ mcp.resource_template_count }} resource templates">({{ mcp.resource_template_count }})</span>
                 </button>
                 <ul class="nav-group-items" id="group-mcp-resource-templates" style="display: block;">
                     {% for template in mcp.resource_templates %}
