@@ -1,0 +1,2465 @@
+openapi: 3.0.1
+info:
+  title: API Experience Hub Consumer API
+  description: API Experience Hub API
+  version: 1.0.0
+servers:
+- url: https://anypoint.mulesoft.com/api-experience-hub
+  description: US
+- url: https://eu1.anypoint.mulesoft.com/api-experience-hub
+  description: EU
+- url: https://ca1.platform.mulesoft.com/api-experience-hub
+  description: CA
+- url: https://jp1.platform.mulesoft.com/api-experience-hub
+  description: JP
+security:
+- bearerAuth: []
+tags:
+- name: Asset Discovery
+  description: Search and browse API assets published in a portal
+- name: Application Management
+  description: "Create, update and delete client applications and credentials"
+- name: Request Access
+  description: "Request API access through instances, tiers, providers and contracts"
+paths:
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications/{applicationId}:
+    get:
+      tags:
+      - Application Management
+      summary: Get application details
+      description: Returns detailed information about a specific application including credentials.
+      operationId: getApplicationDetailById
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiManagerApplicationDTO"
+              example:
+                id: "12345"
+                name: "My API Client"
+                description: "Client application for accessing the Payment API"
+                clientId: "3dbce73b-b8fa-4b39-b4bd-b7fa7a6e9e0f"
+                clientSecret: "secretValue123"
+                grantTypes:
+                - client_credentials
+                redirectUri:
+                - "https://example.com/callback"
+                url: "https://example.com"
+                lastUpdateDate: "2024-01-15T10:30:00Z"
+                clientProvider:
+                  name: "Default"
+                  providerId: "33333333-3333-3333-3333-333333333333"
+                  type: "openid_connect"
+    put:
+      tags:
+      - Application Management
+      summary: Update an application
+      description: Updates the details of an existing client application.
+      operationId: updateApplication
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: "Application update request with new name, description or OAuth settings"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpsertDTO"
+            example:
+              name: "My API Client"
+              description: "Client application for accessing the Payment API"
+              url: "https://example.com"
+              redirectUri:
+              - "https://example.com/callback"
+              grantTypes:
+              - client_credentials
+              apiEndpoints: false
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiManagerApplicationDTO"
+              example:
+                id: "12345"
+                name: "My API Client"
+                description: "Client application for accessing the Payment API"
+                clientId: "3dbce73b-b8fa-4b39-b4bd-b7fa7a6e9e0f"
+                clientSecret: "secretValue123"
+                grantTypes:
+                - client_credentials
+                redirectUri:
+                - "https://example.com/callback"
+                url: "https://example.com"
+                lastUpdateDate: "2024-01-15T10:30:00Z"
+                clientProvider:
+                  name: "Default"
+                  providerId: "33333333-3333-3333-3333-333333333333"
+                  type: "openid_connect"
+    delete:
+      tags:
+      - Application Management
+      summary: Delete an application
+      description: Permanently deletes a client application.
+      operationId: deleteApplication
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+              example: {}
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/{groupId}/{assetId}/{minorVersion}/model:
+    post:
+      tags:
+      - Asset Discovery
+      summary: Get API console model
+      description: Returns the AMF model for rendering the API console for a specific asset.
+      operationId: getAssetModel
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: Shape selection for the API console model
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SelectedShapeDTO"
+            example:
+              selectedShape: "/payments"
+              selectedShapeType: "ENDPOINT"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+              example: "{\"@context\":{\"@base\":\"amf://id\"},\"@graph\":[{\"@id\":\"#/web-api\"}]}"
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/search:
+    post:
+      tags:
+      - Asset Discovery
+      summary: Search portal assets
+      description: "Searches for API assets published in a portal by keyword, categories, tags or asset types."
+      operationId: searchCommunityAssets
+      parameters:
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: x-limit
+        in: header
+        description: Maximum number of search results to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: "Search criteria including keywords, categories, tags and asset types"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsumerAssetsSearchRequest"
+            example:
+              searchTerm: "payment"
+              assetTypes:
+              - rest-api
+              - http-api
+              categories:
+              - "Department:Finance"
+              sort:
+                direction: DESC
+                criteria: LAST_UPDATED
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ConsumerAssetSearchResult"
+              example:
+                assets:
+                - assetId: "payment-api"
+                  groupId: "com.example"
+                  name: "Payment API"
+                  description: "API for processing payments"
+                  type: "rest-api"
+                  minorVersion: "v1"
+                  latestPatchVersion: "1.0.2"
+                  icon: "https://example.com/icon.png"
+                  tags:
+                  - payments
+                  - finance
+                  categories:
+                  - "Department:Finance"
+                  updatedDate: "2024-01-15T10:30:00Z"
+                facets:
+                - "Department:Finance"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/assets/{groupId}/{assetId}/{minorVersion}/applications:
+    post:
+      tags:
+      - Application Management
+      summary: Create an application
+      description: Creates a new client application for requesting API access.
+      operationId: createApplication
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: "Application creation request with name, instance ID and optional OAuth settings"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationCreateDTO"
+            example:
+              name: "My API Client"
+              description: "Client application for the Payment API"
+              instanceId: "22222222-2222-2222-2222-222222222222"
+              url: "https://example.com"
+              redirectUri:
+              - "https://example.com/callback"
+              grantTypes:
+              - client_credentials
+              apiEndpoints: false
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationCreatedResponseDTO"
+              example:
+                id: "12345"
+                name: "My API Client"
+                description: "Client application for the Payment API"
+                clientId: "3dbce73b-b8fa-4b39-b4bd-b7fa7a6e9e0f"
+                clientSecret: "secretValue123"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/assets/{groupId}/{assetId}/{minorVersion}/contracts:
+    post:
+      tags:
+      - Request Access
+      summary: Create a contract
+      description: Creates an API access contract between an application and an API instance.
+      operationId: createContract
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        description: "Contract creation request with application ID, instance ID and accepted terms"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContractCreateDTO"
+            example:
+              applicationId: "11111111-1111-1111-1111-111111111111"
+              instanceId: "22222222-2222-2222-2222-222222222222"
+              acceptedTerms: true
+              tierId: 1
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractCreatedResponseDTO"
+              example:
+                id: "67890"
+                clientId: "3dbce73b-b8fa-4b39-b4bd-b7fa7a6e9e0f"
+                clientSecret: "secretValue123"
+                status: "APPROVED"
+                requestedTier:
+                  id: "1"
+                  name: "Gold"
+                  description: "Gold tier with 1000 req/min"
+                  status: "ACTIVE"
+                  active: true
+                  autoApprove: true
+                  limits:
+                  - maximumRequests: "1000"
+                    timePeriodInMilliseconds: 60000
+                    timePeriod: 60000
+                    timeUnit: "Minute"
+                    visible: true
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications/{applicationId}/secret/reset:
+    post:
+      tags:
+      - Application Management
+      summary: Reset client secret
+      description: Generates a new client secret for the specified application.
+      operationId: resetClientSecretForApplication
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApiManagerSecretResetResponseDTO"
+              example:
+                clientSecret: "newSecretValue456"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications/{applicationId}/contracts/{contractId}/tiers/{tierId}:
+    patch:
+      tags:
+      - Request Access
+      summary: Update contract SLA tier
+      description: Changes the SLA tier assigned to an existing contract.
+      operationId: assignSlaTierToContract
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: contractId
+        in: path
+        description: Unique identifier of the contract
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: tierId
+        in: path
+        description: ID of the SLA tier to assign
+        required: true
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+              example:
+                id: "67890"
+                applicationId: "11111111-1111-1111-1111-111111111111"
+                instanceId: "22222222-2222-2222-2222-222222222222"
+                status: "APPROVED"
+                requestedTier:
+                  id: "2"
+                  name: "Silver"
+                  description: "Silver tier with 500 req/min"
+                  status: "ACTIVE"
+                  active: true
+                  autoApprove: false
+                  limits: []
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets:
+    get:
+      tags:
+      - Asset Discovery
+      summary: List portal assets
+      description: "Returns a paginated list of assets published in the portal, sorted by recently added."
+      operationId: listAssetsCommunityAsset
+      parameters:
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        description: Maximum number of assets to return (max 250)
+        required: false
+        schema:
+          maximum: 250
+          type: integer
+          format: int32
+          default: 5
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConsumerCommunityAsset"
+              example:
+              - assetId: "payment-api"
+                groupId: "com.example"
+                name: "Payment API"
+                description: "API for processing payments"
+                type: "rest-api"
+                minorVersion: "v1"
+                latestPatchVersion: "1.0.2"
+                tags:
+                - payments
+                categories:
+                - "Department:Finance"
+                updatedDate: "2024-01-15T10:30:00Z"
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/{groupId}/{assetId}/{minorVersion}/terms:
+    get:
+      tags:
+      - Asset Discovery
+      summary: Get terms and conditions
+      description: Returns the terms and conditions in markdown format for a specific asset.
+      operationId: getTermsAndConditions
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+              example: "# Terms and Conditions\n\nBy using this API, you agree to..."
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/{groupId}/{assetId}/{minorVersion}/resources/{resourceId}:
+    get:
+      tags:
+      - Asset Discovery
+      summary: Get asset resource
+      description: Returns a binary resource file associated with an asset's documentation.
+      operationId: getAssetResource
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: resourceId
+        in: path
+        description: Unique identifier of the asset resource file
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: byte
+              example: "iVBORw0KGgoAAAANSUhEUg..."
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/{groupId}/{assetId}/{minorVersion}/pages/**:
+    get:
+      tags:
+      - Asset Discovery
+      summary: Get documentation page
+      description: Returns a documentation page in markdown format for a specific asset.
+      operationId: getAssetPages
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+              example: "# Getting Started\n\nWelcome to the API documentation..."
+  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/{groupId}/{assetId}/{minorVersion}/details:
+    get:
+      tags:
+      - Asset Discovery
+      summary: Get asset details
+      description: "Returns detailed information about a specific API asset including instances, categories and documentation pages."
+      operationId: getAssetDetails
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: targetPortalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AssetDetailDTO"
+              example:
+                assetId: "payment-api"
+                groupId: "com.example"
+                name: "Payment API"
+                description: "API for processing payments"
+                type: "rest-api"
+                apiVersion: "v1"
+                organizationId: "88888888-8888-8888-8888-888888888888"
+                minorVersion: "v1"
+                latestPatchVersion: "1.0.2"
+                versionGroup: "v1"
+                icon: "https://example.com/icon.png"
+                tags:
+                - payments
+                categories:
+                - displayName: "Department"
+                  key: "department"
+                  values:
+                  - "Finance"
+                pages:
+                - name: "Getting Started"
+                  path: "/getting-started"
+                instances:
+                - id: "inst-001"
+                  name: "Production"
+                  endpointUri: "https://api.example.com/v1"
+                  environmentId: "99999999-9999-9999-9999-999999999999"
+                  environmentName: "Production"
+                  isPublic: true
+                  type: "rest-api"
+                  minorVersion: "v1"
+                  contractsCount: 5
+                  providerId: "33333333-3333-3333-3333-333333333333"
+                files:
+                - label: "API Specification"
+                  externalLink: "https://example.com/spec.yaml"
+                  isGenerated: false
+                updatedDate: "2024-01-15T10:30:00Z"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/assets/{groupId}/{assetId}/{minorVersion}/instances/{instanceId}/tiers:
+    get:
+      tags:
+      - Request Access
+      summary: List SLA tiers
+      description: Returns the available SLA tiers for an API instance.
+      operationId: getTiers
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: instanceId
+        in: path
+        description: Unique identifier of the API instance
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TierDTO"
+              example:
+              - id: "1"
+                name: "Gold"
+                description: "Gold tier with 1000 req/min"
+                status: "ACTIVE"
+                active: true
+                autoApprove: true
+                limits:
+                - maximumRequests: "1000"
+                  timePeriodInMilliseconds: 60000
+                  timePeriod: 60000
+                  timeUnit: "Minute"
+                  visible: true
+              - id: "2"
+                name: "Silver"
+                description: "Silver tier with 500 req/min"
+                status: "ACTIVE"
+                active: true
+                autoApprove: false
+                limits: []
+  ? /xapi/v1/portals/{targetOrganizationId}/{portalId}/assets/{groupId}/{assetId}/{minorVersion}/instances/{instanceId}/provider/grantTypes
+  : get:
+      tags:
+      - Request Access
+      summary: Get grant types by instance
+      description: Returns the available OAuth grant types for an API instance's provider.
+      operationId: getGrantTypesByInstanceId
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: instanceId
+        in: path
+        description: Unique identifier of the API instance
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GrantTypeResponseDTO"
+              example:
+                grantTypes:
+                - name: "client_credentials"
+                  label: "Client Credentials"
+                  required: false
+                  depends: []
+                  exclude: []
+                - name: "authorization_code"
+                  label: "Authorization Code"
+                  required: false
+                  depends: []
+                  exclude: []
+                type:
+                  name: "openid_connect"
+                  description: "OpenID Connect Provider"
+  ? /xapi/v1/portals/{targetOrganizationId}/{portalId}/assets/{groupId}/{assetId}/{minorVersion}/contracts/{applicationId}/{instanceId}
+  : get:
+      tags:
+      - Request Access
+      summary: Get contract details
+      description: Returns a specific contract for an application and instance.
+      operationId: getContract
+      parameters:
+      - name: minorVersion
+        in: path
+        description: Minor version of the asset (e.g. 1.0)
+        required: true
+        schema:
+          type: string
+          pattern: ^v?\d+$
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: instanceId
+        in: path
+        description: Unique identifier of the API instance
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ContractDTO"
+              example:
+                id: "67890"
+                applicationId: "11111111-1111-1111-1111-111111111111"
+                instanceId: "22222222-2222-2222-2222-222222222222"
+                status: "APPROVED"
+                requestedTier:
+                  id: "2"
+                  name: "Silver"
+                  description: "Silver tier with 500 req/min"
+                  status: "ACTIVE"
+                  active: true
+                  autoApprove: false
+                  limits: []
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications:
+    get:
+      tags:
+      - Application Management
+      summary: List applications
+      description: Returns applications with optional filtering by instance and name.
+      operationId: getApplications
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: instanceId
+        in: query
+        description: Filter applications by API instance ID
+        required: false
+        schema:
+          type: string
+          format: uuid
+      - name: query
+        in: query
+        description: Filter applications by name
+        required: false
+        schema:
+          type: string
+          default: ""
+      - name: limit
+        in: query
+        description: Maximum number of results to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApplicationDTO"
+              example:
+              - id: "12345"
+                name: "My API Client"
+                description: "Client application for the Payment API"
+              - id: "67890"
+                name: "Test Client"
+                description: "Testing application"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications/{applicationId}/provider/grantTypes:
+    get:
+      tags:
+      - Request Access
+      summary: Get grant types by application
+      description: Returns the available OAuth grant types for an application's provider.
+      operationId: getGrantTypesByApplicationId
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/GrantTypeResponseDTO"
+              example:
+                grantTypes:
+                - name: "client_credentials"
+                  label: "Client Credentials"
+                  required: false
+                  depends: []
+                  exclude: []
+                - name: "authorization_code"
+                  label: "Authorization Code"
+                  required: false
+                  depends: []
+                  exclude: []
+                type:
+                  name: "openid_connect"
+                  description: "OpenID Connect Provider"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications/{applicationId}/contracts:
+    get:
+      tags:
+      - Request Access
+      summary: List contracts for application
+      description: Returns all contracts associated with a specific application.
+      operationId: getContractsByApplicationId
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: applicationId
+        in: path
+        description: Unique identifier of the application
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: limit
+        in: query
+        description: Maximum number of results to return
+        required: false
+        schema:
+          maximum: 250
+          type: integer
+          format: int32
+          default: 100
+      - name: offset
+        in: query
+        description: Number of results to skip for pagination
+        required: false
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+          default: 0
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ApplicationContractResponseDTO"
+              example:
+              - contractId: 67890
+                assetId: "payment-api"
+                assetName: "Payment API"
+                groupId: "com.example"
+                instanceId: "22222222-2222-2222-2222-222222222222"
+                instanceName: "Production"
+                environmentId: "99999999-9999-9999-9999-999999999999"
+                environmentName: "Production"
+                minorVersion: "v1"
+                status: "APPROVED"
+  /xapi/v1/portals/{targetOrganizationId}/{portalId}/applications/exists:
+    get:
+      tags:
+      - Application Management
+      summary: Check application name availability
+      description: Checks whether a given application name is already in use.
+      operationId: checkExistenceApplicationName
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: targetOrganizationId
+        in: path
+        description: Anypoint Platform organization ID that owns the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: appName
+        in: query
+        description: Application name to check for availability
+        required: true
+        schema:
+          maxLength: 151
+          minLength: 0
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ApplicationExistsDTO"
+              example:
+                exists: true
+components:
+  schemas:
+    ErrorDetail:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          description: Detailed error message
+        code:
+          type: string
+          description: Machine-readable error code
+        arguments:
+          type: array
+          description: Additional context for the error
+          items:
+            type: object
+    ErrorResponseDTO:
+      type: object
+      required:
+      - name
+      - status
+      - message
+      properties:
+        name:
+          type: string
+          description: Error name
+        status:
+          type: integer
+          description: HTTP status code
+          format: int32
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: array
+          description: List of error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ApplicationUpsertDTO:
+      required:
+      - name
+      type: object
+      properties:
+        apiEndpoints:
+          type: boolean
+          description: Whether to use API endpoint URIs as redirect URIs
+        description:
+          maxLength: 4096
+          minLength: 0
+          type: string
+          description: Application description
+        grantTypes:
+          type: array
+          description: OAuth grant types for the application
+          example:
+          - client_credentials
+          items:
+            type: string
+            description: OAuth grant types for the application
+            example: "[\"client_credentials\"]"
+        name:
+          maxLength: 151
+          minLength: 0
+          type: string
+          description: Application name
+          example: My API Client
+        redirectUri:
+          type: array
+          description: OAuth redirect URIs for the application
+          items:
+            type: string
+            description: OAuth redirect URIs for the application
+        url:
+          type: string
+          description: Application URL
+          format: uri
+      description: Application creation or update request
+    ApiManagerApplicationDTO:
+      required:
+      - clientId
+      - id
+      - name
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: OAuth client ID for the application
+          format: uuid
+        clientProvider:
+          $ref: "#/components/schemas/ApiManagerClientProviderDTO"
+        clientSecret:
+          type: string
+          description: OAuth client secret for the application
+        description:
+          type: string
+          description: Human-readable description of the application
+        grantTypes:
+          type: array
+          description: OAuth grant types enabled for the application
+          items:
+            type: string
+            description: OAuth grant types enabled for the application
+        id:
+          type: string
+          description: Unique application identifier
+        lastUpdateDate:
+          type: string
+          description: Timestamp of the last update to the application
+          format: date-time
+        name:
+          type: string
+          description: Application name
+        redirectUri:
+          type: array
+          description: OAuth redirect URIs registered for the application
+          items:
+            type: string
+            description: OAuth redirect URIs registered for the application
+        url:
+          type: string
+          description: Application URL
+          format: uri
+    ApiManagerClientProviderDTO:
+      type: object
+      required:
+      - providerId
+      properties:
+        name:
+          type: string
+          description: Client provider name
+        providerId:
+          type: string
+          description: Unique identifier of the client provider
+          format: uuid
+        type:
+          type: string
+          description: Client provider type
+      description: Client identity provider associated with this application
+    SelectedShapeDTO:
+      required:
+      - selectedShapeType
+      type: object
+      properties:
+        selectedShape:
+          type: string
+          description: Name or identifier of the selected API shape
+        selectedShapeType:
+          type: string
+          description: Type of the selected shape
+          enum:
+          - SUMMARY
+          - TYPE
+          - ENDPOINT
+          - OPERATION
+          - DOCUMENTATION
+          - SECURITY
+          - METHOD
+    ConsumerAssetsSearchRequest:
+      type: object
+      properties:
+        assetTypes:
+          type: array
+          description: Filter by asset types
+          example:
+          - rest-api
+          - http-api
+          items:
+            type: string
+            description: Filter by asset types
+            example: "[\"rest-api\",\"http-api\"]"
+        categories:
+          type: array
+          description: Filter by categories in key:value format
+          example:
+          - Department:Finance
+          items:
+            type: string
+            description: Filter by categories in key:value format
+            example: "[\"Department:Finance\"]"
+        searchTerm:
+          type: string
+          description: Text to search for in asset names and descriptions
+        sort:
+          $ref: "#/components/schemas/SearchSort"
+      description: Search criteria for portal assets
+    SearchSort:
+      type: object
+      required:
+      - criteria
+      - direction
+      properties:
+        direction:
+          type: string
+          description: Sort direction
+          enum:
+          - ASC
+          - DESC
+        criteria:
+          type: string
+          description: Sort criteria field
+          enum:
+          - LAST_UPDATED
+          - NAME
+          - CREATED_AT
+      description: Sort configuration for search results
+    ConsumerAssetSearchResult:
+      required:
+      - assets
+      type: object
+      properties:
+        assets:
+          type: array
+          description: List of assets matching the search criteria
+          items:
+            $ref: "#/components/schemas/ConsumerCommunityAsset"
+        facets:
+          type: array
+          description: Available facets for filtering search results
+          items:
+            type: string
+            description: Available facets for filtering search results
+    ConsumerCommunityAsset:
+      required:
+      - assetId
+      - groupId
+      - name
+      - type
+      type: object
+      properties:
+        major:
+          type: integer
+          description: Major version number
+          format: int32
+        minor:
+          type: integer
+          description: Minor version number
+          format: int32
+        mayorComponent:
+          type: integer
+          description: "Major version component (legacy field name)"
+          format: int32
+        minorComponent:
+          type: integer
+          description: Minor version component
+          format: int32
+        minorVersionComponents:
+          type: array
+          description: List of minor version component strings
+          items:
+            type: string
+        assetId:
+          type: string
+          description: Asset identifier within the organization
+        description:
+          type: string
+          description: Human-readable description of the asset
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+        icon:
+          type: string
+          description: URL or encoded content of the asset icon
+          format: uri
+        tags:
+          uniqueItems: true
+          type: array
+          description: Tags associated with the asset
+          items:
+            type: string
+            description: Tags associated with the asset
+        categories:
+          uniqueItems: true
+          type: array
+          description: Categories assigned to the asset in key:value format
+          items:
+            type: string
+            description: Categories assigned to the asset in key:value format
+        latestPatchVersion:
+          type: string
+          description: Latest patch version string
+          example: "1.0.1"
+        minorVersion:
+          type: string
+          description: Current minor version
+          example: "v1"
+          pattern: ^v?\d+$
+        minorVersions:
+          type: array
+          description: All available minor versions for this asset
+          items:
+            type: string
+            description: All available minor versions for this asset
+        name:
+          type: string
+          description: Display name of the asset
+        type:
+          type: string
+          description: Asset type classifier
+          example: rest-api
+        updatedDate:
+          type: string
+          description: Timestamp of the last update to the asset
+          format: date-time
+      description: List of assets matching the search criteria
+    ApplicationCreateDTO:
+      required:
+      - instanceId
+      - name
+      type: object
+      properties:
+        apiEndpoints:
+          type: boolean
+          description: Whether to use API endpoint URIs as redirect URIs
+        description:
+          maxLength: 4096
+          minLength: 0
+          type: string
+          description: Application description
+        grantTypes:
+          type: array
+          description: OAuth grant types for the application
+          example:
+          - client_credentials
+          items:
+            type: string
+            description: OAuth grant types for the application
+            example: "[\"client_credentials\"]"
+        name:
+          maxLength: 151
+          minLength: 0
+          type: string
+          description: Application name
+          example: My API Client
+        redirectUri:
+          type: array
+          description: OAuth redirect URIs for the application
+          items:
+            type: string
+            description: OAuth redirect URIs for the application
+        url:
+          type: string
+          description: Application URL
+          format: uri
+        instanceId:
+          type: string
+          description: API instance ID to associate the application with
+          format: uuid
+      description: Request body for creating a new client application
+    ApplicationCreatedResponseDTO:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        clientId:
+          type: string
+          description: OAuth client ID assigned to the application
+          format: uuid
+        clientSecret:
+          type: string
+          description: OAuth client secret assigned to the application
+        description:
+          type: string
+          description: Application description
+        id:
+          type: string
+          description: Unique application identifier
+        name:
+          type: string
+          description: Application name
+    ContractCreateDTO:
+      required:
+      - acceptedTerms
+      - applicationId
+      - instanceId
+      type: object
+      properties:
+        acceptedTerms:
+          type: boolean
+          description: Whether the user has accepted the API terms and conditions
+        applicationId:
+          type: string
+          description: ID of the application requesting access
+          format: uuid
+        instanceId:
+          type: string
+          description: ID of the API instance to create a contract with
+          format: uuid
+        tierId:
+          type: integer
+          description: ID of the SLA tier to request
+          format: int32
+          nullable: true
+      description: Request body for creating an API access contract
+    ContractCreatedResponseDTO:
+      type: object
+      required:
+      - id
+      - status
+      properties:
+        clientId:
+          type: string
+          description: OAuth client ID of the application
+          format: uuid
+        clientSecret:
+          type: string
+          description: OAuth client secret of the application
+        id:
+          type: string
+          description: Unique contract identifier
+        requestedTier:
+          $ref: "#/components/schemas/TierDTO"
+        status:
+          type: string
+          description: Contract status
+          example: APPROVED
+    TierDTO:
+      type: object
+      required:
+      - id
+      - name
+      - status
+      properties:
+        active:
+          type: boolean
+          description: Whether the tier is currently active (derived from status == ACTIVE)
+        autoApprove:
+          type: boolean
+          description: Whether contracts with this tier are automatically approved
+        description:
+          type: string
+          description: Human-readable description of the tier
+        id:
+          type: string
+          description: Unique tier identifier
+        limits:
+          type: array
+          description: Rate limit definitions for this tier
+          items:
+            $ref: "#/components/schemas/TierLimitDTO"
+        name:
+          type: string
+          description: Tier name
+          example: Gold
+        status:
+          type: string
+          description: Tier status
+          example: ACTIVE
+      description: SLA tier defining rate limits for API access
+    TierLimitDTO:
+      type: object
+      required:
+      - maximumRequests
+      - timePeriod
+      - timeUnit
+      properties:
+        maximumRequests:
+          type: string
+          description: Maximum number of requests allowed in the time period
+          example: "100"
+        visible:
+          type: boolean
+          description: Whether this limit is visible to API consumers
+        timePeriodInMilliseconds:
+          type: integer
+          description: Duration of the rate limit window in milliseconds
+          format: int64
+        timePeriod:
+          type: integer
+          description: Duration of the rate limit window in the specified time unit
+          format: int64
+        timeUnit:
+          type: string
+          description: Time unit for the rate limit period
+          example: Hours
+      description: Rate limit definitions for this tier
+    ApiManagerSecretResetResponseDTO:
+      required:
+      - clientSecret
+      type: object
+      properties:
+        clientSecret:
+          type: string
+          description: Newly generated client secret
+    ContractDTO:
+      type: object
+      required:
+      - id
+      - applicationId
+      - status
+      properties:
+        applicationId:
+          type: string
+          description: ID of the application holding the contract
+          format: uuid
+        id:
+          type: string
+          description: Unique contract identifier
+        instanceId:
+          type: string
+          description: API instance ID the contract is associated with
+          format: uuid
+        requestedTier:
+          $ref: "#/components/schemas/TierDTO"
+        status:
+          type: string
+          description: Contract status
+          example: APPROVED
+    AssetCategoryDTO:
+      type: object
+      required:
+      - key
+      - displayName
+      properties:
+        displayName:
+          type: string
+          description: Human-readable category name
+        key:
+          type: string
+          description: Unique category key
+        values:
+          type: array
+          description: List of values for this category
+          items:
+            type: string
+            description: List of values for this category
+      description: Categories assigned to the asset
+    AssetDetailDTO:
+      required:
+      - assetId
+      - groupId
+      - name
+      type: object
+      properties:
+        tags:
+          type: array
+          description: Tags associated with the asset
+          items:
+            type: string
+            description: Tags associated with the asset
+        major:
+          type: integer
+          description: Major version number
+          format: int32
+        minor:
+          type: integer
+          description: Minor version number
+          format: int32
+        mayorComponent:
+          type: integer
+          description: "Major version component (legacy field name)"
+          format: int32
+        minorComponent:
+          type: integer
+          description: Minor version component
+          format: int32
+        minorVersionComponents:
+          type: array
+          description: List of minor version component strings
+          items:
+            type: string
+        apiVersion:
+          type: string
+          description: API version identifier
+        assetId:
+          type: string
+          description: Asset identifier within the organization
+        categories:
+          type: array
+          description: Categories assigned to the asset
+          items:
+            $ref: "#/components/schemas/AssetCategoryDTO"
+        customFields:
+          type: array
+          description: Custom fields defined for the asset
+          items:
+            $ref: "#/components/schemas/GraphQLCustomFieldDTO"
+        description:
+          type: string
+          description: Human-readable description of the asset
+        files:
+          type: array
+          description: Downloadable files attached to this asset version
+          items:
+            $ref: "#/components/schemas/AssetFileDTO"
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+        icon:
+          type: string
+          description: URL or encoded content of the asset icon
+          format: uri
+        instances:
+          type: array
+          description: API instances deployed for this asset version
+          items:
+            $ref: "#/components/schemas/AssetInstanceDTO"
+        labels:
+          type: array
+          description: Labels attached to the asset
+          items:
+            type: string
+            description: Labels attached to the asset
+        latestPatchVersion:
+          type: string
+          description: Latest patch version string
+          example: "1.0.1"
+        lifeCycleState:
+          type: string
+          description: Current lifecycle state of the asset
+        minorVersion:
+          type: string
+          description: Current minor version
+          example: "v1"
+          pattern: ^v?\d+$
+        minorVersions:
+          uniqueItems: true
+          type: array
+          description: All available minor versions for this asset
+          items:
+            type: string
+            description: All available minor versions for this asset
+        name:
+          type: string
+          description: Display name of the asset
+        organizationId:
+          type: string
+          description: Anypoint Platform organization ID
+          format: uuid
+        owner:
+          $ref: "#/components/schemas/AssetOwnerDTO"
+        pages:
+          type: array
+          description: Documentation pages for this asset version
+          items:
+            $ref: "#/components/schemas/AssetPageDTO"
+        type:
+          type: string
+          description: Asset type classifier
+          example: rest-api
+        updatedDate:
+          type: string
+          description: Timestamp of the last update to the asset
+          format: date-time
+        versionGroup:
+          type: string
+          description: Version group identifier for the asset
+    AssetFileDTO:
+      type: object
+      required:
+      - label
+      properties:
+        externalLink:
+          type: string
+          description: URL to the external file resource
+          format: uri
+        isGenerated:
+          type: boolean
+          description: Whether the file was auto-generated
+        label:
+          type: string
+          description: Display label for the file
+      description: Downloadable files attached to this asset version
+    AssetInstanceDTO:
+      type: object
+      required:
+      - id
+      - name
+      - minorVersion
+      properties:
+        contractsCount:
+          type: integer
+          description: Number of active contracts for this instance
+          format: int32
+        endpointUri:
+          type: string
+          description: API endpoint URL
+          format: uri
+        environmentId:
+          type: string
+          description: Anypoint environment ID
+          format: uuid
+        environmentName:
+          type: string
+          description: Anypoint environment name
+        id:
+          type: string
+          description: Unique instance identifier
+        isPublic:
+          type: boolean
+          description: Whether the instance is publicly accessible
+        minorVersion:
+          type: string
+          description: Minor version of the API instance
+          pattern: ^v?\d+$
+        name:
+          type: string
+          description: Instance name
+        providerId:
+          type: string
+          description: Client provider ID
+          format: uuid
+        type:
+          type: string
+          description: Instance type
+      description: API instances deployed for this asset version
+    AssetOwnerDTO:
+      type: object
+      required:
+      - contactEmail
+      properties:
+        contactEmail:
+          type: string
+          description: Owner's contact email address
+          format: email
+        contactName:
+          type: string
+          description: Owner's contact name
+      description: Owner contact information for the asset
+    AssetPageDTO:
+      type: object
+      required:
+      - name
+      - path
+      properties:
+        name:
+          type: string
+          description: Page name
+        path:
+          type: string
+          description: URL path to the documentation page
+      description: Documentation pages for this asset version
+    GraphQLCustomFieldDTO:
+      type: object
+      required:
+      - key
+      - dataType
+      properties:
+        dataType:
+          type: string
+          description: Data type of the custom field
+        dateValue:
+          type: string
+          description: Date value when data type is date
+        displayName:
+          type: string
+          description: Human-readable display name
+        enumValue:
+          type: array
+          description: Enum values when data type is enum
+          items:
+            type: string
+            description: Enum values when data type is enum
+        key:
+          type: string
+          description: Unique custom field key
+        numberValue:
+          type: integer
+          description: Numeric value when data type is number
+          format: int32
+        numericListValue:
+          type: array
+          description: List of numeric values
+          items:
+            type: string
+            description: List of numeric values
+        textListValue:
+          type: array
+          description: List of text values
+          items:
+            type: string
+            description: List of text values
+        textValue:
+          type: string
+          description: Text value when data type is text
+      description: Custom fields defined for the asset
+    GrantTypeDTO:
+      type: object
+      required:
+      - name
+      properties:
+        depends:
+          type: array
+          description: Grant types that this grant type depends on
+          items:
+            type: string
+            description: Grant types that this grant type depends on
+        exclude:
+          type: array
+          description: Grant types that are mutually exclusive with this one
+          items:
+            type: string
+            description: Grant types that are mutually exclusive with this one
+        label:
+          type: string
+          description: Human-readable label for the grant type
+        name:
+          type: string
+          description: Grant type name identifier
+          example: client_credentials
+        required:
+          type: boolean
+          description: Whether this grant type is mandatory
+      description: Available OAuth grant types for the provider
+    GrantTypeResponseDTO:
+      type: object
+      required:
+      - type
+      - grantTypes
+      properties:
+        grantTypes:
+          type: array
+          description: Available OAuth grant types for the provider
+          items:
+            $ref: "#/components/schemas/GrantTypeDTO"
+        type:
+          $ref: "#/components/schemas/ProviderDTO"
+    ProviderDTO:
+      type: object
+      required:
+      - name
+      properties:
+        description:
+          type: string
+          description: Human-readable description of the provider type
+        name:
+          type: string
+          description: Provider type name identifier
+      description: Identity provider type information
+    ApplicationDTO:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        description:
+          type: string
+          description: Application description
+        id:
+          type: string
+          description: Unique application identifier
+        name:
+          type: string
+          description: Application name
+    ApplicationContractResponseDTO:
+      required:
+      - assetId
+      - contractId
+      - instanceId
+      type: object
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier
+        assetName:
+          type: string
+          description: Display name of the API asset
+        contractId:
+          type: integer
+          description: Unique contract identifier
+          format: int32
+        environmentId:
+          type: string
+          description: Environment ID where the API instance is deployed
+          format: uuid
+        environmentName:
+          type: string
+          description: Environment name where the API instance is deployed
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+        instanceId:
+          type: string
+          description: API instance identifier
+          format: uuid
+        instanceName:
+          type: string
+          description: API instance name
+        minorVersion:
+          type: string
+          description: Minor version of the contracted API
+          example: "v1"
+          pattern: ^v?\d+$
+        requestedTier:
+          $ref: "#/components/schemas/TierDTO"
+        status:
+          type: string
+          description: Contract status
+          example: APPROVED
+        tier:
+          $ref: "#/components/schemas/TierDTO"
+    ApplicationExistsDTO:
+      required:
+      - exists
+      type: object
+      properties:
+        exists:
+          type: boolean
+          description: Whether an application with the given name already exists
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: Anypoint Platform bearer token obtained from Access Management
+      scheme: bearer
