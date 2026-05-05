@@ -792,6 +792,141 @@ code {
     padding: 10px 10px;
 }
 
+/* MCP Coming Soon Badge & Animations */
+.hero-tab-mcp {
+    position: relative;
+    overflow: visible;
+    cursor: not-allowed;
+    pointer-events: auto;
+}
+
+.coming-soon-badge {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: 200% 200%;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    z-index: 10;
+}
+
+
+/* Hover state for MCP tab */
+.hero-tab-mcp:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+}
+
+.hero-tab-mcp:hover .coming-soon-badge {
+    animation: pulse-badge 2s ease-in-out infinite, gradient-shift 3s ease infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+    }
+}
+
+@keyframes gradient-shift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* Tooltip on hover - liquid glass effect */
+.hero-tab-mcp::after {
+    content: "Something wonderful is going to happen.";
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.3) 100%);
+    padding: 10px 16px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    /* Purple to turquoise gradient text */
+    background-image: linear-gradient(90deg,
+        #5E5CE6 0%,
+        #4E7BDB 25%,
+        #3E9AD0 50%,
+        #2EB9C5 75%,
+        #00C7BE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-tab-mcp:hover::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(5px);
+}
+
+/* Dark mode adjustments */
+[data-theme="dark"] .coming-soon-badge {
+    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.5);
+}
+
+[data-theme="dark"] .hero-tab-mcp:hover {
+    box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+[data-theme="dark"] .hero-tab-mcp::after {
+    background: linear-gradient(135deg,
+        rgba(255, 255, 255, 0.15) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0.12) 100%);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    /* Same purple to turquoise gradient for dark mode */
+    background-image: linear-gradient(90deg,
+        #5E5CE6 0%,
+        #4E7BDB 25%,
+        #3E9AD0 50%,
+        #2EB9C5 75%,
+        #00C7BE 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
 /* ============================================================================
    Unified Catalog (APIs & Skills)
    ============================================================================ */
@@ -833,19 +968,19 @@ code {
 
 /* Catalog Results Header */
 .catalog-results-header {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 389px));
+    gap: 32px; /* Same horizontal gap as card grid */
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-lg);
-    margin-right: 60px;
+    justify-content: start;
 }
 
 .catalog-search-and-results {
     display: flex;
     align-items: center;
     gap: var(--space-lg);
-    flex: 1;
     min-width: 0;
+    grid-column: 1 / 3;
 }
 
 .results-count {
@@ -1131,6 +1266,8 @@ code {
     display: flex;
     align-items: center;
     gap: 12px;
+    grid-column: 3;
+    justify-self: end;
 }
 
 /* Sort Button */
@@ -1288,19 +1425,49 @@ code {
 /* Catalog Grid */
 .catalog-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 36px 0px;
+    grid-template-columns: repeat(3, minmax(0, 389px));
+    gap: 36px 32px; /* 36px vertical, 32px horizontal gap for equal "streets" */
+    justify-content: start;
 }
 
 @media (max-width: 1200px) {
     .catalog-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 389px));
+        gap: 36px 32px;
+    }
+
+    .catalog-results-header {
+        grid-template-columns: repeat(2, minmax(0, 389px));
+        gap: 32px;
+    }
+
+    .catalog-search-and-results {
+        grid-column: 1 / 2;
+    }
+
+    .catalog-controls-right {
+        grid-column: 2;
     }
 }
 
 @media (max-width: 768px) {
     .catalog-grid {
         grid-template-columns: 1fr;
+        gap: 36px 0;
+    }
+
+    .catalog-results-header {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
+
+    .catalog-search-and-results {
+        grid-column: 1;
+    }
+
+    .catalog-controls-right {
+        grid-column: 1;
+        justify-self: start;
     }
 }
 
@@ -2872,7 +3039,7 @@ button.nav-group-header {
 }
 
 .servers-list li {
-    padding: 0;
+    padding: 0 var(--space-medium);
     background: transparent;
     border: none;
     margin-bottom: var(--space-x-small);
@@ -3252,17 +3419,38 @@ button.nav-group-header {
     overflow: hidden;
 }
 
-.url-server-part {
-    color: var(--color-text-secondary);
-    cursor: pointer;
+.url-server-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     position: relative;
+}
+
+.url-server-container.has-dropdown {
+    cursor: pointer;
     border-bottom: 1px dashed transparent;
     transition: border-color 0.15s, color 0.15s;
 }
 
-.url-server-part:hover {
+.url-server-container.has-dropdown:hover {
     color: var(--color-primary);
     border-bottom-color: var(--color-primary);
+}
+
+.url-server-container.has-dropdown:hover .server-dropdown-chevron {
+    color: var(--color-primary);
+}
+
+.url-server-part {
+    color: var(--color-text-secondary);
+}
+
+.server-dropdown-chevron {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+    transition: color 0.15s;
+    line-height: 1;
+    user-select: none;
 }
 
 .url-path-part {
