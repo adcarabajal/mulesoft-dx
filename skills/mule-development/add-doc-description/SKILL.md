@@ -1,16 +1,18 @@
 ---
 name: add-doc-description
 description: Call use_skill as your FIRST and ONLY action when the user asks to document, add descriptions to, annotate, or add doc:description attributes to Mule XML files, flows, components, or connectors. Do not read project files first — this skill provides instructions for when to read files. Covers documenting all Mule elements in src/main/mule including flows, sub-flows, configs, listeners, processors, transforms, error handlers, and connectors. When you call use_skill, it must be the only tool call in that response.
-user-invocable: true
+metadata:
+  author: mule-dx-tooling
+  version: "1.0.0"
 ---
+
+## Overview
 
 You are an XML documentation expert for MuleSoft. Add doc:description attributes to XML elements in Mule configuration files.
 
-## Your Task
-
 Scan the Mule project for configuration XML files in `src/main/mule/` and add or update `doc:description` attributes on elements that are missing them or have inaccurate descriptions.
 
-### Rules:
+## Rules
 - **doc:description**: A meaningful 1-2 sentence purpose description. MUST NOT exceed 150 characters.
 - Preserve ALL existing XML structure, attributes, CDATA blocks, and content exactly as-is
 - Do NOT modify, add, or remove any non-doc attributes or elements
@@ -18,17 +20,31 @@ Scan the Mule project for configuration XML files in `src/main/mule/` and add or
 - Ensure xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" is present on the root element
 - **CRITICAL: NEVER call Read and Write in the same turn** - When you call Read tool, do NOT call Write tool in that same response. Read in one turn, analyze and prepare changes, then Write in the next turn. This is a hard requirement - Read and Write are always separate turns.
 
-## Step-by-Step Process
+## Important Rules
+  - **Complete each file fully in ONE Write operation** - do NOT make edits in batches
+  - **Do NOT modify doc:name attributes** - only work with doc:description
+  - **Do NOT modify, add, or remove any non-doc attributes or elements**
+  - **Preserve ALL existing XML structure, attributes, CDATA blocks, and content exactly as-is**
+  - **Add doc:description to ALL elements listed in section B** - including loggers, processors, connectors, configs, etc.
+  - **Do NOT change existing accurate descriptions** - only update if they're vague or incorrect
+  - **Maintain XML formatting** - preserve indentation and structure
+  - **Be specific** - avoid generic phrases like "processes data" or "handles request"
+  - **Enforce 150 character limit** - all descriptions must be 150 characters or less
 
-### 1. Verify Project Structure
-- Check that `src/main/mule` directory exists in the current working directory
-- If not found, inform the user this doesn't appear to be a Mule application project
+## Error Handling
+  - If a file cannot be read, skip it and report the error
+  - If XML parsing seems problematic, inform the user
+  - If uncertain about a component's purpose, generate a conservative description or ask the user
 
-### 2. Find All Mule XML Files
-- Use Glob to find all XML files: `src/main/mule/**/*.xml`
-- If no files are found, inform the user and exit
+## Step 1: Verify Project Structure
+  - Check that `src/main/mule` directory exists in the current working directory
+  - If not found, inform the user this doesn't appear to be a Mule application project
 
-### 3. Process Each File Completely
+## Step 2: Find All Mule XML Files
+  - Use Glob to find all XML files: `src/main/mule/**/*.xml`
+  - If no files are found, inform the user and exit
+
+## Step 3: Process Each File Completely
 For each XML file found:
 
 #### A. Read the entire file FIRST
@@ -52,17 +68,18 @@ For each XML file found:
    - Count global error handlers (`<error-handler>` at top level, outside flows)
 
 2. Output this analysis in a clear summary format:
-   ```
+
+   ```text
    Analyzing file: [filename]
    File size: [line count] lines
-   
+
    Found:
    - [X] flows: [flow-name-1], [flow-name-2], [flow-name-3]...
    - [X] sub-flows: [subflow-name-1], [subflow-name-2]...
    - [X] batch jobs: [batch-job-name-1]...
    - [X] global configs
    - [X] global error handlers
-   
+
    Proceeding to add doc:descriptions...
    ```
 
@@ -266,7 +283,7 @@ Study the template above to understand the level of detail and style expected fo
 - Easier to review all changes at once
 - No risk of partial updates
 
-### 4. Present Changes for Approval
+## Step 4: Present Changes for Approval
 After completing ALL edits for a file:
 - Summarize what doc:description attributes were added (count by element type)
 - Highlight any elements that were skipped and why
@@ -274,30 +291,12 @@ After completing ALL edits for a file:
 - If approved, move to the next file
 - If denied, ask what needs adjustment and re-read the file to verify current state
 
-### 5. Repeat for All Files
+## Step 5: Repeat for All Files
 Continue this process for each XML file in the `src/main/mule/` directory.
 
-### 6. Final Summary
+## Step 6: Final Summary
 After all files are processed, provide:
 - Number of files scanned
 - Number of files modified
 - Total number of doc:description attributes added
 - Total number of doc:description attributes updated
-
-## Important Rules
-
-- **Complete each file fully in ONE Write operation** - do NOT make edits in batches
-- **Do NOT modify doc:name attributes** - only work with doc:description
-- **Do NOT modify, add, or remove any non-doc attributes or elements**
-- **Preserve ALL existing XML structure, attributes, CDATA blocks, and content exactly as-is**
-- **Add doc:description to ALL elements listed in section B** - including loggers, processors, connectors, configs, etc.
-- **Do NOT change existing accurate descriptions** - only update if they're vague or incorrect
-- **Maintain XML formatting** - preserve indentation and structure
-- **Be specific** - avoid generic phrases like "processes data" or "handles request"
-- **Enforce 150 character limit** - all descriptions must be 150 characters or less
-
-## Error Handling
-
-- If a file cannot be read, skip it and report the error
-- If XML parsing seems problematic, inform the user
-- If uncertain about a component's purpose, generate a conservative description or ask the user

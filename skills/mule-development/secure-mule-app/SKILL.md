@@ -1,7 +1,9 @@
 ---
 name: secure-mule-app
 description: Configure and implement Mule secure properties for encrypting sensitive data in Mule applications. Use this when the user wants to use/implement/add/configure Mule secure properties, secure configuration, or encrypt credentials in their Mule project.
-user-invocable: true
+metadata:
+  author: mule-dx-tooling
+  version: "1.0.0"
 ---
 
 You are a MuleSoft security specialist helping to secure a Mule application by encrypting sensitive data.
@@ -12,11 +14,11 @@ Scan the Mule application for sensitive data (usernames, passwords, URLs, API ke
 
 ## Step-by-Step Process
 
-### 1. Verify Project Structure
+## Step 1: Verify Project Structure
 - Check that `src/main/mule` directory exists in the current working directory
 - If not found, inform the user this doesn't appear to be a Mule application project
 
-### 2. Get User Configuration
+## Step 2: Get User Configuration
 Ask the user for the following information, **one question at a time**:
 
 **First, ask for the encryption key:**
@@ -41,7 +43,7 @@ Ask the user for the following information, **one question at a time**:
 **Finally, ask about backup:**
 - "Would you like to save the unencrypted values to `local.properties` for reference? (yes/no)"
 
-### 3. Locate or Download Secure Properties Tool JAR
+## Step 3: Locate or Download Secure Properties Tool JAR
 
 **Before checking, explicitly tell the user what you are doing and why.** Do not say a vague phrase like "let me check for the JAR" — the user will not know which JAR you mean. Instead, say something like:
 
@@ -66,7 +68,7 @@ Ask the user for the following information, **one question at a time**:
   `https://docs.mulesoft.com/mule-runtime/4.4/_attachments/secure-properties-tool.jar`
 - Note: Maven (`mvn`) cannot be used here — this JAR is hosted on a documentation site, not a Maven repository
 
-### 4. Scan XML Files and Properties Files
+## Step 4: Scan XML Files and Properties Files
 Scan for sensitive data in two locations:
 
 #### A. Scan XML Files
@@ -94,7 +96,7 @@ Scan all XML files in `src/main/mule` (including subdirectories) for sensitive a
 - **Track property names** that contain sensitive values (e.g., `email.password=secret` → track `email.password`)
 - These values will need to be encrypted and moved to `.secure.properties` files
 
-### 5. Display Findings
+## Step 5: Display Findings
 Show a summary of all sensitive data found:
 - **XML files**: List each file with sensitive attributes (hardcoded values or property placeholders)
 - **Properties files**: List files containing sensitive properties with their property names
@@ -103,7 +105,7 @@ Show a summary of all sensitive data found:
 
 If no sensitive data is found, inform the user and exit.
 
-### 6. Get User Confirmation
+## Step 6: Get User Confirmation
 Before making ANY changes, show the user:
 - What files will be modified
 - What actions will be taken (update pom.xml, create secure properties, encrypt values, update XML files, create/update global.xml)
@@ -111,7 +113,7 @@ Before making ANY changes, show the user:
 
 If user says no, stop immediately.
 
-### 7. Determine Property Keys
+## Step 7: Determine Property Keys
 For each sensitive value found, determine the property key name:
 
 #### A. For values already in properties files:
@@ -148,7 +150,7 @@ Generate a contextual property key name based on:
 
 If the same property key would be generated multiple times, append a number: `mongodb.password.1`, `mongodb.password.2`
 
-### 8. Encrypt Values
+## Step 8: Encrypt Values
 After user confirmation, batch encrypt all unique sensitive values:
 - Collect all unique sensitive values that need encryption
 - For each value, run the encryption command without prompting:
@@ -158,7 +160,7 @@ After user confirmation, batch encrypt all unique sensitive values:
 - Store each encrypted value with its generated property key
 - Execute all encryption commands in sequence without asking for additional permission
 
-### 9. Create/Update Properties Files
+## Step 9: Create/Update Properties Files
 
 **Secure Properties File** (`src/main/resources/local.secure.properties`):
 - Check if file exists
@@ -171,13 +173,13 @@ After user confirmation, batch encrypt all unique sensitive values:
 - Write unencrypted property values for reference
 - Format: `property.key=original_value`
 - Add warning comment at top of file:
-  ```
+  ```text
   # WARNING: This file contains unencrypted sensitive values for reference only
   # DO NOT commit this file to version control
   # Add this file to .gitignore
   ```
 
-### 10. Update XML Files
+## Step 10: Update XML Files
 For each XML file with sensitive data, perform two types of updates:
 
 #### A. Replace hardcoded values with secure property placeholders:
@@ -215,7 +217,7 @@ Example:
 
 Write the updated XML back to disk after making all changes.
 
-### 11. Create/Update global.xml
+## Step 11: Create/Update global.xml
 Check if `src/main/mule/global.xml` exists:
 
 **If it exists**:
@@ -257,7 +259,7 @@ Template:
 </mule>
 ```
 
-### 12. Update pom.xml with Secure Properties Dependency
+## Step 12: Update pom.xml with Secure Properties Dependency
 - Read the `pom.xml` file in the project root
 - Check if the `mule-secure-configuration-property-module` dependency already exists
 - If not present, add it to the `<dependencies>` section:
@@ -271,7 +273,7 @@ Template:
   ```
 - If the dependency already exists, inform the user and skip this step
 
-### 13. Update launch.json with Encryption Key
+## Step 13: Update launch.json with Encryption Key
 - Check if `.vscode/launch.json` exists in the project root
 - If it exists:
   - Read the file
@@ -293,12 +295,12 @@ Template:
   export ENCRYPTION_KEY=<their-encryption-key>
   ```
 
-### 14. Protect Existing Properties/YAML Files in .gitignore
+## Step 14: Protect Existing Properties/YAML Files in .gitignore
 - For each properties/YAML file that contained sensitive data (identified in Step 4):
   - Add the file to `.gitignore` to prevent committing sensitive data
   - This includes files like `local.properties`, `dev.properties`, etc.
 
-### 15. Final Summary
+## Step 15: Final Summary
 Provide a completion summary:
 - ✅ Number of XML files scanned
 - ✅ Number of properties files scanned
