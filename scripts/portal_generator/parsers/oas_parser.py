@@ -117,21 +117,25 @@ def _convert_to_plain(obj):
     return obj
 
 
-def resolve_schema(schema: Dict, base_dir: Path, depth: int = 0) -> Dict:
-    """Resolve a schema, following $ref if it points to an external file.
+def resolve_schema(schema: Dict, base_dir: Path, depth: int = 0, components: Dict = None) -> Dict:
+    """Resolve a schema, following $ref to either an external file or an
+    internal #/components/schemas/* entry when components are provided.
     Returns the schema with top-level properties expanded.
     Limits depth to avoid infinite recursion."""
     if not isinstance(schema, dict) or depth > 2:
         return schema or {}
 
-    # Handle $ref to external file
     if '$ref' in schema:
         ref = schema['$ref']
         if ref.startswith('#'):
-            return schema  # Internal ref, can't resolve without full spec
+            if components:
+                resolved = resolve_ref(ref, components)
+                if resolved and isinstance(resolved, dict):
+                    return resolve_schema(resolved, base_dir, depth + 1, components)
+            return schema  # No components or ref not found: passthrough
         resolved = resolve_external_ref(ref, base_dir)
         if resolved and isinstance(resolved, dict):
-            return resolve_schema(resolved, base_dir, depth + 1)
+            return resolve_schema(resolved, base_dir, depth + 1, components)
         return schema
 
     # Handle allOf: merge properties from all schemas
@@ -140,7 +144,7 @@ def resolve_schema(schema: Dict, base_dir: Path, depth: int = 0) -> Dict:
         merged_props = {}
         merged_required = []
         for sub in schema['allOf']:
-            resolved_sub = resolve_schema(sub, base_dir, depth + 1)
+            resolved_sub = resolve_schema(sub, base_dir, depth + 1, components)
             if isinstance(resolved_sub, dict):
                 merged_props.update(resolved_sub.get('properties', {}))
                 merged_required.extend(resolved_sub.get('required', []))
@@ -159,10 +163,10 @@ def resolve_schema(schema: Dict, base_dir: Path, depth: int = 0) -> Dict:
     return schema
 
 
-def extract_schema_properties(schema: Dict, base_dir: Path) -> List[Dict]:
+def extract_schema_properties(schema: Dict, base_dir: Path, components: Dict = None) -> List[Dict]:
     """Extract a flat list of property definitions from a schema for rendering.
     Returns list of {name, type, required, description, constraints, children}."""
-    resolved = resolve_schema(schema, base_dir)
+    resolved = resolve_schema(schema, base_dir, components=components)
     if not isinstance(resolved, dict):
         return []
 
@@ -176,9 +180,15 @@ def extract_schema_properties(schema: Dict, base_dir: Path) -> List[Dict]:
 
         # Resolve nested $ref for the property itself
         if '$ref' in prop:
-            ext = resolve_external_ref(prop['$ref'], base_dir)
-            if ext and isinstance(ext, dict):
-                prop = ext
+            ref = prop['$ref']
+            if ref.startswith('#') and components:
+                internal = resolve_ref(ref, components)
+                if internal and isinstance(internal, dict):
+                    prop = internal
+            else:
+                ext = resolve_external_ref(ref, base_dir)
+                if ext and isinstance(ext, dict):
+                    prop = ext
 
         prop_type = prop.get('type', '')
         if prop.get('format'):
@@ -211,7 +221,7 @@ def extract_schema_properties(schema: Dict, base_dir: Path) -> List[Dict]:
         # Extract nested properties for object types
         children = []
         if prop.get('type') == 'object' and 'properties' in prop:
-            children = extract_schema_properties(prop, base_dir)
+            children = extract_schema_properties(prop, base_dir, components)
 
         result.append({
             'name': str(name),
@@ -311,14 +321,14 @@ def extract_operations(paths: Dict, components: Dict = None, base_dir: Path = No
                 if 'requestBody' in op:
                     rb = op['requestBody']
                     if isinstance(rb, dict):
-                        request_body = _extract_request_body(rb, base_dir)
+                        request_body = _extract_request_body(rb, base_dir, components)
 
                 # Extract responses with resolved schemas and examples
                 responses = {}
                 if 'responses' in op:
                     for status, response in op.get('responses', {}).items():
                         if isinstance(response, dict):
-                            responses[str(status)] = _extract_response(response, base_dir)
+                            responses[str(status)] = _extract_response(response, base_dir, components)
 
                 operations.append({
                     'method': method.upper(),
@@ -353,7 +363,7 @@ def _extract_param(param: Dict) -> Dict:
     }
 
 
-def _extract_request_body(rb: Dict, base_dir: Path = None) -> Dict:
+def _extract_request_body(rb: Dict, base_dir: Path = None, components: Dict = None) -> Dict:
     """Extract request body with resolved schema properties and examples."""
     result = {
         'required': rb.get('required', False),
@@ -373,10 +383,10 @@ def _extract_request_body(rb: Dict, base_dir: Path = None) -> Dict:
 
         # Resolve schema (raw + flattened)
         if 'schema' in media_type and base_dir:
-            resolved = resolve_schema(media_type['schema'], base_dir)
+            resolved = resolve_schema(media_type['schema'], base_dir, components=components)
             if resolved:
                 result['raw_schemas'][ct] = _convert_to_plain(resolved)
-            props = extract_schema_properties(media_type['schema'], base_dir)
+            props = extract_schema_properties(media_type['schema'], base_dir, components)
             if props:
                 result['schemas'][ct] = props
 
@@ -398,7 +408,7 @@ def _extract_request_body(rb: Dict, base_dir: Path = None) -> Dict:
     return result
 
 
-def _extract_response(response: Dict, base_dir: Path = None) -> Dict:
+def _extract_response(response: Dict, base_dir: Path = None, components: Dict = None) -> Dict:
     """Extract a response with resolved schema properties and examples."""
     result = {
         'description': response.get('description', ''),
@@ -416,7 +426,7 @@ def _extract_response(response: Dict, base_dir: Path = None) -> Dict:
 
         # Resolve schema
         if 'schema' in media_type and base_dir:
-            props = extract_schema_properties(media_type['schema'], base_dir)
+            props = extract_schema_properties(media_type['schema'], base_dir, components)
             if props:
                 result['schemas'][ct] = props
 

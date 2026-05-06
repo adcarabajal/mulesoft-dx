@@ -151,6 +151,43 @@ class TestResolveSchema:
         result = resolve_schema(schema, tmp_path)
         assert result == schema
 
+    def test_internal_ref_resolves_with_components(self, tmp_path):
+        components = {
+            'schemas': {
+                'Pet': {
+                    'type': 'object',
+                    'required': ['name'],
+                    'properties': {'name': {'type': 'string'}},
+                }
+            }
+        }
+        schema = {'$ref': '#/components/schemas/Pet'}
+        result = resolve_schema(schema, tmp_path, components=components)
+        assert result['type'] == 'object'
+        assert 'name' in result['properties']
+        assert result['required'] == ['name']
+
+    def test_internal_ref_chain_resolves_with_components(self, tmp_path):
+        components = {
+            'schemas': {
+                'Outer': {'$ref': '#/components/schemas/Inner'},
+                'Inner': {
+                    'type': 'object',
+                    'properties': {'id': {'type': 'string'}},
+                },
+            }
+        }
+        result = resolve_schema(
+            {'$ref': '#/components/schemas/Outer'}, tmp_path, components=components
+        )
+        assert result['type'] == 'object'
+        assert 'id' in result['properties']
+
+    def test_internal_ref_unknown_component_passthrough(self, tmp_path):
+        schema = {'$ref': '#/components/schemas/Missing'}
+        result = resolve_schema(schema, tmp_path, components={'schemas': {}})
+        assert result == schema
+
     def test_depth_limit(self, tmp_path):
         schema = {'type': 'string'}
         result = resolve_schema(schema, tmp_path, depth=3)
@@ -262,6 +299,44 @@ class TestExtractSchemaProperties:
             },
         }
         props = extract_schema_properties(schema, tmp_path)
+        assert len(props) == 1
+        assert props[0]['type'] == 'string'
+        assert any('enum' in c for c in props[0]['constraints'])
+
+    def test_internal_ref_top_level_schema(self, tmp_path):
+        components = {
+            'schemas': {
+                'UserGroupRequestDTO': {
+                    'type': 'object',
+                    'required': ['name'],
+                    'properties': {
+                        'name': {'type': 'string', 'description': 'Group name'},
+                        'description': {'type': 'string'},
+                        'parentUserGroupId': {'type': 'string', 'format': 'uuid'},
+                    },
+                }
+            }
+        }
+        schema = {'$ref': '#/components/schemas/UserGroupRequestDTO'}
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        names = [p['name'] for p in props]
+        assert names == ['name', 'description', 'parentUserGroupId']
+        assert next(p for p in props if p['name'] == 'name')['required'] is True
+        assert next(p for p in props if p['name'] == 'description')['required'] is False
+
+    def test_internal_ref_in_property(self, tmp_path):
+        components = {
+            'schemas': {
+                'Status': {'type': 'string', 'enum': ['active', 'inactive']},
+            }
+        }
+        schema = {
+            'type': 'object',
+            'properties': {
+                'status': {'$ref': '#/components/schemas/Status'},
+            },
+        }
+        props = extract_schema_properties(schema, tmp_path, components=components)
         assert len(props) == 1
         assert props[0]['type'] == 'string'
         assert any('enum' in c for c in props[0]['constraints'])
@@ -402,6 +477,81 @@ class TestExtractOperations:
         }
         ops = extract_operations(paths)
         assert ops[0]['operationId'] == 'get__items'
+
+    def test_request_body_with_internal_ref_resolves_properties(self, tmp_path):
+        """Regression: bodies that use $ref to #/components/schemas/* must
+        render their property tables, not appear empty in the portal."""
+        paths = {
+            '/userGroups': {
+                'post': {
+                    'operationId': 'createUserGroup',
+                    'requestBody': {
+                        'required': True,
+                        'content': {
+                            'application/json': {
+                                'schema': {'$ref': '#/components/schemas/UserGroupRequestDTO'},
+                            }
+                        },
+                    },
+                    'responses': {},
+                },
+            }
+        }
+        components = {
+            'schemas': {
+                'UserGroupRequestDTO': {
+                    'type': 'object',
+                    'required': ['name'],
+                    'properties': {
+                        'name': {'type': 'string', 'description': 'Group name'},
+                        'description': {'type': 'string'},
+                        'parentUserGroupId': {'type': 'string', 'format': 'uuid'},
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        rb = ops[0]['requestBody']
+        assert rb['schemas'].get('application/json'), \
+            'request body schema must expose properties when using internal $ref'
+        names = [p['name'] for p in rb['schemas']['application/json']]
+        assert names == ['name', 'description', 'parentUserGroupId']
+
+    def test_response_with_internal_ref_resolves_properties(self, tmp_path):
+        """Same fix should apply to response schemas using internal $ref."""
+        paths = {
+            '/userGroups': {
+                'get': {
+                    'operationId': 'listUserGroups',
+                    'responses': {
+                        '200': {
+                            'description': 'OK',
+                            'content': {
+                                'application/json': {
+                                    'schema': {'$ref': '#/components/schemas/UserGroupDTO'},
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        }
+        components = {
+            'schemas': {
+                'UserGroupDTO': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {'type': 'string', 'format': 'uuid'},
+                        'name': {'type': 'string'},
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        resp = ops[0]['responses']['200']
+        assert resp['schemas'].get('application/json')
+        names = [p['name'] for p in resp['schemas']['application/json']]
+        assert names == ['id', 'name']
 
     def test_empty_paths(self):
         assert extract_operations({}) == []
