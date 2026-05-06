@@ -341,6 +341,63 @@ class TestExtractSchemaProperties:
         assert props[0]['type'] == 'string'
         assert any('enum' in c for c in props[0]['constraints'])
 
+    def test_top_level_array_body_with_internal_ref_items(self, tmp_path):
+        """Regression: array request bodies whose items use $ref must surface
+        the item's properties as children of a synthetic 'items' row."""
+        components = {
+            'schemas': {
+                'CommunityAssetGaCreateDTO': {
+                    'type': 'object',
+                    'required': ['assetId', 'groupId'],
+                    'properties': {
+                        'assetId': {'type': 'string', 'description': 'Exchange asset id'},
+                        'groupId': {'type': 'string', 'description': 'Exchange group id'},
+                    },
+                }
+            }
+        }
+        schema = {
+            'type': 'array',
+            'items': {'$ref': '#/components/schemas/CommunityAssetGaCreateDTO'},
+        }
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        assert len(props) == 1
+        assert props[0]['name'] == 'items'
+        assert props[0]['type'] == 'array[object]'
+        child_names = [c['name'] for c in props[0]['children']]
+        assert child_names == ['assetId', 'groupId']
+
+    def test_top_level_array_body_with_inline_items(self, tmp_path):
+        schema = {
+            'type': 'array',
+            'items': {'type': 'string'},
+        }
+        props = extract_schema_properties(schema, tmp_path)
+        assert len(props) == 1
+        assert props[0]['name'] == 'items'
+        assert props[0]['type'] == 'array[string]'
+        assert props[0]['children'] == []
+
+    def test_array_property_items_ref_resolves_type(self, tmp_path):
+        """A property of type array whose items use $ref should report the
+        resolved item type (e.g. 'object'), not the literal 'object' fallback."""
+        components = {
+            'schemas': {
+                'Tag': {'type': 'string', 'enum': ['a', 'b']},
+            }
+        }
+        schema = {
+            'type': 'object',
+            'properties': {
+                'tags': {
+                    'type': 'array',
+                    'items': {'$ref': '#/components/schemas/Tag'},
+                },
+            },
+        }
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        assert props[0]['type'] == 'array[string]'
+
     def test_empty_properties(self, tmp_path):
         schema = {'type': 'object'}
         assert extract_schema_properties(schema, tmp_path) == []
@@ -517,6 +574,57 @@ class TestExtractOperations:
         names = [p['name'] for p in rb['schemas']['application/json']]
         assert names == ['name', 'description', 'parentUserGroupId']
 
+    def test_array_request_body_resolves_items_and_keeps_inline_example(self, tmp_path):
+        """Regression: array bodies (type: array, items: $ref) must render
+        their item properties AND their inline list example -- both were
+        previously dropped, leaving the body and Examples section empty."""
+        paths = {
+            '/assets': {
+                'post': {
+                    'operationId': 'addAssetsToCommunity',
+                    'requestBody': {
+                        'required': True,
+                        'content': {
+                            'application/json': {
+                                'schema': {
+                                    'type': 'array',
+                                    'items': {'$ref': '#/components/schemas/CommunityAssetGaCreateDTO'},
+                                },
+                                'example': [
+                                    {'assetId': 'payment-api', 'groupId': 'com.example'},
+                                ],
+                            }
+                        },
+                    },
+                    'responses': {},
+                },
+            }
+        }
+        components = {
+            'schemas': {
+                'CommunityAssetGaCreateDTO': {
+                    'type': 'object',
+                    'required': ['assetId', 'groupId'],
+                    'properties': {
+                        'assetId': {'type': 'string'},
+                        'groupId': {'type': 'string'},
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        rb = ops[0]['requestBody']
+        # Body fields render via the synthetic 'items' row
+        props = rb['schemas']['application/json']
+        assert len(props) == 1
+        assert props[0]['name'] == 'items'
+        child_names = [c['name'] for c in props[0]['children']]
+        assert child_names == ['assetId', 'groupId']
+        # Inline list example survives
+        assert rb['examples']['application/json']['Default']
+        parsed = json.loads(rb['examples']['application/json']['Default'])
+        assert parsed[0]['assetId'] == 'payment-api'
+
     def test_response_with_internal_ref_resolves_properties(self, tmp_path):
         """Same fix should apply to response schemas using internal $ref."""
         paths = {
@@ -677,6 +785,16 @@ class TestLoadExampleContent:
 
     def test_missing_ref(self, tmp_path):
         assert load_example_content({'$ref': 'missing.json'}, tmp_path) is None
+
+    def test_inline_list(self, tmp_path):
+        """Regression: array request bodies often supply an inline YAML list
+        as the example value. load_example_content must serialize lists, not
+        treat them as None (which would drop the Examples section)."""
+        example = [{'assetId': 'payment-api', 'groupId': 'com.example'}]
+        result = load_example_content(example, tmp_path)
+        assert result is not None
+        parsed = json.loads(result)
+        assert parsed == example
 
 
 # ============================================================================

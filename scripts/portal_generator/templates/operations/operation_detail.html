@@ -145,7 +145,7 @@
                     {% endif %}
                 </div>
                 {% for ct, props in rb.schemas|default({})|items %}
-                {{ render_schema_table(props, '') }}
+                {{ render_schema_table(props, '', operation.operationId ~ '-rb') }}
                 {% endfor %}
                 {% if rb.examples %}
                 <details class="response-examples-section">
@@ -198,7 +198,7 @@
                     <div class="param-description">{{ response.description|md }}</div>
                     {% endif %}
                     {% for ct, props in response.schemas|default({})|items %}
-                    {{ render_schema_table(props) }}
+                    {{ render_schema_table(props, '', operation.operationId ~ '-resp-' ~ status) }}
                     {% endfor %}
                     {% if response.examples %}
                     <details class="response-examples-section">

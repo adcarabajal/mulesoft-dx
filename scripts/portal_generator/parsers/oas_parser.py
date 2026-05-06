@@ -85,6 +85,9 @@ def load_example_content(ref_or_value, base_dir: Path) -> Optional[str]:
                 return json.dumps(_convert_to_plain(ref_or_value['value']), indent=2)
             # Inline example object
             return json.dumps(_convert_to_plain(ref_or_value), indent=2)
+        elif isinstance(ref_or_value, list):
+            # Inline list example (e.g. array request body example)
+            return json.dumps(_convert_to_plain(ref_or_value), indent=2)
         elif isinstance(ref_or_value, str):
             if len(ref_or_value) > 500:
                 return None  # Not a file path
@@ -163,12 +166,51 @@ def resolve_schema(schema: Dict, base_dir: Path, depth: int = 0, components: Dic
     return schema
 
 
+def _resolve_inline_ref(node: Dict, base_dir: Path, components: Dict = None) -> Dict:
+    """Resolve a single $ref node (internal or external) to its target dict.
+    Returns the original node unchanged if no $ref or it can't be resolved."""
+    if not isinstance(node, dict) or '$ref' not in node:
+        return node
+    ref = node['$ref']
+    if ref.startswith('#') and components:
+        internal = resolve_ref(ref, components)
+        if internal and isinstance(internal, dict):
+            return internal
+    elif not ref.startswith('#'):
+        ext = resolve_external_ref(ref, base_dir)
+        if ext and isinstance(ext, dict):
+            return ext
+    return node
+
+
 def extract_schema_properties(schema: Dict, base_dir: Path, components: Dict = None) -> List[Dict]:
     """Extract a flat list of property definitions from a schema for rendering.
-    Returns list of {name, type, required, description, constraints, children}."""
+    Returns list of {name, type, required, description, constraints, children}.
+
+    For top-level array schemas, returns a single synthetic 'items' row whose
+    children are the properties of the resolved items schema -- so callers and
+    templates can render array-of-DTO bodies/responses without special casing."""
     resolved = resolve_schema(schema, base_dir, components=components)
     if not isinstance(resolved, dict):
         return []
+
+    # Top-level array schema: synthesize an 'items' row with the item properties
+    # as children. This handles array request bodies and array responses where
+    # the items use $ref to a component schema.
+    if resolved.get('type') == 'array' and 'items' in resolved:
+        items_schema = _resolve_inline_ref(resolved['items'], base_dir, components)
+        items_resolved = resolve_schema(items_schema, base_dir, components=components)
+        items_type = items_resolved.get('type', 'object') if isinstance(items_resolved, dict) else 'object'
+        children = extract_schema_properties(items_schema, base_dir, components)
+        return [{
+            'name': 'items',
+            'type': f'array[{items_type}]',
+            'required': False,
+            'description': resolved.get('description', '') or 'Array items',
+            'constraints': [],
+            'children': children,
+            'schema': resolved,
+        }]
 
     properties = resolved.get('properties', {})
     required_fields = set(resolved.get('required', []))
@@ -196,10 +238,11 @@ def extract_schema_properties(schema: Dict, base_dir: Path, components: Dict = N
         if prop.get('nullable'):
             prop_type += ', nullable'
 
-        # Items type for arrays
+        # Items type for arrays (resolve $ref to surface the real item type)
         items = prop.get('items', {})
         if isinstance(items, dict) and prop_type.startswith('array'):
-            items_type = items.get('type', 'object')
+            resolved_items = _resolve_inline_ref(items, base_dir, components)
+            items_type = resolved_items.get('type', 'object') if isinstance(resolved_items, dict) else 'object'
             prop_type = f"array[{items_type}]"
 
         constraints = []

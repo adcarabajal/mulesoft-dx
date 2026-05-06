@@ -287,104 +287,6 @@ paths:
               schema:
                 type: object
               example: {}
-  /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/{groupId}/{assetId}/{minorVersion}/model:
-    post:
-      tags:
-      - Asset Discovery
-      summary: Get API console model
-      description: Returns the AMF model for rendering the API console for a specific asset.
-      operationId: getAssetModel
-      parameters:
-      - name: minorVersion
-        in: path
-        description: Minor version of the asset (e.g. 1.0)
-        required: true
-        schema:
-          type: string
-          pattern: ^v?\d+$
-        x-origin:
-        - api: urn:api:api-experience-hub-consumer
-          operation: getAssetDetails
-          values: $.minorVersion
-          description: Minor version published for the selected asset
-      - name: assetId
-        in: path
-        description: Exchange asset ID
-        required: true
-        schema:
-          type: string
-        x-origin:
-        - api: urn:api:api-experience-hub-consumer
-          operation: listAssetsCommunityAsset
-          values: $[*].assetId
-          labels: $[*].name
-          description: Exchange asset published in the portal
-      - name: groupId
-        in: path
-        description: Exchange group ID of the asset
-        required: true
-        schema:
-          type: string
-        x-origin:
-        - api: urn:api:api-experience-hub-consumer
-          operation: listAssetsCommunityAsset
-          values: $[*].groupId
-          description: Exchange group identifier for the selected asset
-      - name: targetPortalId
-        in: path
-        description: Unique identifier of the portal
-        required: true
-        schema:
-          type: string
-        x-origin:
-        - api: urn:api:api-experience-hub-management
-          operation: getAllApiPortalByConnectionId
-          values: $[*].targetPortalId
-          labels: $[*].name
-          description: Portal identifier from the management API's portal list for the active connection
-      - name: targetOrganizationId
-        in: path
-        description: External organization ID tied to the connection (e.g. Salesforce organization ID for SALESFORCE connections). Obtained from the connection record, not from Anypoint access-management.
-        required: true
-        schema:
-          type: string
-          format: uuid
-        x-origin:
-        - api: urn:api:api-experience-hub-management
-          operation: getConnections
-          values: $[*].targetOrganizationId
-          labels: $[*].targetOrganizationDomain
-          description: External organization identifier for the connection (e.g. Salesforce org ID)
-      requestBody:
-        description: Shape selection for the API console model
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/SelectedShapeDTO"
-            example:
-              selectedShape: "/payments"
-              selectedShapeType: "ENDPOINT"
-        required: true
-      responses:
-        "400":
-          description: Bad Request
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ErrorResponseDTO"
-        "401":
-          description: Unauthorized
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ErrorResponseDTO"
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: string
-              example: "{\"@context\":{\"@base\":\"amf://id\"},\"@graph\":[{\"@id\":\"#/web-api\"}]}"
   /xapi/v1/portals/{targetOrganizationId}/{targetPortalId}/assets/search:
     post:
       tags:
@@ -2206,25 +2108,6 @@ components:
           type: string
           description: Client provider type
       description: Client identity provider associated with this application
-    SelectedShapeDTO:
-      required:
-      - selectedShapeType
-      type: object
-      properties:
-        selectedShape:
-          type: string
-          description: Name or identifier of the selected API shape
-        selectedShapeType:
-          type: string
-          description: Type of the selected shape
-          enum:
-          - SUMMARY
-          - TYPE
-          - ENDPOINT
-          - OPERATION
-          - DOCUMENTATION
-          - SECURITY
-          - METHOD
     ConsumerAssetsSearchRequest:
       type: object
       properties:

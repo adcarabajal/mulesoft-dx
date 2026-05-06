@@ -1276,3 +1276,63 @@ class TestBuildMcpLookup:
         gen = self._make_generator(mcps)
         lookup = gen._build_mcp_lookup()
         assert lookup['test']['tools']['search']['inputSchema'] == schema
+
+
+# ============================================================================
+# render_schema_table macro -- regression tests for nested-prop id uniqueness
+# ============================================================================
+
+class TestRenderSchemaTableIds:
+    """The render_schema_table macro must scope nested-property ids by an
+    optional id_prefix so that multiple operations on the same page (or a
+    single operation rendering both a request body and responses) don't
+    produce colliding `id="..."` attributes that break the toggle button."""
+
+    @pytest.fixture
+    def render(self):
+        from portal_generator.template_env import create_env
+        env = create_env()
+        wrapper = env.from_string(
+            "{% from 'operations/schema_table.html' import render_schema_table %}"
+            "{{ render_schema_table(props, '', prefix) }}"
+        )
+
+        def _render(props, prefix=''):
+            return wrapper.render(props=props, prefix=prefix)
+
+        return _render
+
+    def _items_row(self):
+        return [{
+            'name': 'items',
+            'type': 'array[object]',
+            'required': False,
+            'description': 'Array items',
+            'constraints': [],
+            'children': [{
+                'name': 'assetId',
+                'type': 'string',
+                'required': True,
+                'description': 'Asset id',
+                'constraints': [],
+                'children': [],
+                'schema': {'type': 'string'},
+            }],
+            'schema': {'type': 'array'},
+        }]
+
+    def test_id_prefix_makes_ids_unique(self, render):
+        html_a = render(self._items_row(), prefix='addAssetsToCommunity-rb')
+        html_b = render(self._items_row(), prefix='removeAssetFromCommunity-rb')
+        assert 'id="addAssetsToCommunity-rb-items-1"' in html_a
+        assert 'id="removeAssetFromCommunity-rb-items-1"' in html_b
+        # Toggle onclick targets the same id as the panel
+        assert "toggleNestedProps('addAssetsToCommunity-rb-items-1')" in html_a
+        assert "toggleNestedProps('removeAssetFromCommunity-rb-items-1')" in html_b
+
+    def test_empty_prefix_preserves_legacy_id_shape(self, render):
+        """When id_prefix is empty (default), ids remain in the original
+        form so existing callers / tests don't shift unexpectedly."""
+        html = render(self._items_row(), prefix='')
+        assert 'id="items-1"' in html
+        assert "toggleNestedProps('items-1')" in html
