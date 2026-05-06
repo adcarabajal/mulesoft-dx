@@ -8,7 +8,7 @@ from markupsafe import Markup
 
 from portal_generator.utils import get_category, CATEGORY_MAPPING
 from portal_generator.builders.tree_builder import build_operation_tree, count_tree_operations
-from portal_generator.template_env import _nl2br, _nl2br_html, _render_markdown, _tojson_raw, _skill_title
+from portal_generator.template_env import _nl2br, _render_markdown, _tojson_raw, _skill_title
 from portal_generator.generator import _build_api_meta, _get_example_body, PortalGenerator
 from portal_generator.parsers.skill_parser import (
     _extract_yaml_blocks,
@@ -144,16 +144,6 @@ class TestNl2br:
         result = _nl2br('')
         assert str(result) == ''
 
-
-class TestNl2brHtml:
-    def test_preserves_html_tags(self):
-        result = _nl2br_html('hello<br>world\nnext')
-        assert '<br>' in str(result)
-        assert str(result) == 'hello<br>world<br>next'
-
-    def test_empty_value(self):
-        assert str(_nl2br_html('')) == ''
-        assert str(_nl2br_html(None)) == ''
 
 
 class TestRenderMarkdown:

@@ -18,14 +18,6 @@ def _nl2br(value):
     return Markup(escaped.replace('\n', '<br>'))
 
 
-def _nl2br_html(value):
-    """Convert newlines to <br> tags while preserving existing HTML tags."""
-    if not value:
-        return Markup('')
-    # Don't escape - preserve existing HTML like <br>, <code>, etc.
-    # Just convert remaining newlines to <br>
-    return Markup(str(value).replace('\n', '<br>'))
-
 
 def _render_markdown(value):
     """Convert basic markdown to HTML for use in description cells."""
@@ -253,7 +245,6 @@ def create_env() -> Environment:
 
     # Custom filters
     env.filters['nl2br'] = _nl2br
-    env.filters['nl2br_html'] = _nl2br_html
     env.filters['md'] = _render_markdown
     env.filters['tojson_raw'] = _tojson_raw
     env.filters['titleize_operation'] = _titleize_operation
