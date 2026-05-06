@@ -1,0 +1,2568 @@
+openapi: 3.0.1
+info:
+  title: API Experience Hub Management API
+  description: |
+    Administer API Experience Hub portals, members and the assets they expose.
+
+    Use this API as a portal owner to provision and operate Salesforce-hosted developer
+    portals that surface APIs from Anypoint Exchange. The management surface covers four
+    jobs:
+
+    - **Connections and portals** — list Salesforce connections, enumerate the portals
+      attached to each connection, and resolve the external organization id used by the
+      Consumer API.
+    - **Asset curation** — publish, search, update and remove the Exchange assets that
+      appear in a portal's catalog, including version visibility.
+    - **Members and prospects** — list portal users, enable or disable accounts, review
+      pending sign-ups, and approve or reject prospects.
+    - **User groups and access** — create user groups, manage their group mappings to
+      external IdP groups, and assign or revoke user-group memberships.
+
+    All paths are scoped by `connectionId` (the Salesforce connection registered in the
+    hub) and `portalId` (the portal hosted under that connection). Both are obtained from
+    `GET /connections` and `GET /connections/{connectionId}/apiPortals`. Authentication is
+    via bearer token. Errors follow the standard Anypoint JSON error envelope; list
+    endpoints support `searchTerm` filtering and header-based pagination
+    (`x-limit` / `x-offset`).
+  version: 1.0.0
+servers:
+- url: https://anypoint.mulesoft.com/api-experience-hub
+  description: US
+- url: https://eu1.anypoint.mulesoft.com/api-experience-hub
+  description: EU
+- url: https://ca1.platform.mulesoft.com/api-experience-hub
+  description: CA
+- url: https://jp1.platform.mulesoft.com/api-experience-hub
+  description: JP
+security:
+- bearerAuth: []
+tags:
+- name: User Management
+  description: "Manage portal users, prospects, registration and identity providers"
+- name: Asset Curation
+  description: "Add, remove and configure API assets in your portal"
+- name: User Groups
+  description: "Manage user groups, profiles and group mappings"
+- name: Connections
+  description: "Manage Salesforce connections for API Experience Hub"
+- name: Portals
+  description: "Manage API portals"
+paths:
+  /api/v1/connections/{connectionId}/apiPortals:
+    get:
+      tags:
+      - Portals
+      summary: List portals for connection
+      description: Returns all portals associated with a specific connection.
+      operationId: getAllApiPortalByConnectionId
+      parameters:
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PortalDTO"
+              example:
+              - id: "550e8400-e29b-41d4-a716-446655440000"
+                connectionId: "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+                name: "Developer Portal"
+                targetPortalId: "77777777-7777-7777-7777-777777777777"
+                internalPortalId: "770e8400-e29b-41d4-a716-446655440002"
+                builderUrl: "https://example.my.site.com/builder"
+                siteUrl: "https://example.my.site.com"
+                createdDate: "2024-01-10T08:00:00Z"
+                updatedDate: "2024-06-15T14:30:00Z"
+                finishedAtLeastOnce: true
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/users/{targetUserId}/userGroups:
+    put:
+      tags:
+      - User Management
+      summary: Assign user groups to user
+      description: Applies the specified user group memberships to a portal user.
+      operationId: addGroupMappingToUser
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: targetUserId
+        in: path
+        description: Unique identifier of the target portal user
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getCommunityUsers
+          values: $[*].id
+          labels: $[*].name
+          description: Portal user enrolled in the selected portal
+      requestBody:
+        description: List of user group IDs to assign to the user (maximum 20)
+        content:
+          application/json:
+            schema:
+              maxItems: 20
+              minItems: 0
+              type: array
+              items:
+                type: string
+                format: uuid
+            example:
+            - "550e8400-e29b-41d4-a716-446655440000"
+            - "660e8400-e29b-41d4-a716-446655440001"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections:
+    get:
+      tags:
+      - Connections
+      summary: List connections
+      description: Returns all connections for the current organization.
+      operationId: getConnections
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConnectionDTO"
+              example:
+              - id: "conn-001"
+                organizationId: "88888888-8888-8888-8888-888888888888"
+                targetOrganizationId: "66666666-6666-6666-6666-666666666666"
+                targetOrganizationDomain: "example.my.salesforce.com"
+                type: "SALESFORCE"
+                environment: "PRODUCTION"
+                username: "admin@example.com"
+                createdDate: "2024-01-10T08:00:00Z"
+                updatedDate: "2024-06-15T14:30:00Z"
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/userGroups:
+    get:
+      tags:
+      - User Groups
+      summary: List profiles and user groups
+      description: Returns all profiles and user groups for a portal.
+      operationId: getAllProfilesByPortal
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProfileDTO"
+              example:
+              - id: "550e8400-e29b-41d4-a716-446655440000"
+                name: "Everyone"
+                description: "Default user group for all portal users"
+                isAdmin: false
+                isAutoGenerated: true
+                isDefault: true
+                isPublic: true
+                createdDate: "2024-01-10T08:00:00Z"
+                children:
+                - id: "660e8400-e29b-41d4-a716-446655440001"
+                  name: "API Developers"
+                  description: "Users who can create applications"
+                  isAdmin: false
+                  isAutoGenerated: false
+                  isDefault: false
+                  isPublic: false
+                  createdDate: "2024-02-15T12:00:00Z"
+                  children: []
+    post:
+      tags:
+      - User Groups
+      summary: Create a user group
+      description: Creates a new user group within the portal.
+      operationId: createUserGroup
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      requestBody:
+        description: User group creation request with name and optional description
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserGroupRequestDTO"
+            example:
+              name: "API Developers"
+              description: "Users who can create applications"
+              parentUserGroupId: "550e8400-e29b-41d4-a716-446655440000"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "415":
+          description: Unsupported Media Type
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/userGroups/{userGroupId}/groupMappings:
+    get:
+      tags:
+      - User Groups
+      summary: List group mappings
+      description: Returns all team group mappings for a specific user group.
+      operationId: getGroupMappings
+      parameters:
+      - name: userGroupId
+        in: path
+        description: Unique identifier of the user group
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllProfilesByPortal
+          values: $[*].id
+          labels: $[*].name
+          description: User group or profile defined in the portal
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamGroupMapping"
+              example:
+              - external_group_name: "API Developers"
+                membership_type: "member"
+                provider_id: "idp-001"
+    post:
+      tags:
+      - User Groups
+      summary: Add group mapping
+      description: Adds an identity provider group mapping to a user group.
+      operationId: addAdditionalGroupMapping
+      parameters:
+      - name: userGroupId
+        in: path
+        description: Unique identifier of the user group
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllProfilesByPortal
+          values: $[*].id
+          labels: $[*].name
+          description: User group or profile defined in the portal
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      requestBody:
+        description: "Group mapping to add, with identity provider ID and group name"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserGroupAddGroupMappingDTO"
+            example:
+              groupMappingName: "API Developers"
+              idpId: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/assets:
+    post:
+      tags:
+      - Asset Curation
+      summary: Publish assets to portal
+      description: Adds one or more Exchange assets to the portal for consumer discovery.
+      operationId: addAssetsToCommunity
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      requestBody:
+        description: "List of assets to publish, identified by group ID and asset ID"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CommunityAssetGaCreateDTO"
+            example:
+            - assetId: "payment-api"
+              groupId: "com.example"
+            - assetId: "order-api"
+              groupId: "com.example"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommunityAssetGaCreateDTO"
+              example:
+              - assetId: "payment-api"
+                groupId: "com.example"
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/assets/search:
+    post:
+      tags:
+      - Asset Curation
+      summary: Search published assets
+      description: Searches assets currently published in the portal.
+      operationId: searchCommunityAssets
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: x-limit
+        in: header
+        description: Maximum number of search results to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: x-from
+        in: header
+        description: Offset for paginated search results
+        required: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: Search criteria for published portal assets
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommunityAssetsSearchRequest"
+            example:
+              searchTerm: "payment"
+              userGroupId: "dddddddd-dddd-dddd-dddd-dddddddddddd"
+              categories:
+              - "Department:Finance"
+              tags:
+              - payments
+              sort:
+                direction: DESC
+                criteria: LAST_UPDATED
+              showInherited: true
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CommunityAssetsSearchResult"
+              example:
+                assets:
+                - assetId: "payment-api"
+                  groupId: "com.example"
+                  name: "Payment API"
+                  description: "API for processing payments"
+                  type: "rest-api"
+                  businessGroupId: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+                  businessGroupName: "Finance"
+                  createdById: "cccccccc-cccc-cccc-cccc-cccccccccccc"
+                  lastUpdated: "2024-06-15T14:30:00Z"
+                  addedOn: "2024-01-10T08:00:00Z"
+                  categories:
+                  - "Department:Finance"
+                  tags:
+                  - payments
+                facets:
+                  categories:
+                  - "Department:Finance"
+                  tags:
+                  - payments
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/assets/search/exchange:
+    post:
+      tags:
+      - Asset Curation
+      summary: Search Exchange assets
+      description: Searches Anypoint Exchange for assets available to publish.
+      operationId: searchExchangeAssets
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: x-limit
+        in: header
+        description: Maximum number of search results to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: x-from
+        in: header
+        description: Offset for paginated search results
+        required: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: Search criteria for Anypoint Exchange assets
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeSearchRequest"
+            example:
+              searchTerm: "order"
+              categories:
+              - "Department:Commerce"
+              tags:
+              - orders
+              sort:
+                direction: DESC
+                criteria: LAST_UPDATED
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ExchangeAssetsSearchResult"
+              example:
+                assets:
+                - assetId: "order-api"
+                  groupId: "com.example"
+                  name: "Order API"
+                  description: "API for managing orders"
+                  type: "rest-api"
+                  businessGroupId: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+                  businessGroupName: "Commerce"
+                  createdById: "cccccccc-cccc-cccc-cccc-cccccccccccc"
+                  createdByName: "John Doe"
+                  createdAt: "2024-01-10T08:00:00Z"
+                  lastUpdated: "2024-06-15T14:30:00Z"
+                  latestVersion: "1.2.3"
+                  categories:
+                  - "Department:Commerce"
+                  tags:
+                  - orders
+                facets:
+                  categories:
+                  - "Department:Commerce"
+                  tags:
+                  - orders
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/assets/remove:
+    post:
+      tags:
+      - Asset Curation
+      summary: Remove assets from portal
+      description: Removes one or more assets from the portal.
+      operationId: removeAssetFromCommunity
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      requestBody:
+        description: "List of assets to remove, identified by group ID and asset ID"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/CommunityAssetGaRemoveDTO"
+            example:
+            - assetId: "payment-api"
+              groupId: "com.example"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/assets/exchange/search:
+    post:
+      tags:
+      - Asset Curation
+      summary: Search Exchange assets (legacy)
+      description: Legacy endpoint for searching Anypoint Exchange assets.
+      operationId: legacySearchExchangeAssets
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: x-limit
+        in: header
+        description: Maximum number of search results to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: x-from
+        in: header
+        description: Offset for paginated search results
+        required: false
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        description: Search criteria for Anypoint Exchange assets
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExchangeSearchRequest"
+            example:
+              searchTerm: "order"
+              categories:
+              - "Department:Commerce"
+              tags:
+              - orders
+              sort:
+                direction: DESC
+                criteria: LAST_UPDATED
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ExchangeAsset"
+              example:
+              - assetId: "order-api"
+                groupId: "com.example"
+                name: "Order API"
+                description: "API for managing orders"
+                type: "rest-api"
+                businessGroupId: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+                businessGroupName: "Commerce"
+                createdById: "cccccccc-cccc-cccc-cccc-cccccccccccc"
+                createdByName: "John Doe"
+                createdAt: "2024-01-10T08:00:00Z"
+                lastUpdated: "2024-06-15T14:30:00Z"
+                latestVersion: "1.2.3"
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/users/{targetUserId}/enable:
+    patch:
+      tags:
+      - User Management
+      summary: Enable a user
+      description: Enables a previously disabled portal user account.
+      operationId: enableCommunityUser
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: targetUserId
+        in: path
+        description: Unique identifier of the target portal user
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getCommunityUsers
+          values: $[*].id
+          labels: $[*].name
+          description: Portal user enrolled in the selected portal
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/users/{targetUserId}/disable:
+    patch:
+      tags:
+      - User Management
+      summary: Disable a user
+      description: Disables a portal user account.
+      operationId: disableCommunityUser
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: targetUserId
+        in: path
+        description: Unique identifier of the target portal user
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getCommunityUsers
+          values: $[*].id
+          labels: $[*].name
+          description: Portal user enrolled in the selected portal
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/userGroups/{userGroupId}:
+    delete:
+      tags:
+      - User Groups
+      summary: Delete a user group
+      description: Permanently deletes a user group from the portal.
+      operationId: deleteUserGroup
+      parameters:
+      - name: userGroupId
+        in: path
+        description: Unique identifier of the user group
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllProfilesByPortal
+          values: $[*].id
+          labels: $[*].name
+          description: User group or profile defined in the portal
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+    patch:
+      tags:
+      - User Groups
+      summary: Update a user group
+      description: Updates the name and description of a user group.
+      operationId: updateUserGroup
+      parameters:
+      - name: userGroupId
+        in: path
+        description: Unique identifier of the user group
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllProfilesByPortal
+          values: $[*].id
+          labels: $[*].name
+          description: User group or profile defined in the portal
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      requestBody:
+        description: User group update request with new name or description
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserGroupRequestDTO"
+            example:
+              name: "API Developers (Updated)"
+              description: "Updated description for API developers group"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProfileDTO"
+              example:
+                id: "660e8400-e29b-41d4-a716-446655440001"
+                name: "API Developers (Updated)"
+                description: "Updated description for API developers group"
+                isAdmin: false
+                isAutoGenerated: false
+                isDefault: false
+                isPublic: false
+                createdDate: "2024-02-15T12:00:00Z"
+                children: []
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/prospects/{prospectId}:
+    delete:
+      tags:
+      - User Management
+      summary: Reject a prospect
+      description: Deletes a pending prospect registration request.
+      operationId: rejectProspect
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: prospectId
+        in: path
+        description: Unique identifier of the prospect
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getProspects
+          values: $[*].id
+          labels: $[*].email
+          description: Prospect awaiting approval into the portal
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProspectDTO"
+              example: []
+    patch:
+      tags:
+      - User Management
+      summary: Approve a prospect
+      description: Approves a pending prospect and creates their user account.
+      operationId: approveProspect
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: prospectId
+        in: path
+        description: Unique identifier of the prospect
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getProspects
+          values: $[*].id
+          labels: $[*].email
+          description: Prospect awaiting approval into the portal
+      requestBody:
+        description: Prospect approval configuration with user group assignments
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProspectApproveDTO"
+            example:
+              userGroupIds:
+              - "550e8400-e29b-41d4-a716-446655440000"
+              - "660e8400-e29b-41d4-a716-446655440001"
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/assets/{groupId}/{assetId}:
+    get:
+      tags:
+      - Asset Curation
+      summary: Get asset version visibility
+      description: Returns visibility settings for all minor versions of an asset.
+      operationId: getAllVersionsVisibilityByGA
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: searchCommunityAssets
+          values: $.assets[*].groupId
+          description: Exchange group identifier for an asset published in the portal
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: searchCommunityAssets
+          values: $.assets[*].assetId
+          labels: $.assets[*].name
+          description: Asset published in the portal
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProducerAssetDetail"
+              example:
+                assetId: "payment-api"
+                groupId: "com.example"
+                name: "Payment API"
+                instanceVisibility: "All"
+                type: "rest-api"
+                minorVersionProfilesVisibility:
+                - minorVersion: "v1"
+                  profileVisibility:
+                  - "550e8400-e29b-41d4-a716-446655440000"
+    patch:
+      tags:
+      - Asset Curation
+      summary: Update asset visibility
+      description: Updates the visibility settings for an asset's minor versions and instances.
+      operationId: updateCommunityAsset
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: groupId
+        in: path
+        description: Exchange group ID of the asset
+        required: true
+        schema:
+          type: string
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: searchCommunityAssets
+          values: $.assets[*].groupId
+          description: Exchange group identifier for an asset published in the portal
+      - name: assetId
+        in: path
+        description: Exchange asset ID
+        required: true
+        schema:
+          type: string
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: searchCommunityAssets
+          values: $.assets[*].assetId
+          labels: $.assets[*].name
+          description: Asset published in the portal
+      requestBody:
+        description: Visibility settings to apply to the asset's minor versions and instances
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CommunityAssetVersionUpdateDTO"
+            example:
+              instancesVisibility: "Custom"
+              minorVersions:
+              - minorVersion: "v1"
+                profileVisibility:
+                - "550e8400-e29b-41d4-a716-446655440000"
+                - "660e8400-e29b-41d4-a716-446655440001"
+              - minorVersion: "v2"
+                profileVisibility:
+                - "550e8400-e29b-41d4-a716-446655440000"
+        required: true
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/users:
+    get:
+      tags:
+      - User Management
+      summary: List users
+      description: Returns portal users with optional filtering by status and search term.
+      operationId: getCommunityUsers
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: searchTerm
+        in: query
+        description: Text to search for in user names and emails
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 0
+          type: string
+      - name: isActive
+        in: query
+        description: Filter users by active status
+        required: false
+        schema:
+          type: boolean
+      - name: x-limit
+        in: header
+        description: Maximum number of users to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: x-offset
+        in: header
+        description: Number of results to skip for pagination
+        required: false
+        schema:
+          type: integer
+          format: int32
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CommunityUserDTO"
+              example:
+              - id: "user-001"
+                name: "Jane Developer"
+                email: "jane@example.com"
+                username: "jane.developer"
+                isActive: true
+                isExternal: false
+                anypointUsername: "jane.developer"
+                anypointIdpId: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"
+                userGroupIds:
+                - "550e8400-e29b-41d4-a716-446655440000"
+                anypointGroups:
+                - "API Developers"
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/users/{userId}:
+    get:
+      tags:
+      - User Management
+      summary: Get user details
+      description: Returns detailed information about a specific portal user.
+      operationId: getCommunityUser
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: userId
+        in: path
+        description: Unique identifier of the portal user
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getCommunityUsers
+          values: $[*].id
+          labels: $[*].name
+          description: Portal user enrolled in the selected portal
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CommunityUserDTO"
+              example:
+                id: "user-001"
+                name: "Jane Developer"
+                email: "jane@example.com"
+                username: "jane.developer"
+                isActive: true
+                isExternal: false
+                anypointUsername: "jane.developer"
+                anypointIdpId: "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee"
+                userGroupIds:
+                - "550e8400-e29b-41d4-a716-446655440000"
+                anypointGroups:
+                - "API Developers"
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/prospects:
+    get:
+      tags:
+      - User Management
+      summary: List prospects
+      description: Returns all prospects with optional search filtering.
+      operationId: getProspects
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: searchTerm
+        in: query
+        description: Text to search for in prospect names and emails
+        required: false
+        schema:
+          maxLength: 128
+          minLength: 0
+          type: string
+          default: ""
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProspectDTO"
+              example:
+              - id: "880e8400-e29b-41d4-a716-446655440003"
+                firstName: "Bob"
+                lastName: "Builder"
+                email: "bob@example.com"
+                username: "bob.builder"
+                status: "PENDING"
+                portalId: "55555555-5555-5555-5555-555555555555"
+                createdDate: "2024-06-15T14:30:00Z"
+                updatedDate: "2024-06-15T14:30:00Z"
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/prospects/count:
+    get:
+      tags:
+      - User Management
+      summary: Get prospect count
+      description: Returns the count of pending prospects for the portal.
+      operationId: getProspectCount
+      parameters:
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ProspectCountDTO"
+              example:
+                count: 5
+  /api/v1/connections/{connectionId}/apiPortals/{portalId}/userGroups/{userGroupId}/groupMappings/{idpId}/{groupMappingName}:
+    delete:
+      tags:
+      - User Groups
+      summary: Delete group mapping
+      description: Removes an identity provider group mapping from a user group.
+      operationId: deleteGroupMappings
+      parameters:
+      - name: userGroupId
+        in: path
+        description: Unique identifier of the user group
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllProfilesByPortal
+          values: $[*].id
+          labels: $[*].name
+          description: User group or profile defined in the portal
+      - name: portalId
+        in: path
+        description: Unique identifier of the portal
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getAllApiPortalByConnectionId
+          values: $[*].targetPortalId
+          labels: $[*].name
+          description: Portal hosted under the selected connection
+      - name: connectionId
+        in: path
+        description: Unique identifier of the Salesforce connection
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getConnections
+          values: $[*].id
+          labels: $[*].targetOrganizationDomain
+          description: Salesforce connection registered in API Experience Hub
+      - name: idpId
+        in: path
+        description: Identity provider ID
+        required: true
+        schema:
+          type: string
+          format: uuid
+        x-origin:
+        - api: urn:api:access-management
+          operation: getIdentityProviders
+          values: $.data[*].id
+          labels: $.data[*].name
+          description: Identity provider configured for the organization
+      - name: groupMappingName
+        in: path
+        description: Name of the group mapping to remove
+        required: true
+        schema:
+          type: string
+        x-origin:
+        - api: urn:api:api-experience-hub-management
+          operation: getGroupMappings
+          values: $[*].name
+          description: Existing group-mapping name on the user group
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "401":
+          description: Unauthorized
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponseDTO"
+        "200":
+          description: OK
+components:
+  schemas:
+    ErrorDetail:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+          description: Detailed error message
+        code:
+          type: string
+          description: Machine-readable error code
+        arguments:
+          type: array
+          description: Additional context for the error
+          items:
+            type: object
+    ErrorResponseDTO:
+      type: object
+      required:
+      - name
+      - status
+      - message
+      properties:
+        name:
+          type: string
+          description: Error name
+        status:
+          type: integer
+          description: HTTP status code
+          format: int32
+        message:
+          type: string
+          description: Human-readable error message
+        details:
+          type: array
+          description: List of error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ConnectionDTO:
+      type: object
+      required:
+      - id
+      - organizationId
+      - type
+      properties:
+        createdDate:
+          type: string
+          description: Date the connection was created
+          format: date-time
+        defaultIdPId:
+          type: string
+          description: Default identity provider ID for this connection
+        environment:
+          type: string
+          description: Target Salesforce environment type
+          enum:
+          - PRODUCTION
+          - SANDBOX
+        id:
+          type: string
+          description: Unique connection identifier
+        organizationId:
+          type: string
+          description: Anypoint Platform organization ID
+          format: uuid
+        sandboxName:
+          type: string
+          description: "Salesforce sandbox name, if applicable"
+        targetOrganizationDomain:
+          type: string
+          description: Salesforce organization domain URL
+        targetOrganizationId:
+          type: string
+          description: Target Salesforce organization ID
+          format: uuid
+        type:
+          type: string
+          description: Connection type
+          example: SALESFORCE
+        updatedDate:
+          type: string
+          description: Date the connection was last updated
+          format: date-time
+        username:
+          type: string
+          description: Username used for the Salesforce connection
+      description: Salesforce connection details
+    UserGroupRequestDTO:
+      type: object
+      required:
+      - name
+      properties:
+        description:
+          type: string
+          description: Human-readable description of the user group
+        name:
+          maxLength: 95
+          type: string
+          description: User group name
+        parentUserGroupId:
+          type: string
+          description: ID of the parent user group for nesting
+          format: uuid
+    UserGroupAddGroupMappingDTO:
+      required:
+      - groupMappingName
+      type: object
+      properties:
+        groupMappingName:
+          type: string
+          description: External group name to map to this user group
+        idpId:
+          type: string
+          description: Identity provider ID for the group mapping
+          format: uuid
+    CommunityAssetGaCreateDTO:
+      required:
+      - assetId
+      - groupId
+      type: object
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier to add to the portal
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+    CommunityAssetsSearchRequest:
+      type: object
+      properties:
+        searchTerm:
+          type: string
+          description: Text to search for in asset names and descriptions
+        userGroupId:
+          type: string
+          description: Filter assets visible to this user group
+          format: uuid
+        categories:
+          type: array
+          description: Filter by categories in key:value format
+          items:
+            type: string
+            description: Filter by categories in key:value format
+        tags:
+          type: array
+          description: Filter by tags
+          items:
+            type: string
+            description: Filter by tags
+        sort:
+          $ref: "#/components/schemas/SearchSort"
+        showInherited:
+          type: boolean
+          description: Whether to include assets inherited from parent groups
+    SearchSort:
+      type: object
+      required:
+      - criteria
+      - direction
+      properties:
+        direction:
+          type: string
+          description: Sort direction
+          enum:
+          - ASC
+          - DESC
+        criteria:
+          type: string
+          description: Sort criteria field
+          enum:
+          - LAST_UPDATED
+          - NAME
+          - CREATED_AT
+      description: Sort configuration for search results
+    CommunityAsset:
+      type: object
+      required:
+      - assetId
+      - groupId
+      - name
+      - type
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier within the organization
+        businessGroupId:
+          type: string
+          description: Business group ID that owns the asset
+          format: uuid
+        businessGroupName:
+          type: string
+          description: Business group name
+        createdById:
+          type: string
+          description: ID of the user who created the asset
+          format: uuid
+        description:
+          type: string
+          description: Human-readable description of the asset
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+        lastUpdated:
+          type: string
+          description: Timestamp of the last update to the asset
+          format: date-time
+        addedOn:
+          type: string
+          description: Timestamp when the asset was added to the portal
+          format: date-time
+        name:
+          type: string
+          description: Display name of the asset
+        type:
+          type: string
+          description: Asset type classifier
+          example: rest-api
+        categories:
+          uniqueItems: true
+          type: array
+          description: Categories assigned to the asset
+          items:
+            type: string
+            description: Categories assigned to the asset
+        tags:
+          uniqueItems: true
+          type: array
+          description: Tags associated with the asset
+          items:
+            type: string
+            description: Tags associated with the asset
+      description: List of community assets matching the search criteria
+    CommunityAssetsSearchResult:
+      type: object
+      required:
+      - assets
+      properties:
+        assets:
+          type: array
+          description: List of community assets matching the search criteria
+          items:
+            $ref: "#/components/schemas/CommunityAsset"
+        facets:
+          $ref: "#/components/schemas/Facets"
+    Facets:
+      type: object
+      required:
+      - categories
+      - tags
+      properties:
+        categories:
+          type: array
+          description: Category facet values
+          items:
+            type: string
+            description: Category facet values
+        tags:
+          type: array
+          description: Tag facet values
+          items:
+            type: string
+            description: Tag facet values
+      description: Available facets for filtering search results
+    ExchangeSearchRequest:
+      type: object
+      properties:
+        searchTerm:
+          type: string
+          description: Text to search for in asset names and descriptions
+        categories:
+          type: array
+          description: Filter by categories in key:value format
+          items:
+            type: string
+            description: Filter by categories in key:value format
+        tags:
+          type: array
+          description: Filter by tags
+          items:
+            type: string
+            description: Filter by tags
+        sort:
+          $ref: "#/components/schemas/SearchSort"
+    ExchangeAsset:
+      type: object
+      required:
+      - assetId
+      - groupId
+      - name
+      - type
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier within the organization
+        businessGroupId:
+          type: string
+          description: Business group ID that owns the asset
+          format: uuid
+        businessGroupName:
+          type: string
+          description: Business group name
+        createdAt:
+          type: string
+          description: Timestamp when the asset was created
+          format: date-time
+        createdById:
+          type: string
+          description: ID of the user who created the asset
+          format: uuid
+        createdByName:
+          type: string
+          description: Name of the user who created the asset
+        description:
+          type: string
+          description: Human-readable description of the asset
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+        lastUpdated:
+          type: string
+          description: Timestamp of the last update to the asset
+          format: date-time
+        latestVersion:
+          type: string
+          description: Latest minor version string
+          example: "1.0"
+        name:
+          type: string
+          description: Display name of the asset
+        type:
+          type: string
+          description: Asset type classifier
+          example: rest-api
+        categories:
+          uniqueItems: true
+          type: array
+          description: Categories assigned to the asset
+          items:
+            type: string
+            description: Categories assigned to the asset
+        tags:
+          uniqueItems: true
+          type: array
+          description: Tags associated with the asset
+          items:
+            type: string
+            description: Tags associated with the asset
+    ExchangeAssetsSearchResult:
+      type: object
+      required:
+      - assets
+      properties:
+        assets:
+          type: array
+          description: List of Anypoint Exchange assets matching the search criteria
+          items:
+            $ref: "#/components/schemas/ExchangeAsset"
+        facets:
+          $ref: "#/components/schemas/Facets"
+    CommunityAssetGaRemoveDTO:
+      required:
+      - assetId
+      - groupId
+      type: object
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier to remove from the portal
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+    ProfileDTO:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        children:
+          type: array
+          description: Child user groups nested under this group
+          items:
+            $ref: "#/components/schemas/ProfileDTO"
+        createdDate:
+          type: string
+          description: Date the user group was created
+          format: date-time
+        description:
+          type: string
+          description: Human-readable description of the user group
+        id:
+          type: string
+          description: Unique user group identifier
+          format: uuid
+        isAdmin:
+          type: boolean
+          description: Whether this is the admin user group
+        isAutoGenerated:
+          type: boolean
+          description: Whether this user group was auto-generated by the system
+        isDefault:
+          type: boolean
+          description: Whether this is the default portal user group
+        isPublic:
+          type: boolean
+          description: Whether this user group is publicly visible
+        name:
+          type: string
+          description: User group name
+    ProspectApproveDTO:
+      required:
+      - userGroupIds
+      type: object
+      properties:
+        userGroupIds:
+          type: array
+          description: User group IDs to assign to the approved prospect
+          items:
+            type: string
+            description: User group IDs to assign to the approved prospect
+            format: uuid
+    CommunityAssetVersionUpdateDTO:
+      type: object
+      required:
+      - minorVersions
+      properties:
+        instancesVisibility:
+          type: string
+          description: Visibility level for API instances
+          enum:
+          - All
+          - Public
+          - Custom
+        minorVersions:
+          type: array
+          description: Per-version visibility settings
+          items:
+            $ref: "#/components/schemas/CommunityAssetVersionVisibilityForAPICuratorDTO"
+    CommunityAssetVersionVisibilityForAPICuratorDTO:
+      type: object
+      required:
+      - minorVersion
+      properties:
+        minorVersion:
+          type: string
+          description: Minor version string
+          example: "v1"
+          pattern: ^v?\d+$
+        profileVisibility:
+          type: array
+          description: User group IDs that can view this version
+          items:
+            type: string
+            description: User group IDs that can view this version
+            format: uuid
+      description: Per-version visibility settings
+    PortalDTO:
+      required:
+      - id
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique portal identifier
+          format: uuid
+        connectionId:
+          type: string
+          description: Associated Salesforce connection ID
+          format: uuid
+        name:
+          type: string
+          description: Portal name
+        targetPortalId:
+          type: string
+          description: Salesforce Experience Cloud site ID
+          format: uuid
+        internalPortalId:
+          type: string
+          description: Internal portal identifier
+          format: uuid
+        builderUrl:
+          type: string
+          description: URL of the Experience Builder for this portal
+          format: uri
+        siteUrl:
+          type: string
+          description: Public URL of the portal site
+          format: uri
+        createdDate:
+          type: string
+          description: Date the portal was created
+          format: date-time
+        updatedDate:
+          type: string
+          description: Date the portal was last updated
+          format: date-time
+        finishedAtLeastOnce:
+          type: boolean
+          description: Whether the portal setup has completed at least once
+      description: API Experience Hub portal information
+    CommunityUserDTO:
+      required:
+      - email
+      - id
+      type: object
+      properties:
+        anypointGroups:
+          type: array
+          description: Anypoint Platform groups the user belongs to
+          items:
+            type: string
+            description: Anypoint Platform groups the user belongs to
+        anypointIdpId:
+          type: string
+          description: Anypoint identity provider ID for the user
+          format: uuid
+        anypointUsername:
+          type: string
+          description: Anypoint Platform username
+        email:
+          type: string
+          description: User email address
+          format: email
+        id:
+          type: string
+          description: Unique Salesforce user identifier
+        isActive:
+          type: boolean
+          description: Whether the user account is active
+        name:
+          type: string
+          description: Full name of the user
+        username:
+          type: string
+          description: Salesforce username
+        userGroupIds:
+          type: array
+          description: User group IDs the user is a member of
+          items:
+            type: string
+            description: User group IDs the user is a member of
+        isExternal:
+          type: boolean
+          description: Whether the user is an external community user
+    TeamGroupMapping:
+      type: object
+      required:
+      - provider_id
+      - external_group_name
+      properties:
+        external_group_name:
+          type: string
+          description: Name of the external identity provider group
+        membership_type:
+          type: string
+          description: Membership type within the team
+          example: member
+        provider_id:
+          type: string
+          description: Identity provider ID for this group mapping
+    ProspectDTO:
+      required:
+      - email
+      - id
+      type: object
+      properties:
+        createdDate:
+          type: string
+          description: Date the access request was created
+          format: date-time
+        email:
+          type: string
+          description: Email address of the prospect
+          format: email
+        firstName:
+          type: string
+          description: First name of the prospect
+        id:
+          type: string
+          description: Unique prospect identifier
+          format: uuid
+        lastName:
+          type: string
+          description: Last name of the prospect
+        portalId:
+          type: string
+          description: Portal ID the access request is associated with
+          format: uuid
+        status:
+          type: string
+          description: Current status of the access request
+          enum:
+          - APPROVED
+          - PENDING
+        updatedDate:
+          type: string
+          description: Date the access request was last updated
+          format: date-time
+        username:
+          type: string
+          description: Username of the prospect
+    ProspectCountDTO:
+      required:
+      - count
+      type: object
+      properties:
+        count:
+          type: integer
+          description: Number of pending access requests
+          format: int64
+    ProducerAssetDetail:
+      type: object
+      required:
+      - assetId
+      - groupId
+      - name
+      - type
+      properties:
+        assetId:
+          type: string
+          description: Asset identifier within the organization
+        groupId:
+          type: string
+          description: Organization group ID that owns the asset
+        name:
+          type: string
+          description: Display name of the asset
+        instanceVisibility:
+          type: string
+          description: Visibility level for API instances
+          enum:
+          - All
+          - Public
+          - Custom
+        minorVersionProfilesVisibility:
+          type: array
+          description: Per-version user group visibility settings
+          items:
+            $ref: "#/components/schemas/CommunityAssetVersionVisibilityForAPICuratorDTO"
+        type:
+          type: string
+          description: Asset type classifier
+          example: rest-api
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: Anypoint Platform bearer token obtained from Access Management
+      scheme: bearer

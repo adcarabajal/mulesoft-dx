@@ -53,6 +53,8 @@ anypoint-cli-v4 plugins:install anypoint-cli-api-project-plugin
 pip3 install -r scripts/requirements.txt
 ```
 
+> **Using a Homebrew-managed Python (macOS)?** Homebrew's Python is marked as an "externally-managed" environment (PEP 668), so a bare `pip3 install` will refuse to write into it. Use a local virtual environment instead (see [Generating the Portal with Homebrew-managed Python](#generating-the-portal-with-homebrew-managed-python-macos) below).
+
 **3. Install API Spec Validation Skills:**
 ```bash
 # In Claude Code CLI
@@ -306,6 +308,60 @@ open portal/index.html
 ```
 
 The portal features API browsing, operation details with "Try It Out" panels, skill workflow execution, and authentication management.
+
+### Generating the Portal with Homebrew-managed Python (macOS)
+
+If your `python3` comes from Homebrew, it is an **externally-managed environment** (PEP 668) and the standard `pip3 install -r scripts/requirements.txt` will fail with:
+
+```
+error: externally-managed-environment
+× This environment is externally managed
+```
+
+The portal generator depends on `ruamel.yaml`, `Jinja2`, `markdown-it-py`, `beautifulsoup4`, and `pytest`, so these must be installable. Use a local virtual environment in the repo root to avoid touching the system interpreter.
+
+**One-time setup:**
+
+```bash
+# From the repository root
+python3 -m venv .venv                          # create a local venv
+source .venv/bin/activate                      # activate it for this shell
+pip install --upgrade pip                      # (optional) refresh pip itself
+pip install -r scripts/requirements.txt        # install portal generator deps
+deactivate                                     # leave the venv (optional)
+```
+
+The venv is created at `.venv/` (already covered by `.gitignore` in most setups — add it if not).
+
+**Every time you build or test the portal**, put the venv's `bin` on `PATH` for the current shell so `make` picks up the venv's `python3` transparently:
+
+```bash
+# From the repository root
+export PATH="$PWD/.venv/bin:$PATH"
+
+make generate-portal            # builds to portal/
+make test-portal                # runs the portal test suite
+python3 scripts/build/validate_jtbd.py skills/<skill-name>/SKILL.md .   # validate a JTBD
+```
+
+Equivalently you can `source .venv/bin/activate` instead of exporting `PATH` — both approaches shadow the Homebrew `python3` with the venv's.
+
+**Serving the generated portal locally:**
+
+After `make generate-portal`, start a simple HTTP server so relative links and `fetch()` calls resolve correctly:
+
+```bash
+cd portal
+python3 -m http.server 8000     # works with venv or Homebrew Python — no extra deps
+```
+
+Then open http://localhost:8000 in your browser. Opening `portal/index.html` via `file://` also works for basic browsing, but some dynamic features (registry JSON loading, iframe previews) require the HTTP origin.
+
+**Troubleshooting:**
+
+- `ruamel.yaml not installed`: the shell is still using the Homebrew `python3` — re-run `export PATH="$PWD/.venv/bin:$PATH"` or re-activate the venv.
+- `pip install -r ... : error: externally-managed-environment`: you forgot to activate the venv; `pip` is resolving to Homebrew. Activate the venv (or use `.venv/bin/pip install ...` directly) and re-run.
+- `pipx install -r requirements.txt` fails: `pipx` is for installing individual CLI apps, not bulk-installing libraries. Use the venv approach above.
 
 ### Running Tests
 
