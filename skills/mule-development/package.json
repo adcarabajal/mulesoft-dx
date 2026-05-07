@@ -1,0 +1,17 @@
+{
+  "name": "@mulesoft/mule-dx-skills",
+  "version": "0.1.0",
+  "description": "MuleSoft DX skills to enhance Mule developement",
+  "private": true,
+  "license": "UNLICENSED",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "homepage": "https://github.com/mulesoft/mulesoft-dx/tree/master/skills/mule-developement",
+  "keywords": [
+    "mulesoft",
+    "mule",
+    "dx"
+  ]
+}

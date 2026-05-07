@@ -1,0 +1,63 @@
+name: release-skills
+
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+    paths: ['skills/mule-development/package.json']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # Required for OIDC authentication (npm trusted publishing)
+
+jobs:
+  release:
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: skills/mule-development
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Upgrade npm for trusted publishing
+        run: npm install -g npm@11.9.0
+
+      - name: Check if version is already published
+        id: check
+        run: |
+          NAME=$(node -p "require('./package.json').name")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if npm view "$NAME@$VERSION" version > /dev/null 2>&1; then
+            echo "$NAME@$VERSION is already published — skipping."
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "$NAME@$VERSION not yet published — will publish."
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish to npm
+        if: steps.check.outputs.should_publish == 'true'
+        # NOTE: Provenance is intentionally disabled.
+        # Per OSPO policy, provenance must be turned OFF for EMU-org repos
+        # approved for public npm publishing.
+        run: npm publish --access public --provenance=false
+
+  # Next steps for you:
+  # 1. Configure trusted publishing on npmjs.com for @mulesoft/mule-dx-skills:
+  #    npmjs.com → package settings → Trusted Publisher → GitHub Actions
+  #    → org: mulesoft, repo: mulesoft-dx, workflow: release-skills.yml,
+  #      environment: (leave blank unless you add one).
+  # 2. Bump skills/mule-development/package.json version each time you want a release —
+  #    the workflow won't publish if the version is unchanged.
+  # 3. First-time publish of @mulesoft/mule-dx-skills may need a one-time manual
+  #    npm publish to claim the name on the @mulesoft scope before OIDC can take over.
+  # 4. Remove "private": true from package.json before the workflow can publish.
