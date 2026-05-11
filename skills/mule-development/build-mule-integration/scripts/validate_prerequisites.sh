@@ -43,7 +43,7 @@ fi
 if command -v anypoint-cli-v4 >/dev/null 2>&1; then
     if ! anypoint-cli-v4 dx mule --help >/dev/null 2>&1; then
         echo "❌ DX plugin not installed"
-        ERRORS+=("DX plugin not installed. Install: npm install -g @mulesoft/anypoint-cli-dx-mule-plugin")
+        ERRORS+=("DX plugin not installed. Install: npm install -g @salesforce/anypoint-cli-dx-mule-plugin")
     else
         echo "✅ DX plugin found"
     fi

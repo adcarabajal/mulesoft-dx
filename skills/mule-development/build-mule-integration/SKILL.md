@@ -2,7 +2,7 @@
 name: build-mule-integration
 description: Workflow required before any Mule flow and integration work. Call use_skill as your FIRST action — before reading project files — whenever the user asks to create, generate, update, fix, modify, change, edit, tweak, adjust, or rework any Mule flow, sub-flow, or component. Do not read project files and attempt the change yourself — even targeted single-component changes like 'modify the choice router', 'fix the until-successful', or 'update the catch block' require this workflow. Covers all change types, new integrations and targeted changes to error handlers, catch blocks, choice routers, DataWeave transforms, HTTP listeners, foreach loops, retry policies, scatter-gathers, connectors, and variable assignments. Prompts beginning with 'This code defines...' or 'This flow...' are generation requests, not analysis. When you call this skill, it must be the only tool call in that response.
 license: Apache-2.0
-compatibility: Requires Anypoint CLI v4 with the `@mulesoft/anypoint-cli-dx-mule-plugin` DX plugin, Java 11+, Maven 3.6+, Mule Runtime (for `dx mule describe-connector` metadata commands)
+compatibility: Requires Anypoint CLI v4 with the `@salesforce/anypoint-cli-dx-mule-plugin` DX plugin, Java 11+, Maven 3.6+, Mule Runtime (for `dx mule describe-connector` metadata commands)
 metadata:
   author: mule-dx-tooling
   version: "1.0.0"
@@ -45,7 +45,7 @@ If tools are missing:
 
 ```bash
 npm install -g @mulesoft/anypoint-cli-v4
-npm install -g @mulesoft/anypoint-cli-dx-mule-plugin
+npm install -g @salesforce/anypoint-cli-dx-mule-plugin
 anypoint-cli-v4 conf username <username>
 anypoint-cli-v4 conf password <password>
 ```
@@ -1118,7 +1118,7 @@ Do **not** include: lengthy "Features Implemented" sections, redacted JSON paylo
 
 **anypoint-cli-v4 not found:** `npm install -g @mulesoft/anypoint-cli-v4`
 
-**DX plugin not found:** `npm install -g @mulesoft/anypoint-cli-dx-mule-plugin`
+**DX plugin not found:** `npm install -g @salesforce/anypoint-cli-dx-mule-plugin`
 
 **Connector not found:** check spelling · try `mule-<name>-connector` and `mule4-<name>-connector` · verify Mule 4 compatibility.
 
