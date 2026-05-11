@@ -18,14 +18,6 @@ def _nl2br(value):
     return Markup(escaped.replace('\n', '<br>'))
 
 
-def _nl2br_html(value):
-    """Convert newlines to <br> tags while preserving existing HTML tags."""
-    if not value:
-        return Markup('')
-    # Don't escape - preserve existing HTML like <br>, <code>, etc.
-    # Just convert remaining newlines to <br>
-    return Markup(str(value).replace('\n', '<br>'))
-
 
 def _render_markdown(value):
     """Convert basic markdown to HTML for use in description cells."""
@@ -65,8 +57,14 @@ def _render_markdown(value):
 
 
 def _tojson_raw(value, indent=2):
-    """Serialize to JSON with indentation for embedding in <script> tags."""
-    return Markup(json.dumps(value, indent=indent))
+    """Serialize to JSON with indentation for embedding in <script> tags.
+
+    Falls back to str() for types json.dumps doesn't know — notably datetime.date
+    and datetime.datetime, which ruamel.yaml produces from unquoted ISO dates in
+    spec examples. Without this, a date-typed example anywhere in an op's parsed
+    metadata crashes the whole detail page render.
+    """
+    return Markup(json.dumps(value, indent=indent, default=str))
 
 
 def _titleize_operation(value):
@@ -253,7 +251,6 @@ def create_env() -> Environment:
 
     # Custom filters
     env.filters['nl2br'] = _nl2br
-    env.filters['nl2br_html'] = _nl2br_html
     env.filters['md'] = _render_markdown
     env.filters['tojson_raw'] = _tojson_raw
     env.filters['titleize_operation'] = _titleize_operation

@@ -151,6 +151,43 @@ class TestResolveSchema:
         result = resolve_schema(schema, tmp_path)
         assert result == schema
 
+    def test_internal_ref_resolves_with_components(self, tmp_path):
+        components = {
+            'schemas': {
+                'Pet': {
+                    'type': 'object',
+                    'required': ['name'],
+                    'properties': {'name': {'type': 'string'}},
+                }
+            }
+        }
+        schema = {'$ref': '#/components/schemas/Pet'}
+        result = resolve_schema(schema, tmp_path, components=components)
+        assert result['type'] == 'object'
+        assert 'name' in result['properties']
+        assert result['required'] == ['name']
+
+    def test_internal_ref_chain_resolves_with_components(self, tmp_path):
+        components = {
+            'schemas': {
+                'Outer': {'$ref': '#/components/schemas/Inner'},
+                'Inner': {
+                    'type': 'object',
+                    'properties': {'id': {'type': 'string'}},
+                },
+            }
+        }
+        result = resolve_schema(
+            {'$ref': '#/components/schemas/Outer'}, tmp_path, components=components
+        )
+        assert result['type'] == 'object'
+        assert 'id' in result['properties']
+
+    def test_internal_ref_unknown_component_passthrough(self, tmp_path):
+        schema = {'$ref': '#/components/schemas/Missing'}
+        result = resolve_schema(schema, tmp_path, components={'schemas': {}})
+        assert result == schema
+
     def test_depth_limit(self, tmp_path):
         schema = {'type': 'string'}
         result = resolve_schema(schema, tmp_path, depth=3)
@@ -265,6 +302,101 @@ class TestExtractSchemaProperties:
         assert len(props) == 1
         assert props[0]['type'] == 'string'
         assert any('enum' in c for c in props[0]['constraints'])
+
+    def test_internal_ref_top_level_schema(self, tmp_path):
+        components = {
+            'schemas': {
+                'UserGroupRequestDTO': {
+                    'type': 'object',
+                    'required': ['name'],
+                    'properties': {
+                        'name': {'type': 'string', 'description': 'Group name'},
+                        'description': {'type': 'string'},
+                        'parentUserGroupId': {'type': 'string', 'format': 'uuid'},
+                    },
+                }
+            }
+        }
+        schema = {'$ref': '#/components/schemas/UserGroupRequestDTO'}
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        names = [p['name'] for p in props]
+        assert names == ['name', 'description', 'parentUserGroupId']
+        assert next(p for p in props if p['name'] == 'name')['required'] is True
+        assert next(p for p in props if p['name'] == 'description')['required'] is False
+
+    def test_internal_ref_in_property(self, tmp_path):
+        components = {
+            'schemas': {
+                'Status': {'type': 'string', 'enum': ['active', 'inactive']},
+            }
+        }
+        schema = {
+            'type': 'object',
+            'properties': {
+                'status': {'$ref': '#/components/schemas/Status'},
+            },
+        }
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        assert len(props) == 1
+        assert props[0]['type'] == 'string'
+        assert any('enum' in c for c in props[0]['constraints'])
+
+    def test_top_level_array_body_with_internal_ref_items(self, tmp_path):
+        """Regression: array request bodies whose items use $ref must surface
+        the item's properties as children of a synthetic 'items' row."""
+        components = {
+            'schemas': {
+                'CommunityAssetGaCreateDTO': {
+                    'type': 'object',
+                    'required': ['assetId', 'groupId'],
+                    'properties': {
+                        'assetId': {'type': 'string', 'description': 'Exchange asset id'},
+                        'groupId': {'type': 'string', 'description': 'Exchange group id'},
+                    },
+                }
+            }
+        }
+        schema = {
+            'type': 'array',
+            'items': {'$ref': '#/components/schemas/CommunityAssetGaCreateDTO'},
+        }
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        assert len(props) == 1
+        assert props[0]['name'] == 'items'
+        assert props[0]['type'] == 'array[object]'
+        child_names = [c['name'] for c in props[0]['children']]
+        assert child_names == ['assetId', 'groupId']
+
+    def test_top_level_array_body_with_inline_items(self, tmp_path):
+        schema = {
+            'type': 'array',
+            'items': {'type': 'string'},
+        }
+        props = extract_schema_properties(schema, tmp_path)
+        assert len(props) == 1
+        assert props[0]['name'] == 'items'
+        assert props[0]['type'] == 'array[string]'
+        assert props[0]['children'] == []
+
+    def test_array_property_items_ref_resolves_type(self, tmp_path):
+        """A property of type array whose items use $ref should report the
+        resolved item type (e.g. 'object'), not the literal 'object' fallback."""
+        components = {
+            'schemas': {
+                'Tag': {'type': 'string', 'enum': ['a', 'b']},
+            }
+        }
+        schema = {
+            'type': 'object',
+            'properties': {
+                'tags': {
+                    'type': 'array',
+                    'items': {'$ref': '#/components/schemas/Tag'},
+                },
+            },
+        }
+        props = extract_schema_properties(schema, tmp_path, components=components)
+        assert props[0]['type'] == 'array[string]'
 
     def test_empty_properties(self, tmp_path):
         schema = {'type': 'object'}
@@ -403,6 +535,208 @@ class TestExtractOperations:
         ops = extract_operations(paths)
         assert ops[0]['operationId'] == 'get__items'
 
+    def test_request_body_with_internal_ref_resolves_properties(self, tmp_path):
+        """Regression: bodies that use $ref to #/components/schemas/* must
+        render their property tables, not appear empty in the portal."""
+        paths = {
+            '/userGroups': {
+                'post': {
+                    'operationId': 'createUserGroup',
+                    'requestBody': {
+                        'required': True,
+                        'content': {
+                            'application/json': {
+                                'schema': {'$ref': '#/components/schemas/UserGroupRequestDTO'},
+                            }
+                        },
+                    },
+                    'responses': {},
+                },
+            }
+        }
+        components = {
+            'schemas': {
+                'UserGroupRequestDTO': {
+                    'type': 'object',
+                    'required': ['name'],
+                    'properties': {
+                        'name': {'type': 'string', 'description': 'Group name'},
+                        'description': {'type': 'string'},
+                        'parentUserGroupId': {'type': 'string', 'format': 'uuid'},
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        rb = ops[0]['requestBody']
+        assert rb['schemas'].get('application/json'), \
+            'request body schema must expose properties when using internal $ref'
+        names = [p['name'] for p in rb['schemas']['application/json']]
+        assert names == ['name', 'description', 'parentUserGroupId']
+
+    def test_array_request_body_resolves_items_and_keeps_inline_example(self, tmp_path):
+        """Regression: array bodies (type: array, items: $ref) must render
+        their item properties AND their inline list example -- both were
+        previously dropped, leaving the body and Examples section empty."""
+        paths = {
+            '/assets': {
+                'post': {
+                    'operationId': 'addAssetsToCommunity',
+                    'requestBody': {
+                        'required': True,
+                        'content': {
+                            'application/json': {
+                                'schema': {
+                                    'type': 'array',
+                                    'items': {'$ref': '#/components/schemas/CommunityAssetGaCreateDTO'},
+                                },
+                                'example': [
+                                    {'assetId': 'payment-api', 'groupId': 'com.example'},
+                                ],
+                            }
+                        },
+                    },
+                    'responses': {},
+                },
+            }
+        }
+        components = {
+            'schemas': {
+                'CommunityAssetGaCreateDTO': {
+                    'type': 'object',
+                    'required': ['assetId', 'groupId'],
+                    'properties': {
+                        'assetId': {'type': 'string'},
+                        'groupId': {'type': 'string'},
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        rb = ops[0]['requestBody']
+        # Body fields render via the synthetic 'items' row
+        props = rb['schemas']['application/json']
+        assert len(props) == 1
+        assert props[0]['name'] == 'items'
+        child_names = [c['name'] for c in props[0]['children']]
+        assert child_names == ['assetId', 'groupId']
+        # Inline list example survives
+        assert rb['examples']['application/json']['Default']
+        parsed = json.loads(rb['examples']['application/json']['Default'])
+        assert parsed[0]['assetId'] == 'payment-api'
+
+    def test_response_with_internal_ref_resolves_properties(self, tmp_path):
+        """Same fix should apply to response schemas using internal $ref."""
+        paths = {
+            '/userGroups': {
+                'get': {
+                    'operationId': 'listUserGroups',
+                    'responses': {
+                        '200': {
+                            'description': 'OK',
+                            'content': {
+                                'application/json': {
+                                    'schema': {'$ref': '#/components/schemas/UserGroupDTO'},
+                                }
+                            },
+                        }
+                    },
+                },
+            }
+        }
+        components = {
+            'schemas': {
+                'UserGroupDTO': {
+                    'type': 'object',
+                    'properties': {
+                        'id': {'type': 'string', 'format': 'uuid'},
+                        'name': {'type': 'string'},
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        resp = ops[0]['responses']['200']
+        assert resp['schemas'].get('application/json')
+        names = [p['name'] for p in resp['schemas']['application/json']]
+        assert names == ['id', 'name']
+
+    def test_request_body_top_level_ref_to_components_request_bodies(self, tmp_path):
+        """Regression: operations using `requestBody: { $ref: '#/components/requestBodies/X' }`
+        must resolve through the reference. AMF-emitted specs commonly hoist shared
+        request bodies into components.requestBodies and reference them by $ref."""
+        paths = {
+            '/clients/{clientId}/roles': {
+                'post': {
+                    'operationId': 'addRolesToClient',
+                    'requestBody': {'$ref': '#/components/requestBodies/RoleAssignment'},
+                    'responses': {},
+                },
+            }
+        }
+        components = {
+            'requestBodies': {
+                'RoleAssignment': {
+                    'description': 'Role assignment payload',
+                    'content': {
+                        'application/json': {
+                            'schema': {
+                                'type': 'object',
+                                'required': ['roleId'],
+                                'properties': {
+                                    'roleId': {'type': 'string'},
+                                    'scope': {'type': 'string'},
+                                },
+                            },
+                            'example': {'roleId': 'admin', 'scope': 'org'},
+                        }
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        rb = ops[0]['requestBody']
+        assert rb is not None, 'requestBody must resolve through $ref to components.requestBodies'
+        assert 'application/json' in rb['content_types']
+        names = [p['name'] for p in rb['schemas']['application/json']]
+        assert names == ['roleId', 'scope']
+        assert rb['examples']['application/json']['Default']
+
+    def test_response_top_level_ref_to_components_responses(self, tmp_path):
+        """Regression: operations using a $ref to components.responses must resolve."""
+        paths = {
+            '/items': {
+                'get': {
+                    'operationId': 'listItems',
+                    'responses': {
+                        '404': {'$ref': '#/components/responses/NotFound'},
+                    },
+                },
+            }
+        }
+        components = {
+            'responses': {
+                'NotFound': {
+                    'description': 'Resource not found',
+                    'content': {
+                        'application/json': {
+                            'schema': {
+                                'type': 'object',
+                                'properties': {'message': {'type': 'string'}},
+                            },
+                            'example': {'message': 'not found'},
+                        }
+                    },
+                }
+            }
+        }
+        ops = extract_operations(paths, components, tmp_path)
+        resp = ops[0]['responses']['404']
+        assert resp['description'] == 'Resource not found'
+        names = [p['name'] for p in resp['schemas']['application/json']]
+        assert names == ['message']
+        assert resp['examples']['application/json']['Default']
+
     def test_empty_paths(self):
         assert extract_operations({}) == []
         assert extract_operations(None) == []
@@ -527,6 +861,16 @@ class TestLoadExampleContent:
 
     def test_missing_ref(self, tmp_path):
         assert load_example_content({'$ref': 'missing.json'}, tmp_path) is None
+
+    def test_inline_list(self, tmp_path):
+        """Regression: array request bodies often supply an inline YAML list
+        as the example value. load_example_content must serialize lists, not
+        treat them as None (which would drop the Examples section)."""
+        example = [{'assetId': 'payment-api', 'groupId': 'com.example'}]
+        result = load_example_content(example, tmp_path)
+        assert result is not None
+        parsed = json.loads(result)
+        assert parsed == example
 
 
 # ============================================================================

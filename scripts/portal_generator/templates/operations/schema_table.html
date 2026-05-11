@@ -1,8 +1,9 @@
 {% from "operations/macros.html" import param_type, param_type_simple %}
 
-{% macro render_schema_table(properties, title='') %}
+{% macro render_schema_table(properties, title='', id_prefix='') %}
 {% if properties %}
 {% if title %}<h5 class="schema-title">{{ title }}</h5>{% endif %}
+{% set scope = (id_prefix ~ '-') if id_prefix else '' %}
 <div class="params-list">
     {% for prop in properties %}
     {% set prop_desc = prop.description|md if prop.description else '' %}
@@ -10,6 +11,7 @@
     {% set has_default = schema.default is defined and schema.default is not none %}
     {% set has_constraints = schema.minimum is defined or schema.maximum is defined or schema.minLength is defined or schema.maxLength is defined or schema.pattern is defined or has_default %}
     {% set should_collapse = prop_desc|should_collapse_description or has_constraints %}
+    {% set nested_id = scope ~ (prop.name|replace(' ', '-')|replace('.', '-')|lower) ~ '-' ~ loop.index %}
     <div class="param-item{% if should_collapse %} has-collapsible{% endif %}">
         <div class="param-header">
             {% if should_collapse %}
@@ -18,7 +20,7 @@
             </button>
             {% endif %}
             {% if prop.children and prop.children|length > 0 %}
-            <button class="nested-prop-toggle" onclick="toggleNestedProps('{{ prop.name|replace(' ', '-')|replace('.', '-')|lower }}-{{ loop.index }}')" aria-label="Toggle nested properties">
+            <button class="nested-prop-toggle" onclick="toggleNestedProps('{{ nested_id }}')" aria-label="Toggle nested properties">
                 <svg viewBox="0 0 16 16" fill="none"><path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             {% endif %}
@@ -49,7 +51,7 @@
         </div>
         {% endif %}
         {% if prop.children and prop.children|length > 0 %}
-        <div class="nested-properties" id="{{ prop.name|replace(' ', '-')|replace('.', '-')|lower }}-{{ loop.index }}" style="display:none">
+        <div class="nested-properties" id="{{ nested_id }}" style="display:none">
             <div class="params-list nested-params-list">
                 {% for child in prop.children %}
                 {% set child_desc = child.description|md if child.description else '' %}

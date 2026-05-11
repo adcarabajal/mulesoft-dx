@@ -8,7 +8,7 @@ from markupsafe import Markup
 
 from portal_generator.utils import get_category, CATEGORY_MAPPING
 from portal_generator.builders.tree_builder import build_operation_tree, count_tree_operations
-from portal_generator.template_env import _nl2br, _nl2br_html, _render_markdown, _tojson_raw, _skill_title
+from portal_generator.template_env import _nl2br, _render_markdown, _tojson_raw, _skill_title, _titleize_operation, _slugify, _resolve_skill_inputs
 from portal_generator.generator import _build_api_meta, _get_example_body, PortalGenerator
 from portal_generator.parsers.skill_parser import (
     _extract_yaml_blocks,
@@ -19,6 +19,7 @@ from portal_generator.parsers.skill_parser import (
     _convert_to_plain,
     parse_skill,
 )
+from portal_generator.parsers.mcp_parser import _example_from_schema
 from portal_generator.discovery import calculate_stats, _extract_api_refs, discover_skills
 
 import sys
@@ -145,16 +146,6 @@ class TestNl2br:
         assert str(result) == ''
 
 
-class TestNl2brHtml:
-    def test_preserves_html_tags(self):
-        result = _nl2br_html('hello<br>world\nnext')
-        assert '<br>' in str(result)
-        assert str(result) == 'hello<br>world<br>next'
-
-    def test_empty_value(self):
-        assert str(_nl2br_html('')) == ''
-        assert str(_nl2br_html(None)) == ''
-
 
 class TestRenderMarkdown:
     def test_inline_code(self):
@@ -225,6 +216,22 @@ class TestTojsonRaw:
     def test_custom_indent(self):
         result = _tojson_raw({'a': 1}, indent=4)
         assert '    "a"' in str(result)
+
+    def test_serializes_date_via_default_str(self):
+        """ruamel.yaml parses unquoted ISO dates in spec examples as datetime.date.
+        Those leak through into requestBody/response metadata that gets embedded
+        in <script> tags via op_lookup. Without a fallback, the whole detail page
+        render crashes. The filter must coerce unknown types to str."""
+        import datetime
+        result = _tojson_raw({'expirationDate': datetime.date(2026, 11, 22)})
+        parsed = json.loads(str(result))
+        assert parsed == {'expirationDate': '2026-11-22'}
+
+    def test_serializes_datetime_via_default_str(self):
+        import datetime
+        result = _tojson_raw({'when': datetime.datetime(2026, 11, 22, 10, 30)})
+        parsed = json.loads(str(result))
+        assert parsed['when'].startswith('2026-11-22')
 
 
 # ============================================================================
@@ -1276,3 +1283,234 @@ class TestBuildMcpLookup:
         gen = self._make_generator(mcps)
         lookup = gen._build_mcp_lookup()
         assert lookup['test']['tools']['search']['inputSchema'] == schema
+
+
+# ============================================================================
+# render_schema_table macro -- regression tests for nested-prop id uniqueness
+# ============================================================================
+
+class TestRenderSchemaTableIds:
+    """The render_schema_table macro must scope nested-property ids by an
+    optional id_prefix so that multiple operations on the same page (or a
+    single operation rendering both a request body and responses) don't
+    produce colliding `id="..."` attributes that break the toggle button."""
+
+    @pytest.fixture
+    def render(self):
+        from portal_generator.template_env import create_env
+        env = create_env()
+        wrapper = env.from_string(
+            "{% from 'operations/schema_table.html' import render_schema_table %}"
+            "{{ render_schema_table(props, '', prefix) }}"
+        )
+
+        def _render(props, prefix=''):
+            return wrapper.render(props=props, prefix=prefix)
+
+        return _render
+
+    def _items_row(self):
+        return [{
+            'name': 'items',
+            'type': 'array[object]',
+            'required': False,
+            'description': 'Array items',
+            'constraints': [],
+            'children': [{
+                'name': 'assetId',
+                'type': 'string',
+                'required': True,
+                'description': 'Asset id',
+                'constraints': [],
+                'children': [],
+                'schema': {'type': 'string'},
+            }],
+            'schema': {'type': 'array'},
+        }]
+
+    def test_id_prefix_makes_ids_unique(self, render):
+        html_a = render(self._items_row(), prefix='addAssetsToCommunity-rb')
+        html_b = render(self._items_row(), prefix='removeAssetFromCommunity-rb')
+        assert 'id="addAssetsToCommunity-rb-items-1"' in html_a
+        assert 'id="removeAssetFromCommunity-rb-items-1"' in html_b
+        # Toggle onclick targets the same id as the panel
+        assert "toggleNestedProps('addAssetsToCommunity-rb-items-1')" in html_a
+        assert "toggleNestedProps('removeAssetFromCommunity-rb-items-1')" in html_b
+
+    def test_empty_prefix_preserves_legacy_id_shape(self, render):
+        """When id_prefix is empty (default), ids remain in the original
+        form so existing callers / tests don't shift unexpectedly."""
+        html = render(self._items_row(), prefix='')
+        assert 'id="items-1"' in html
+        assert "toggleNestedProps('items-1')" in html
+
+
+class TestTitleizeOperation:
+    def test_simple_camel_case(self):
+        assert _titleize_operation('createApplication') == 'Create Application'
+
+    def test_consecutive_uppercase_acronym(self):
+        assert _titleize_operation('getAPIInstance') == 'Get API Instance'
+
+    def test_trailing_word(self):
+        assert _titleize_operation('listApis') == 'List Apis'
+
+    def test_multiple_words(self):
+        assert _titleize_operation('createOrganizationsApplications') == 'Create Organizations Applications'
+
+    def test_single_word(self):
+        assert _titleize_operation('list') == 'List'
+
+    def test_already_capitalized(self):
+        assert _titleize_operation('List') == 'List'
+
+    def test_empty_string(self):
+        assert _titleize_operation('') == ''
+
+    def test_none(self):
+        assert _titleize_operation(None) == ''
+
+    def test_multi_acronym(self):
+        assert _titleize_operation('getHTTPSUrl') == 'Get HTTPS Url'
+
+
+class TestSlugify:
+    def test_basic_title(self):
+        assert _slugify('Get Current Organization') == 'get-current-organization'
+
+    def test_preserves_hyphens(self):
+        assert _slugify('List Environments') == 'list-environments'
+
+    def test_special_characters(self):
+        assert _slugify('Create App (v2)') == 'create-app-v2'
+
+    def test_multiple_spaces(self):
+        assert _slugify('get   current   org') == 'get-current-org'
+
+    def test_underscores_become_hyphens(self):
+        assert _slugify('get_current_org') == 'get-current-org'
+
+    def test_strips_leading_trailing_hyphens(self):
+        assert _slugify('-hello-world-') == 'hello-world'
+
+    def test_empty_string(self):
+        assert _slugify('') == ''
+
+    def test_none(self):
+        assert _slugify(None) == ''
+
+    def test_unicode(self):
+        assert _slugify('café latte') == 'café-latte'
+
+
+class TestResolveSkillInputs:
+    def test_variable_reference(self):
+        inputs = {
+            'organizationId': {
+                'from': {'variable': 'organizationId'},
+                'description': 'The org ID'
+            }
+        }
+        result = _resolve_skill_inputs(inputs, [])
+        assert result['organizationId']['ref'] == '${organizationId}'
+        assert result['organizationId']['description'] == 'The org ID'
+        assert 'from' not in result['organizationId']
+
+    def test_api_reference_removes_from(self):
+        inputs = {
+            'envId': {
+                'from': {'api': 'urn:api:access-management', 'operation': 'listEnvs'},
+                'description': 'Env ID'
+            }
+        }
+        result = _resolve_skill_inputs(inputs, [])
+        assert 'from' not in result['envId']
+        assert 'ref' not in result['envId']
+        assert result['envId']['description'] == 'Env ID'
+
+    def test_simple_value_passthrough(self):
+        inputs = {'name': 'literal-value'}
+        result = _resolve_skill_inputs(inputs, [])
+        assert result['name'] == 'literal-value'
+
+    def test_dict_without_from_passthrough(self):
+        inputs = {'name': {'description': 'just a desc', 'type': 'string'}}
+        result = _resolve_skill_inputs(inputs, [])
+        assert result['name'] == {'description': 'just a desc', 'type': 'string'}
+
+    def test_none_input(self):
+        assert _resolve_skill_inputs(None, []) is None
+
+    def test_empty_dict(self):
+        assert _resolve_skill_inputs({}, []) == {}
+
+    def test_non_dict_input(self):
+        assert _resolve_skill_inputs('not a dict', []) == 'not a dict'
+
+
+class TestExampleFromSchema:
+    def test_explicit_example(self):
+        assert _example_from_schema({'type': 'string', 'example': 'hello'}) == 'hello'
+
+    def test_examples_list(self):
+        assert _example_from_schema({'type': 'string', 'examples': ['a', 'b']}) == 'a'
+
+    def test_default_value(self):
+        assert _example_from_schema({'type': 'integer', 'default': 42}) == 42
+
+    def test_enum_picks_first(self):
+        assert _example_from_schema({'type': 'string', 'enum': ['active', 'inactive']}) == 'active'
+
+    def test_string_no_format(self):
+        assert _example_from_schema({'type': 'string'}) == ''
+
+    def test_string_email_format(self):
+        assert _example_from_schema({'type': 'string', 'format': 'email'}) == 'user@example.com'
+
+    def test_string_uuid_format(self):
+        assert _example_from_schema({'type': 'string', 'format': 'uuid'}) == '00000000-0000-0000-0000-000000000000'
+
+    def test_string_datetime_format(self):
+        assert _example_from_schema({'type': 'string', 'format': 'date-time'}) == '2026-04-24T00:00:00Z'
+
+    def test_integer(self):
+        assert _example_from_schema({'type': 'integer'}) == 0
+
+    def test_number(self):
+        assert _example_from_schema({'type': 'number'}) == 0
+
+    def test_boolean(self):
+        assert _example_from_schema({'type': 'boolean'}) is False
+
+    def test_object_with_properties(self):
+        schema = {
+            'type': 'object',
+            'properties': {
+                'name': {'type': 'string'},
+                'age': {'type': 'integer'}
+            }
+        }
+        result = _example_from_schema(schema)
+        assert result == {'name': '', 'age': 0}
+
+    def test_array_with_items(self):
+        schema = {'type': 'array', 'items': {'type': 'string'}}
+        result = _example_from_schema(schema)
+        assert result == ['']
+
+    def test_anyof_skips_null(self):
+        schema = {'anyOf': [{'type': 'null'}, {'type': 'string'}]}
+        assert _example_from_schema(schema) == ''
+
+    def test_type_list_picks_non_null(self):
+        schema = {'type': ['string', 'null']}
+        assert _example_from_schema(schema) == ''
+
+    def test_depth_guard(self):
+        assert _example_from_schema({'type': 'object', 'properties': {'x': {'type': 'string'}}}, depth=7) is None
+
+    def test_none_input(self):
+        assert _example_from_schema(None) is None
+
+    def test_empty_dict(self):
+        assert _example_from_schema({}) is None
