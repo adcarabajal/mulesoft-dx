@@ -69,12 +69,25 @@ def _render_markdown(value):
 def _tojson_raw(value, indent=2):
     """Serialize to JSON with indentation for embedding in <script> tags.
 
-    Falls back to str() for types json.dumps doesn't know — notably datetime.date
-    and datetime.datetime, which ruamel.yaml produces from unquoted ISO dates in
-    spec examples. Without this, a date-typed example anywhere in an op's parsed
-    metadata crashes the whole detail page render.
+    Escapes HTML-significant characters (`<`, `>`, `&`) and Unicode line
+    separators (U+2028 / U+2029) as `\\uXXXX` sequences. Without this,
+    spec content like `</script><img onerror=...>` breaks out of inline
+    <script> blocks and executes attacker JS (audit finding C2).
+
+    Falls back to str() for types json.dumps doesn't know — notably
+    datetime.date / datetime.datetime, which ruamel.yaml produces from
+    unquoted ISO dates in spec examples.
     """
-    return Markup(json.dumps(value, indent=indent, default=str))
+    encoded = json.dumps(value, indent=indent, default=str)
+    encoded = (
+        encoded
+        .replace('<', '\\u003c')
+        .replace('>', '\\u003e')
+        .replace('&', '\\u0026')
+        .replace(' ', '\\u2028')
+        .replace(' ', '\\u2029')
+    )
+    return Markup(encoded)
 
 
 def _titleize_operation(value):
