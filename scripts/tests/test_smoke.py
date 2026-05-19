@@ -837,3 +837,56 @@ class TestTerraformPageGeneration:
         scripts = terraform_soup.find_all('script')
         text = ' '.join(s.string or '' for s in scripts)
         assert 'wrapTerraformCodeBlocks()' in text
+
+
+SECURITY_FIXTURES = Path(__file__).parent / 'fixtures' / 'security'
+
+
+def _copy_fixture_dir(src: Path, dst: Path):
+    """Copy each file from src into dst (which is created)."""
+    dst.mkdir(parents=True, exist_ok=True)
+    for entry in src.iterdir():
+        if entry.is_file():
+            (dst / entry.name).write_bytes(entry.read_bytes())
+
+
+class TestMaliciousSpecSmokeXSS:
+    """E2E: a malicious OpenAPI spec must not produce executable XSS in the rendered page."""
+
+    @pytest.fixture
+    def portal_with_malicious_spec(self, tmp_path):
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        api_dir = repo / 'apis' / 'malicious-test'
+        _copy_fixture_dir(SECURITY_FIXTURES / 'malicious_spec', api_dir)
+        setup_schema_docs(repo)
+
+        output = tmp_path / 'output'
+        PortalGenerator(output).generate(repo)
+        return output
+
+    @pytest.fixture
+    def detail_html(self, portal_with_malicious_spec):
+        return (portal_with_malicious_spec / 'apis' / 'malicious-test.html').read_text(encoding='utf-8')
+
+    def test_no_javascript_href(self, detail_html):
+        soup = BeautifulSoup(detail_html, 'html.parser')
+        for a in soup.find_all('a'):
+            href = (a.get('href') or '').strip().lower()
+            assert not href.startswith('javascript:'), f'unsafe href: {href!r}'
+
+    def test_no_unescaped_script_breakout_in_inline_scripts(self, detail_html):
+        """Inline <script> bodies must not contain a literal </script> sequence
+        that would close the tag and let attacker-supplied content execute."""
+        soup = BeautifulSoup(detail_html, 'html.parser')
+        for s in soup.find_all('script'):
+            body = s.string or ''
+            assert '</script>' not in body
+
+    def test_no_onerror_image_payload(self, detail_html):
+        """No <img> tag with an onerror handler should be present in the DOM."""
+        soup = BeautifulSoup(detail_html, 'html.parser')
+        for img in soup.find_all('img'):
+            assert not img.has_attr('onerror'), 'img onerror attribute present'
+
+
