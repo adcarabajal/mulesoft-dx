@@ -115,3 +115,21 @@ def test_c4_terraform_parser_strips_raw_html():
     assert '<iframe' not in body
     # Table syntax must still work — table extension is independent of html: True.
     assert '<table>' in body
+
+
+# ---------------------------------------------------------------------------
+# H4: MCP capability flag keys/values must be HTML-escaped, not |safe-rendered.
+# ---------------------------------------------------------------------------
+
+def test_h4_mcp_capability_flag_keys_are_escaped(tmp_path):
+    """A capability flag key containing HTML must render as text, not markup."""
+    from bs4 import BeautifulSoup
+
+    from tests.fixtures.security import build_mcp_with_xss_capabilities
+
+    html = build_mcp_with_xss_capabilities(tmp_path)
+    soup = BeautifulSoup(html, 'html.parser')
+    # An <img> with onerror would mean concat-then-|safe leaked through.
+    assert soup.find('img') is None
+    # The literal `<img src=x onerror=alert(1)>` must appear as escaped text.
+    assert '<img src=x onerror=alert(1)>' in soup.get_text()
