@@ -198,6 +198,48 @@ def test_h6_skill_markdown_allows_anchor_link():
     assert 'href="#section"' in rendered
 
 
+# ---------------------------------------------------------------------------
+# H7: chrome dependency URLs must be allowlisted to mulesoft.com over HTTPS.
+# ---------------------------------------------------------------------------
+
+def test_h7_chrome_dependencies_rejects_offsite_script_url():
+    """A malicious dependencies response with an offsite script URL must be rejected."""
+    from portal_generator.mulesoft_chrome import _parse_dependencies
+
+    payload = (
+        '{"data": {"styles": ["https://www.mulesoft.com/x.css"], '
+        '"scripts": ["https://evil.example/x.js"]}}'
+    )
+    out = _parse_dependencies(payload)
+    assert 'evil.example' not in out
+    assert 'https://www.mulesoft.com/x.css' in out
+
+
+def test_h7_chrome_dependencies_rejects_non_https_url():
+    from portal_generator.mulesoft_chrome import _parse_dependencies
+
+    payload = '{"data": {"styles": ["http://www.mulesoft.com/x.css"], "scripts": []}}'
+    out = _parse_dependencies(payload)
+    assert 'http://www.mulesoft.com/x.css' not in out
+
+
+def test_h7_chrome_dependencies_accepts_mulesoft_subdomain():
+    from portal_generator.mulesoft_chrome import _parse_dependencies
+
+    payload = '{"data": {"styles": [], "scripts": ["https://cdn.mulesoft.com/lib.js"]}}'
+    out = _parse_dependencies(payload)
+    assert 'https://cdn.mulesoft.com/lib.js' in out
+
+
+def test_h7_chrome_dependencies_rejects_lookalike_domain():
+    """Suffix matching must not allow `evilmulesoft.com`."""
+    from portal_generator.mulesoft_chrome import _parse_dependencies
+
+    payload = '{"data": {"styles": [], "scripts": ["https://evilmulesoft.com/x.js"]}}'
+    out = _parse_dependencies(payload)
+    assert 'evilmulesoft.com' not in out
+
+
 def test_h5_mcp_resource_template_mimetype_is_escaped():
     """Same H5 protection for resource templates."""
     from bs4 import BeautifulSoup
