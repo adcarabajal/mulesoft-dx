@@ -162,6 +162,42 @@ def test_h5_mcp_resource_mimetype_is_escaped():
     assert '<script>alert(1)</script>' in soup.get_text()
 
 
+# ---------------------------------------------------------------------------
+# H6: skill_parser._md must reject javascript:/data: links regardless of
+#     markdown-it-py upstream defaults (defense-in-depth).
+# ---------------------------------------------------------------------------
+
+def test_h6_skill_markdown_blocks_javascript_link():
+    """markdown-it-py must not produce <a href=javascript:...> regardless of version."""
+    from portal_generator.parsers import skill_parser
+
+    rendered = skill_parser._md.render('[click](javascript:alert(1))').lower()
+    assert 'href="javascript:' not in rendered
+    assert "href='javascript:" not in rendered
+
+
+def test_h6_skill_markdown_blocks_data_link():
+    from portal_generator.parsers import skill_parser
+
+    rendered = skill_parser._md.render('[click](data:text/html,<svg/onload=alert(1)>)').lower()
+    assert 'href="data:' not in rendered
+    assert "href='data:" not in rendered
+
+
+def test_h6_skill_markdown_allows_https_link():
+    from portal_generator.parsers import skill_parser
+
+    rendered = skill_parser._md.render('[click](https://example.com/)')
+    assert 'href="https://example.com/"' in rendered
+
+
+def test_h6_skill_markdown_allows_anchor_link():
+    from portal_generator.parsers import skill_parser
+
+    rendered = skill_parser._md.render('[click](#section)')
+    assert 'href="#section"' in rendered
+
+
 def test_h5_mcp_resource_template_mimetype_is_escaped():
     """Same H5 protection for resource templates."""
     from bs4 import BeautifulSoup

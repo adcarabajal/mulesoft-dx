@@ -13,6 +13,11 @@ from markdown_it import MarkdownIt
 
 _md = MarkdownIt().enable('table')
 
+# H6: pin link-validation to an explicit allowlist so markdown-it-py upstream
+# changes can't quietly regress the protection against javascript:/data: schemes.
+_SAFE_SCHEME_RE = re.compile(r'^(https?:|mailto:|#|/|\./|\.\./)', re.I)
+_md.validateLink = lambda url: bool(_SAFE_SCHEME_RE.match(url))
+
 try:
     from ruamel.yaml import YAML
     _yaml = YAML()
