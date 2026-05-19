@@ -5,9 +5,11 @@ grep `audit ID -> test` is one-shot.
 """
 
 import json
+from pathlib import Path
 
 import pytest
 
+from portal_generator.parsers.terraform_parser import parse_terraform_doc
 from portal_generator.template_env import _render_markdown, _tojson_raw
 
 
@@ -98,3 +100,18 @@ def test_c3_safe_link_allows_relative_paths():
 def test_l1_safe_link_adds_noopener():
     out = str(_render_markdown('[click](https://example.com/)'))
     assert 'rel="noopener"' in out
+
+
+# ---------------------------------------------------------------------------
+# C4: Terraform parser must strip raw HTML embedded in markdown bodies.
+# ---------------------------------------------------------------------------
+
+def test_c4_terraform_parser_strips_raw_html():
+    fixture = Path(__file__).parent / 'fixtures' / 'security' / 'malicious_terraform' / 'dangerous.md'
+    doc = parse_terraform_doc(fixture)
+    assert doc is not None
+    body = doc['body_html']
+    assert '<script>' not in body
+    assert '<iframe' not in body
+    # Table syntax must still work — table extension is independent of html: True.
+    assert '<table>' in body
