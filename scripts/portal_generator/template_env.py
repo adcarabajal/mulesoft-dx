@@ -39,8 +39,16 @@ def _render_markdown(value):
     html = re.sub(r'(?<!\w)\*(.+?)\*(?!\w)', r'<em>\1</em>', html)
     html = re.sub(r'(?<!\w)_(.+?)_(?!\w)', r'<em>\1</em>', html)
 
-    # Links
-    html = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', r'<a href="\2">\1</a>', html)
+    # Links — allowlist URL schemes to prevent javascript:/data:/vbscript: XSS (C3).
+    _SAFE_LINK_RE = re.compile(r'^(https?:|mailto:|#|/|\./|\.\./)', re.I)
+
+    def _safe_link(match):
+        text, url = match.group(1), match.group(2)
+        if not _SAFE_LINK_RE.match(url):
+            url = '#'
+        return f'<a href="{url}" rel="noopener">{text}</a>'
+
+    html = re.sub(r'\[([^\]]+)\]\(([^)]+)\)', _safe_link, html)
 
     # Bullet lists: consecutive lines starting with "- "
     def _replace_list(m):
