@@ -133,3 +133,52 @@ def test_h4_mcp_capability_flag_keys_are_escaped(tmp_path):
     assert soup.find('img') is None
     # The literal `<img src=x onerror=alert(1)>` must appear as escaped text.
     assert '<img src=x onerror=alert(1)>' in soup.get_text()
+
+
+# ---------------------------------------------------------------------------
+# H5: MCP resource mimeType must be passed as a separate (autoescaped) arg,
+#     not concatenated into the title-badges HTML string.
+# ---------------------------------------------------------------------------
+
+def test_h5_mcp_resource_mimetype_is_escaped():
+    """A malicious mimeType must render as text, not markup."""
+    from bs4 import BeautifulSoup
+
+    from portal_generator.template_env import create_env
+
+    env = create_env()
+    wrapper = env.from_string(
+        '{% import "mcp/macros.html" as m %}'
+        '{{ m.render_resource(resource, 0) }}'
+    )
+    html = wrapper.render(resource={
+        'name': 'fixture',
+        'uri': 'file:///x',
+        'description': '',
+        'mimeType': '"><script>alert(1)</script>',
+    })
+    soup = BeautifulSoup(html, 'html.parser')
+    assert soup.find('script') is None
+    assert '<script>alert(1)</script>' in soup.get_text()
+
+
+def test_h5_mcp_resource_template_mimetype_is_escaped():
+    """Same H5 protection for resource templates."""
+    from bs4 import BeautifulSoup
+
+    from portal_generator.template_env import create_env
+
+    env = create_env()
+    wrapper = env.from_string(
+        '{% import "mcp/macros.html" as m %}'
+        '{{ m.render_resource_template(template, 0) }}'
+    )
+    html = wrapper.render(template={
+        'name': 'fixture-template',
+        'uriTemplate': 'file:///{x}',
+        'description': '',
+        'mimeType': '"><script>alert(1)</script>',
+    })
+    soup = BeautifulSoup(html, 'html.parser')
+    assert soup.find('script') is None
+    assert '<script>alert(1)</script>' in soup.get_text()
