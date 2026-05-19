@@ -890,3 +890,73 @@ class TestMaliciousSpecSmokeXSS:
             assert not img.has_attr('onerror'), 'img onerror attribute present'
 
 
+class TestMaliciousMcpSmokeXSS:
+    """E2E: a malicious MCP descriptor must not produce executable XSS in the rendered page."""
+
+    @pytest.fixture
+    def portal_with_malicious_mcp(self, tmp_path):
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        # Discovery short-circuits if apis/ is missing, so create an empty one.
+        (repo / 'apis').mkdir()
+        mcp_dir = repo / 'mcps' / 'malicious-test'
+        _copy_fixture_dir(SECURITY_FIXTURES / 'malicious_mcp', mcp_dir)
+        setup_schema_docs(repo)
+
+        output = tmp_path / 'output'
+        PortalGenerator(output).generate(repo)
+        return output
+
+    @pytest.fixture
+    def mcp_html(self, portal_with_malicious_mcp):
+        return (portal_with_malicious_mcp / 'mcps' / 'malicious-test.html').read_text(encoding='utf-8')
+
+    def test_no_onerror_image_payload(self, mcp_html):
+        """The malicious onerror payload must not become a real img element."""
+        soup = BeautifulSoup(mcp_html, 'html.parser')
+        for img in soup.find_all('img'):
+            assert not img.has_attr('onerror')
+
+    def test_no_inline_script_breakout(self, mcp_html):
+        """Inline <script> bodies must not contain a literal </script>
+        sequence that would close the tag and let attacker-supplied content
+        execute (covers the JSON-encoded fixture payloads)."""
+        soup = BeautifulSoup(mcp_html, 'html.parser')
+        for s in soup.find_all('script'):
+            body = s.string or ''
+            assert '</script>' not in body
+
+
+class TestMaliciousTerraformSmokeRawHtml:
+    """E2E: terraform docs with raw HTML must have it stripped (C4 — html: False)."""
+
+    @pytest.fixture
+    def portal_with_malicious_terraform(self, tmp_path):
+        repo = tmp_path / 'repo'
+        repo.mkdir()
+        (repo / 'apis').mkdir()
+        provider_dir = repo / 'terraform' / 'anypoint-provider'
+        resources_dir = provider_dir / 'resources'
+        resources_dir.mkdir(parents=True)
+        (resources_dir / 'dangerous.md').write_bytes(
+            (SECURITY_FIXTURES / 'malicious_terraform' / 'dangerous.md').read_bytes()
+        )
+        setup_schema_docs(repo)
+
+        output = tmp_path / 'output'
+        PortalGenerator(output).generate(repo)
+        return output
+
+    @pytest.fixture
+    def terraform_html(self, portal_with_malicious_terraform):
+        return (portal_with_malicious_terraform / 'terraform' / 'anypoint-provider.html').read_text(encoding='utf-8')
+
+    def test_no_iframe_tags(self, terraform_html):
+        soup = BeautifulSoup(terraform_html, 'html.parser')
+        assert soup.find('iframe') is None
+
+    def test_no_inline_script_with_evil_payload(self, terraform_html):
+        soup = BeautifulSoup(terraform_html, 'html.parser')
+        for s in soup.find_all('script'):
+            body = s.string or ''
+            assert 'evil.example' not in body
