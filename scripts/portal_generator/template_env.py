@@ -39,7 +39,7 @@ def _render_markdown(value):
     html = re.sub(r'(?<!\w)\*(.+?)\*(?!\w)', r'<em>\1</em>', html)
     html = re.sub(r'(?<!\w)_(.+?)_(?!\w)', r'<em>\1</em>', html)
 
-    # Links — allowlist URL schemes to prevent javascript:/data:/vbscript: XSS (C3).
+    # Links — allowlist URL schemes to prevent javascript:/data:/vbscript: XSS.
     _SAFE_LINK_RE = re.compile(r'^(https?:|mailto:|#|/|\./|\.\./)', re.I)
 
     def _safe_link(match):
@@ -78,9 +78,8 @@ def _tojson_raw(value, indent=2):
     """Serialize to JSON with indentation for embedding in <script> tags.
 
     Escapes HTML-significant characters (`<`, `>`, `&`) and Unicode line
-    separators (U+2028 / U+2029) as `\\uXXXX` sequences. Without this,
-    spec content like `</script><img onerror=...>` breaks out of inline
-    <script> blocks and executes attacker JS (audit finding C2).
+    separators (U+2028 / U+2029) as `\\uXXXX` sequences so spec content
+    like `</script>...` cannot break out of inline <script> blocks.
 
     Falls back to str() for types json.dumps doesn't know — notably
     datetime.date / datetime.datetime, which ruamel.yaml produces from

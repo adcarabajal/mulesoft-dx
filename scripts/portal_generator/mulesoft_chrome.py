@@ -10,7 +10,6 @@ from typing import Dict, Optional
 from urllib.parse import urlparse
 
 
-# H7: only emit chrome asset URLs that are confidently MuleSoft-controlled.
 _ALLOWED_CHROME_HOSTS = ('www.mulesoft.com',)
 _ALLOWED_CHROME_SUFFIXES = ('.mulesoft.com',)
 
@@ -75,8 +74,7 @@ def _parse_dependencies(json_str: str) -> str:
     """Parse dependencies JSON and generate HTML link/script tags.
 
     Only emits URLs that pass _is_allowed_chrome_url; the rest are dropped
-    with a warning so a compromised or MITM'd response can't inject offsite
-    scripts (audit finding H7).
+    with a warning.
     """
     try:
         data = json.loads(json_str)

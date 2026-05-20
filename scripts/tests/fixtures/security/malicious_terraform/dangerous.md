@@ -2,7 +2,7 @@
 page_title: "anypoint_dangerous Resource"
 subcategory: "Security Test Fixture"
 description: |-
-  Fixture for the C4 raw-HTML disable test. Do not copy.
+  Fixture for the raw-HTML disable test. Do not copy.
 ---
 
 # anypoint_dangerous

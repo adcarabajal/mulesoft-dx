@@ -306,7 +306,6 @@
 
 {% macro render_resource(resource, idx, icons_path='../assets/icons', interactive=true) %}
 {% set resource_id = 'resource-' ~ idx %}
-{# H5: pass mimeType as a separate macro arg — never concat into HTML. #}
 <section id="{{ resource_id }}"
          class="content-section operation-detail mcp-invocable"
          data-mcp-kind="resource"
@@ -351,7 +350,6 @@
 
 {% macro render_resource_template(template, idx, icons_path='../assets/icons', interactive=true) %}
 {% set template_id = 'resource-template-' ~ idx %}
-{# H5: pass mimeType as a separate macro arg — never concat into HTML. #}
 <section id="{{ template_id }}"
          class="content-section operation-detail mcp-invocable"
          data-mcp-kind="resource-template"

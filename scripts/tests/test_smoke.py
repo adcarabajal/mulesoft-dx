@@ -928,7 +928,7 @@ class TestMaliciousMcpSmokeXSS:
 
 
 class TestMaliciousTerraformSmokeRawHtml:
-    """E2E: terraform docs with raw HTML must have it stripped (C4 — html: False)."""
+    """E2E: terraform docs with raw HTML must have it stripped (html: False)."""
 
     @pytest.fixture
     def portal_with_malicious_terraform(self, tmp_path):
