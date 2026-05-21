@@ -533,7 +533,7 @@ async function executeXOriginSource(sourceIdx, buttonEl) {
         });
 
         var data = await resp.json();
-        handleProxyResponse(data);
+        await handleProxyResponse(data);
 
         // Restore button
         if (buttonEl) {
@@ -648,7 +648,7 @@ async function executeXOriginSource(sourceIdx, buttonEl) {
             statusBadge.className = 'response-status-badge status-error';
         }
         if (responseBodyDiv) {
-            responseBodyDiv.innerHTML = '<div class="xorigin-error">Cannot reach proxy: ' + escapeHtml(e.message) + '</div>';
+            responseBodyDiv.innerHTML = '<div class="xorigin-error">Request failed: ' + escapeHtml(e.message) + '</div>';
         }
     }
 }
@@ -1206,7 +1206,7 @@ async function executeMcpXOriginSource(sourceIdx, buttonEl) {
         _restoreButton(buttonEl, originalText);
         if (responseDiv) responseDiv.classList.remove('empty');
         if (statusBadge) { statusBadge.textContent = 'Error'; statusBadge.className = 'response-status-badge status-error'; }
-        if (responseBodyDiv) responseBodyDiv.innerHTML = '<div class="xorigin-error">Cannot reach proxy: ' + escapeHtml(e.message) + '</div>';
+        if (responseBodyDiv) responseBodyDiv.innerHTML = '<div class="xorigin-error">Request failed: ' + escapeHtml(e.message) + '</div>';
     }
 }
 
@@ -2416,10 +2416,11 @@ async function loginBearer() {
         });
         var data = await resp.json();
         if (data.error) {
-            showAuthMessage('Proxy error: ' + data.error, true);
+            showAuthMessage('Server error: ' + data.error, true);
             return;
         }
-        var body = JSON.parse(data.body);
+        var body;
+        try { body = JSON.parse(data.body); } catch (_) { body = {}; }
         if (data.status === 200 && body.access_token) {
             sessionStorage.setItem('anypoint_token', body.access_token);
             sessionStorage.setItem('anypoint_identity', username);
@@ -2438,10 +2439,11 @@ async function loginBearer() {
                 updateAllPlaygroundPanelsFromEnvVars();
             }
         } else {
-            showAuthMessage('Login failed: ' + (body.message || body.error || 'Unknown error'), true);
+            var errMsg = body.message || body.error || data.body || 'Unknown error';
+            showAuthMessage('Login failed: ' + errMsg, true);
         }
     } catch (e) {
-        showAuthMessage('Cannot reach proxy at ' + PROXY_URL + '. Is the proxy server running?', true);
+        showAuthMessage('Unable to connect to the server. Please check your network connection and try again.', true);
     }
 }
 
@@ -2466,10 +2468,11 @@ async function loginOAuth2() {
         });
         var data = await resp.json();
         if (data.error) {
-            showAuthMessage('Proxy error: ' + data.error, true);
+            showAuthMessage('Server error: ' + data.error, true);
             return;
         }
-        var body = JSON.parse(data.body);
+        var body;
+        try { body = JSON.parse(data.body); } catch (_) { body = {}; }
         if (data.status === 200 && body.access_token) {
             sessionStorage.setItem('anypoint_token', body.access_token);
             sessionStorage.setItem('anypoint_identity', clientId);
@@ -2492,10 +2495,11 @@ async function loginOAuth2() {
                 updateAllPlaygroundPanelsFromEnvVars();
             }
         } else {
-            showAuthMessage('Token request failed: ' + (body.error_description || body.error || 'Unknown error'), true);
+            var errMsg = body.error_description || body.error || data.body || 'Unknown error';
+            showAuthMessage('Token request failed: ' + errMsg, true);
         }
     } catch (e) {
-        showAuthMessage('Cannot reach proxy at ' + PROXY_URL + '. Is the proxy server running?', true);
+        showAuthMessage('Unable to connect to the server. Please check your network connection and try again.', true);
     }
 }
 
@@ -2771,7 +2775,7 @@ async function sendMcpRequest(invocableId, buttonEl) {
         if (responseBody) {
             createReadOnlyAceEditor(
                 responseBody,
-                'Cannot reach proxy at ' + PROXY_URL,
+                'Unable to connect to the server. Please check your network connection and try again.',
                 'text'
             );
         }
@@ -2875,9 +2879,14 @@ async function checkTtlExpiration() {
     }
 }
 
-function handleProxyResponse(data) {
+async function handleProxyResponse(data) {
     if (data.status === 401) {
-        markTokenExpired();
+        var result = await introspectToken();
+        if (result && result.active === true && result.exp) {
+            setTokenExpiration(parseInt(result.exp, 10));
+        } else {
+            markTokenExpired();
+        }
     }
 }
 
@@ -3109,7 +3118,7 @@ async function loadXOriginValues(opId, paramName) {
         });
 
         var data = await resp.json();
-        handleProxyResponse(data);
+        await handleProxyResponse(data);
 
         if (btn) {
             btn.disabled = false;
@@ -3187,7 +3196,7 @@ async function loadXOriginValues(opId, paramName) {
             btn.textContent = '↻';
             btn.classList.remove('loading');
         }
-        showAuthMessage('Cannot reach proxy: ' + e.message, true);
+        showAuthMessage('Unable to connect to the server. Please check your network connection and try again.', true);
     }
 }
 
@@ -3310,7 +3319,7 @@ async function loadXOriginValuesForEnv(paramName) {
         });
 
         var data = await resp.json();
-        handleProxyResponse(data);
+        await handleProxyResponse(data);
 
         if (btn) {
             btn.disabled = false;
@@ -3382,7 +3391,7 @@ async function loadXOriginValuesForEnv(paramName) {
             btn.textContent = '↻';
             btn.classList.remove('loading');
         }
-        showAuthMessage('Cannot reach proxy: ' + e.message, true);
+        showAuthMessage('Unable to connect to the server. Please check your network connection and try again.', true);
     }
 }
 
@@ -4583,7 +4592,7 @@ async function sendRequest(opId, buttonEl) {
             })
         });
         var data = await resp.json();
-        handleProxyResponse(data);
+        await handleProxyResponse(data);
 
         // Restore button
         if (buttonEl) {
@@ -4633,7 +4642,7 @@ async function sendRequest(opId, buttonEl) {
         }
         if (statusBadge) { statusBadge.textContent = 'Error'; statusBadge.className = 'response-status-badge status-5xx'; }
         if (responseBody) {
-            createReadOnlyAceEditor(responseBody, 'Cannot reach proxy at ' + PROXY_URL + '.\n\n  python3 scripts/proxy_server.py', 'text');
+            createReadOnlyAceEditor(responseBody, 'Unable to connect to the server. Please check your network connection and try again.', 'text');
         }
         if (responseDiv) responseDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -5240,6 +5249,12 @@ function toggleSkillMode(slug) {
 
         // Initialize playground steps if not already done
         initializePlaygroundSteps();
+
+        // Scroll to the first step
+        var firstStep = document.getElementById('step-' + slug + '-0');
+        if (firstStep) {
+            firstStep.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 }
 
@@ -6427,7 +6442,7 @@ async function executePlaygroundStep(sid, buttonEl) {
         });
 
         var result = await resp.json();
-        handleProxyResponse(result);
+        await handleProxyResponse(result);
 
         // Restore button
         if (buttonEl) {
@@ -7333,7 +7348,7 @@ async function runWorkflowStep(skillSlug, stepIndex) {
             })
         });
         var data = await resp.json();
-        handleProxyResponse(data);
+        await handleProxyResponse(data);
 
         if (spinner) spinner.style.display = 'none';
         if (rightPanel) rightPanel.setAttribute('open', '');
@@ -7439,7 +7454,7 @@ async function runWorkflowStep(skillSlug, stepIndex) {
         if (rightPanel) rightPanel.setAttribute('open', '');
         setWfStepStatus(skillSlug, stepIndex, 'error');
         if (statusBadge) { statusBadge.textContent = 'Error'; statusBadge.className = 'response-status-badge status-5xx'; }
-        if (responseBodyEl) responseBodyEl.textContent = 'Cannot reach proxy at ' + PROXY_URL + '.';
+        if (responseBodyEl) responseBodyEl.textContent = 'Unable to connect to the server. Please check your network connection and try again.';
     }
 }
 
@@ -8055,6 +8070,14 @@ function toggleParamDescription(button) {
 // Sort Modal Functionality
 // ============================================================================
 
+function getSortDisplayLabel(sortBy, filterType) {
+    if (sortBy === 'count') {
+        var countLabels = { api: 'Endpoints', mcp: 'Tools', skill: 'Steps', terraform: 'Docs' };
+        return countLabels[filterType] || 'Count';
+    }
+    return sortBy === 'name' ? 'Name' : 'Type';
+}
+
 (function() {
     const sortBtn = document.querySelector('.sort-btn');
     const sortModal = document.getElementById('sortModal');
@@ -8084,7 +8107,43 @@ function toggleParamDescription(button) {
         const direction = sortDirectionSelect.value;
 
         sortCatalog(sortBy, direction);
+        updateSortIndicator(sortBy);
         sortModal.style.display = 'none';
+    });
+
+    function getActiveFilterType() {
+        var activeTab = document.querySelector('.hero-tab.active');
+        return activeTab ? activeTab.dataset.filter : 'all';
+    }
+
+    function updateSortIndicator(sortBy) {
+        var indicator = document.getElementById('sortIndicator');
+        var label = document.getElementById('sortLabel');
+        if (!indicator || !label) return;
+
+        var filterType = getActiveFilterType();
+        label.textContent = getSortDisplayLabel(sortBy, filterType);
+        indicator.style.display = 'inline';
+    }
+
+    function resetSort() {
+        var indicator = document.getElementById('sortIndicator');
+        if (indicator) indicator.style.display = 'none';
+        sortBySelect.value = 'name';
+        sortDirectionSelect.value = 'asc';
+    }
+
+
+    // Listen for filter changes (hero tab clicks)
+    document.querySelectorAll('.hero-tab').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            resetSort();
+            var filterType = tab.dataset.filter || 'all';
+            var typeOption = sortBySelect.querySelector('option[value="type"]');
+            if (typeOption) {
+                typeOption.disabled = filterType !== 'all';
+            }
+        });
     });
 
     function sortCatalog(sortBy, direction) {
@@ -8115,8 +8174,7 @@ function toggleParamDescription(button) {
                 const aName = a.getAttribute('data-name') || '';
                 const bName = b.getAttribute('data-name') || '';
                 return aName.localeCompare(bName);
-            } else if (sortBy === 'endpoints') {
-                // Extract count from the badge text (endpoints for APIs, steps for Skills)
+            } else if (sortBy === 'count') {
                 const aCard = a.querySelector('.badge-count');
                 const bCard = b.querySelector('.badge-count');
 

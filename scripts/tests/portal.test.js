@@ -1174,22 +1174,55 @@ describe('handleProxyResponse', () => {
             }
         });
     });
+    afterEach(() => {
+        delete global.fetch;
+    });
 
-    test('marks token expired on 401', () => {
-        handleProxyResponse({ status: 401 });
+    test('marks token expired on 401 when introspection confirms inactive', async () => {
+        global.fetch = jest.fn(() => Promise.resolve({
+            json: () => Promise.resolve({ status: 200, body: JSON.stringify({ active: false }) }),
+        }));
+        await handleProxyResponse({ status: 401 });
         expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe('0');
     });
 
-    test('does nothing on non-401 responses', () => {
-        var original = sessionStorage.getItem('anypoint_token_expires_at');
-        handleProxyResponse({ status: 200 });
-        expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe(original);
+    test('does not mark expired on 401 when introspection confirms active', async () => {
+        const futureExp = Date.now() + 300000;
+        global.fetch = jest.fn(() => Promise.resolve({
+            json: () => Promise.resolve({ status: 200, body: JSON.stringify({ active: true, exp: futureExp }) }),
+        }));
+        await handleProxyResponse({ status: 401 });
+        expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe(String(futureExp));
     });
 
-    test('does nothing on server error responses', () => {
+    test('does nothing on non-401 responses', async () => {
+        global.fetch = jest.fn();
         var original = sessionStorage.getItem('anypoint_token_expires_at');
-        handleProxyResponse({ status: 500 });
+        await handleProxyResponse({ status: 200 });
         expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe(original);
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    test('does nothing on server error responses', async () => {
+        global.fetch = jest.fn();
+        var original = sessionStorage.getItem('anypoint_token_expires_at');
+        await handleProxyResponse({ status: 500 });
+        expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe(original);
+        expect(global.fetch).not.toHaveBeenCalled();
+    });
+
+    test('marks expired on 401 when introspection network fails', async () => {
+        global.fetch = jest.fn(() => Promise.reject(new Error('Network error')));
+        await handleProxyResponse({ status: 401 });
+        expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe('0');
+    });
+
+    test('marks expired on 401 when introspection returns error', async () => {
+        global.fetch = jest.fn(() => Promise.resolve({
+            json: () => Promise.resolve({ error: 'invalid_token' }),
+        }));
+        await handleProxyResponse({ status: 401 });
+        expect(sessionStorage.getItem('anypoint_token_expires_at')).toBe('0');
     });
 });
 
@@ -1596,4 +1629,275 @@ describe('copyTerraformCode', () => {
         expect(navigator.clipboard.writeText).not.toHaveBeenCalled();
     });
 });
+
+// ===========================================================================
+// getSortDisplayLabel
+// ===========================================================================
+describe('getSortDisplayLabel', () => {
+    test('returns "Name" for name sort regardless of filter', () => {
+        expect(getSortDisplayLabel('name', 'all')).toBe('Name');
+        expect(getSortDisplayLabel('name', 'api')).toBe('Name');
+        expect(getSortDisplayLabel('name', 'mcp')).toBe('Name');
+    });
+
+    test('returns "Type" for type sort regardless of filter', () => {
+        expect(getSortDisplayLabel('type', 'all')).toBe('Type');
+        expect(getSortDisplayLabel('type', 'api')).toBe('Type');
+    });
+
+    test('returns "Endpoints" for count sort when filtered to api', () => {
+        expect(getSortDisplayLabel('count', 'api')).toBe('Endpoints');
+    });
+
+    test('returns "Tools" for count sort when filtered to mcp', () => {
+        expect(getSortDisplayLabel('count', 'mcp')).toBe('Tools');
+    });
+
+    test('returns "Steps" for count sort when filtered to skill', () => {
+        expect(getSortDisplayLabel('count', 'skill')).toBe('Steps');
+    });
+
+    test('returns "Docs" for count sort when filtered to terraform', () => {
+        expect(getSortDisplayLabel('count', 'terraform')).toBe('Docs');
+    });
+
+    test('returns "Count" for count sort when showing all', () => {
+        expect(getSortDisplayLabel('count', 'all')).toBe('Count');
+    });
+
+    test('returns "Count" for count sort with unknown filter', () => {
+        expect(getSortDisplayLabel('count', 'unknown')).toBe('Count');
+    });
+});
+
+// ===========================================================================
+// loginBearer / loginOAuth2 — error handling
+// ===========================================================================
+
+function setupAuthDom() {
+    document.body.innerHTML = `
+        <div id="authMessage"></div>
+        <input id="authUsername" value="user@test.com" />
+        <input id="authPassword" value="wrongpass" />
+        <input id="authClientId" value="my-client" />
+        <input id="authClientSecret" value="my-secret" />
+    `;
+}
+
+function mockFetchResponse(data) {
+    global.fetch = jest.fn(() => Promise.resolve({
+        json: () => Promise.resolve(data),
+    }));
+}
+
+function mockFetchNetworkError() {
+    global.fetch = jest.fn(() => Promise.reject(new Error('Failed to fetch')));
+}
+
+function getAuthMessage() {
+    const el = document.getElementById('authMessage');
+    return { text: el.textContent, isError: el.className.includes('auth-error') };
+}
+
+describe('loginBearer error handling', () => {
+    beforeEach(() => {
+        setupAuthDom();
+        jest.useFakeTimers();
+    });
+    afterEach(() => {
+        jest.useRealTimers();
+        delete global.fetch;
+    });
+
+    test('401 with non-JSON body shows "Login failed: Unauthorized"', async () => {
+        mockFetchResponse({ status: 401, headers: {}, body: 'Unauthorized' });
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Login failed: Unauthorized');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('400 with JSON error body shows the error message', async () => {
+        mockFetchResponse({ status: 400, headers: {}, body: JSON.stringify({ message: 'Invalid request format' }) });
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Login failed: Invalid request format');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('404 with plain text body shows the body content', async () => {
+        mockFetchResponse({ status: 404, headers: {}, body: 'Not Found' });
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Login failed: Not Found');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('500 with JSON error body shows the error field', async () => {
+        mockFetchResponse({ status: 500, headers: {}, body: JSON.stringify({ error: 'Internal Server Error' }) });
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Login failed: Internal Server Error');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('502 with empty body shows "Unknown error"', async () => {
+        mockFetchResponse({ status: 502, headers: {}, body: '' });
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Login failed: Unknown error');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('504 with HTML body shows raw body as fallback', async () => {
+        mockFetchResponse({ status: 504, headers: {}, body: '<html>Gateway Timeout</html>' });
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Login failed: <html>Gateway Timeout</html>');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('network failure shows generic connection error', async () => {
+        mockFetchNetworkError();
+        await loginBearer();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Unable to connect to the server. Please check your network connection and try again.');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('no error message mentions proxy', async () => {
+        mockFetchResponse({ status: 401, headers: {}, body: 'Unauthorized' });
+        await loginBearer();
+        expect(getAuthMessage().text.toLowerCase()).not.toContain('proxy');
+    });
+});
+
+describe('loginOAuth2 error handling', () => {
+    beforeEach(() => {
+        setupAuthDom();
+        jest.useFakeTimers();
+    });
+    afterEach(() => {
+        jest.useRealTimers();
+        delete global.fetch;
+    });
+
+    test('401 with non-JSON body shows "Token request failed: Unauthorized"', async () => {
+        mockFetchResponse({ status: 401, headers: {}, body: 'Unauthorized' });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Token request failed: Unauthorized');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('400 with oauth error body shows error_description', async () => {
+        mockFetchResponse({ status: 400, headers: {}, body: JSON.stringify({ error: 'invalid_client', error_description: 'Client authentication failed' }) });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Token request failed: Client authentication failed');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('404 with plain text body shows the body content', async () => {
+        mockFetchResponse({ status: 404, headers: {}, body: 'Not Found' });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Token request failed: Not Found');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('500 with JSON error body shows the error field', async () => {
+        mockFetchResponse({ status: 500, headers: {}, body: JSON.stringify({ error: 'Internal Server Error' }) });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Token request failed: Internal Server Error');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('502 with empty body shows "Unknown error"', async () => {
+        mockFetchResponse({ status: 502, headers: {}, body: '' });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Token request failed: Unknown error');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('504 with HTML body shows raw body as fallback', async () => {
+        mockFetchResponse({ status: 504, headers: {}, body: '<html>Gateway Timeout</html>' });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Token request failed: <html>Gateway Timeout</html>');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('network failure shows generic connection error', async () => {
+        mockFetchNetworkError();
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Unable to connect to the server. Please check your network connection and try again.');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('server-side error field shows "Server error:" prefix', async () => {
+        mockFetchResponse({ error: 'connection reset' });
+        await loginOAuth2();
+        const msg = getAuthMessage();
+        expect(msg.text).toBe('Server error: connection reset');
+        expect(msg.isError).toBe(true);
+    });
+
+    test('no error message mentions proxy', async () => {
+        mockFetchResponse({ status: 401, headers: {}, body: 'Unauthorized' });
+        await loginOAuth2();
+        expect(getAuthMessage().text.toLowerCase()).not.toContain('proxy');
+    });
+});
+
+// ===========================================================================
+// toggleSkillMode — scroll to first step on activation
+// ===========================================================================
+
+describe('toggleSkillMode scroll behavior', () => {
+    const slug = 'test-skill';
+
+    function setupSkillDom() {
+        document.body.innerHTML = `
+            <div id="toggle-${slug}" aria-checked="false"></div>
+            <div id="variables-sidebar-${slug}" style="display:none"></div>
+            <div class="step-documentation-view"></div>
+            <div class="step-interactive-view" style="display:none"></div>
+            <div id="step-${slug}-0"></div>
+            <div id="step-${slug}-1"></div>
+        `;
+        document.getElementById('step-' + slug + '-0').scrollIntoView = jest.fn();
+        document.getElementById('step-' + slug + '-1').scrollIntoView = jest.fn();
+    }
+
+    beforeEach(() => {
+        setupSkillDom();
+    });
+
+    test('scrolls to first step when activating interactive mode', () => {
+        toggleSkillMode(slug);
+        const firstStep = document.getElementById('step-' + slug + '-0');
+        expect(firstStep.scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' });
+    });
+
+    test('does not scroll to second step', () => {
+        toggleSkillMode(slug);
+        const secondStep = document.getElementById('step-' + slug + '-1');
+        expect(secondStep.scrollIntoView).not.toHaveBeenCalled();
+    });
+
+    test('does not scroll when deactivating interactive mode', () => {
+        // Activate first
+        toggleSkillMode(slug);
+        const firstStep = document.getElementById('step-' + slug + '-0');
+        firstStep.scrollIntoView.mockClear();
+        // Deactivate
+        toggleSkillMode(slug);
+        expect(firstStep.scrollIntoView).not.toHaveBeenCalled();
+    });
+});
+
 
