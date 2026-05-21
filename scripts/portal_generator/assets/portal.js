@@ -918,7 +918,7 @@ function _buildMcpSourcePanel(idx, mcpSlug, toolName, origin, mcpLookup, envVars
     html += '<span class="try-spinner" id="spinner-xorigin-' + idx + '" style="display:none">Sending...</span>';
     html += '<button class="btn-send" onclick="executeMcpXOriginSource(' + idx + ', this)">';
     html += '<img src="../assets/icons/send-icon.svg" alt="" width="13" height="11"><span>Send</span></button>';
-    html += '<button class="btn-copy-curl" onclick="copyMcpCurlCommand(\'' + xoriginOpId + '\', ' + idx + ', this)">';
+    html += '<button class="btn-copy-curl" onclick="copyXOriginMcpCurl(\'' + xoriginOpId + '\', ' + idx + ', this)">';
     html += '<img src="../assets/icons/copy-curl-icon.svg" alt="" width="13" height="13"><span>Copy cURL</span></button>';
     html += '</div></div>';
 
@@ -4107,7 +4107,7 @@ function copyCurlCommand(opId, buttonEl) {
     });
 }
 
-function copyMcpCurlCommand(xoriginOpId, sourceIdx, buttonEl) {
+function copyXOriginMcpCurl(xoriginOpId, sourceIdx, buttonEl) {
     var currentModal = xOriginModalStack[xOriginModalStack.length - 1];
     if (!currentModal) return;
     var origin = currentModal.origins[sourceIdx];
@@ -8450,14 +8450,31 @@ function clearTerraformSidebarSearch() {
 }
 
 function wrapTerraformCodeBlocks() {
-    document.querySelectorAll('.terraform-view-markdown pre').forEach(function(pre) {
-        if (pre.parentElement.classList.contains('terraform-code-wrapper')) return;
+    wrapCodeBlocksWithCopyHeader('.terraform-view-markdown pre');
+}
+
+function wrapSkillCodeBlocks() {
+    wrapCodeBlocksWithCopyHeader('.step-prose pre');
+    wrapCodeBlocksWithCopyHeader('.skill-view-markdown pre');
+    wrapCodeBlocksWithCopyHeader('.skill-prose-content pre');
+}
+
+function wrapMcpCodeBlocks() {
+    // MCP config blocks already have their own copy button inside `.mcp-config-block`,
+    // so only the install pre gets the unified wrapper.
+    wrapCodeBlocksWithCopyHeader('pre.mcp-install-command');
+}
+
+function wrapCodeBlocksWithCopyHeader(selector) {
+    document.querySelectorAll(selector).forEach(function(pre) {
+        if (pre.parentElement.classList.contains('code-block-wrapper')) return;
+        if (pre.querySelector('code.language-mermaid')) return;
         var wrapper = document.createElement('div');
-        wrapper.className = 'terraform-code-wrapper';
+        wrapper.className = 'code-block-wrapper';
         var header = document.createElement('div');
-        header.className = 'terraform-code-header';
+        header.className = 'code-block-header';
         var btn = document.createElement('button');
-        btn.className = 'terraform-btn-copy';
+        btn.className = 'code-block-copy-btn';
         btn.onclick = function() { copyTerraformCode(btn); };
         btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>';
         header.appendChild(btn);
@@ -8468,7 +8485,7 @@ function wrapTerraformCodeBlocks() {
 }
 
 function copyTerraformCode(button) {
-    var wrapper = button.closest('.terraform-code-wrapper');
+    var wrapper = button.closest('.code-block-wrapper');
     if (!wrapper) return;
     var code = wrapper.querySelector('pre code') || wrapper.querySelector('pre');
     var text = code.textContent || code.innerText;
@@ -8604,3 +8621,34 @@ function copyToClipboard(text, buttonEl) {
     });
 }
 
+
+function downloadSkillZip(skillRelPath, slug) {
+    var basePath = '../skills/' + skillRelPath + '/';
+    fetch(basePath + 'manifest.json')
+        .then(function(r) { return r.json(); })
+        .then(function(manifest) {
+            var zip = new JSZip();
+            var fetches = manifest.files.map(function(file) {
+                return fetch(basePath + file)
+                    .then(function(r) { return r.blob(); })
+                    .then(function(blob) { zip.file(file, blob); });
+            });
+            return Promise.all(fetches).then(function() { return zip; });
+        })
+        .then(function(zip) {
+            return zip.generateAsync({ type: 'blob' });
+        })
+        .then(function(blob) {
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = slug + '.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        })
+        .catch(function(err) {
+            console.error('Failed to download skill:', err);
+            alert('Download failed. Please try again.');
+        });
+}
