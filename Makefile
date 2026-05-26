@@ -305,7 +305,7 @@ serve-portal:
 	echo "$(GREEN)✓ Portal is being served at http://localhost:$$PORT_VAL$(NC)"; \
 	echo "$(BLUE)Press Ctrl+C to stop the server$(NC)"; \
 	echo ""; \
-	python3 -m http.server $$PORT_VAL --directory portal
+	python3 -m http.server $$PORT_VAL  --directory portal
 
 # Start CORS proxy server
 # Usage: make serve-proxy [PROXY_PORT=8080]
