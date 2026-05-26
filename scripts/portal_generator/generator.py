@@ -883,7 +883,7 @@ class PortalGenerator:
                 'name': mcp.get('name', ''),
                 'version': mcp.get('version', ''),
                 'description': mcp.get('description', ''),
-                'href': f"mcps/{slug}/mcp.yaml",
+                'href': f"mcps/{slug}/server.json",
                 'docs': f"mcps/{slug}.html",
                 'tool_count': mcp.get('tool_count', 0),
                 'resource_count': mcp.get('resource_count', 0),
