@@ -79,7 +79,8 @@ externalDocs:
       -H 'Content-Type: application/json'
       -H 'Authorization:Bearer <access_token>'
       ```
-      5) Query for log entries for an org with different filters. Query parameters are documented in the logQuery schema. Entries returned will match the entries that were passed in, and are sorted in ascending timestamp order (oldest to newest). E.g. below query searches for log entries for a duration of 1 day regardless of any platform, object types or actions.
+      5) Query for log entries for an org with different filters. Query parameters are documented in the logQuery schema. Entries returned will match the entries that were passed in, and are sorted in ascending
+    timestamp order (oldest to newest). E.g. below query searches for log entries for a duration of 1 day regardless of any platform, object types or actions.
 
       ```
     curl -X POST
@@ -176,7 +177,8 @@ externalDocs:
        "total": 50000
       }
       ```
-      12) This example shows how to opt-in to get logs with versioned object information that was captured when the audit logs were generated, instead of getting latest object information. Logs for objects created or updated on or after November 29, 2023 will return versioned object information; other logs will show no change in behavior.
+      12) This example shows how to opt-in to get logs with versioned object information that was captured when the audit logs were generated, instead of getting latest object information. Logs for objects
+    created or updated on or after November 29, 2023 will return versioned object information; other logs will show no change in behavior.
       ```
     curl -X POST
       https://anypoint.mulesoft.com/audit/v2/organizations/f0c9b011-980e-4928-9430-e60e3a97c043/query?getVersionedObjectsInLogs=true
@@ -198,7 +200,8 @@ x-amf-userDocumentation:
     # Log Entries
 
 
-    Log represent actions made by a user against an object. Events happen at a particular time, involve one or more objects, have an action, such as 'delete' or 'approve', and an optional payload which can store application-specific information, such as changed fields, environment information, and so on.
+    Log represent actions made by a user against an object. Events happen at a particular time, involve one or more objects, have an action, such as 'delete' or 'approve', and an optional payload which
+    can store application-specific information, such as changed fields, environment information, and so on.
 
     Events are queried by POSTing a query object to the /query endpoint. Note that this endpoint uses timespan ranges for paging, with a maximum return set of 200 log entries.
 
@@ -231,7 +234,9 @@ x-amf-userDocumentation:
     ## Object Hierarchies
 
 
-    In the real world, objects have parent-child relationships that are critical for querying and organizing log data. For example, when looking at api platform events, a user may wish to look at all events for a particular api. However, the api contains api versions as well as policies, portals, and other objects, whose events the user would need to see. To this end, objects have a parent id and a parent type, which acts as a key to their parent and enabled queries for the children of any entity. Parent id and parent type are optional.
+    In the real world, objects have parent-child relationships that are critical for querying and organizing log data. For example, when looking at api platform events, a user may wish to look at all events
+    for a particular api. However, the api contains api versions as well as policies, portals, and other objects, whose events the user would need to see. To this end, objects have a parent id and a parent
+    type, which acts as a key to their parent and enabled queries for the children of any entity. Parent id and parent type are optional.
 
 
     See the API reference for complete information on object structure, which is embedded within the log entries schema.
@@ -745,21 +750,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: >
-        Bearer token authentication. Login endpoint:
-        https://anypoint.mulesoft.com/accounts/api/login
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: >
-        OAuth2 client credentials. Token endpoint:
-        https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   schemas:
     logQuery:
       title: Audit Log Query
@@ -845,16 +838,20 @@ components:
       - data
       properties:
         data:
-          description: Log entry - note that we cannot reference logEntry from here - see https://github.com/raml-org/raml-spec/issues/109. Maximum number of log entries returned is 200 for json query, 300000 for csv query.
+          description: Log entry - note that we cannot reference logEntry from here - see https://github.com/raml-org/raml-spec/issues/109. Maximum number of log entries returned is 200 for json 
+            query, 300000 for csv query.
           type: array
           minItems: 0
           items:
             type: object
         total:
-          description: Total amount of entries that the query matches. Total will be returned when offset based pagination is used. When cursorPagination is set to true, the total will not be returned by default. To get the total in response, doIncludeTotal should be set to true.
+          description: Total amount of entries that the query matches. Total will be returned when offset based pagination is used. When cursorPagination is set to true, the total will not be returned
+            by default. To get the total in response, doIncludeTotal should be set to true.
           type: number
         cursor:
-          description: Cursor value in response. The cursor value should be used in the next query to get the next page of query results. Cursor will be returned only when cursorPagination is set to true in query. Cursor value corresponds to the last data entry in the response data set and so even with cursorPagination as true, a cursor will not be returned when the data object is empty.
+          description: Cursor value in response. The cursor value should be used in the next query to get the next page of query results. Cursor will be returned only when cursorPagination is set to 
+            true in query. Cursor value corresponds to the last data entry in the response data set and so even with cursorPagination as true, a cursor will not be returned when the data object is 
+            empty.
           type: string
     platforms:
       title: Platforms Type
@@ -903,7 +900,8 @@ components:
                   minLength: 3
                   maxLength: 20
               label:
-                description: The label to use in the UI for the final user, e.g. 'Access Management'. In the context of Actions, the label to use in the UI for the final user. E.g. 'Update' or 'Delete'
+                description: The label to use in the UI for the final user, e.g. 'Access Management'. In the context of Actions, the label to use in the UI for the final user. E.g. 'Update' or 
+                  'Delete'
                 type: string
                 minLength: 3
                 maxLength: 50
@@ -974,7 +972,8 @@ components:
                 minLength: 3
                 maxLength: 20
               label:
-                description: The label to use in the UI for the final user, e.g. 'Access Management'. In the context of Actions, the label to use in the UI for the final user. E.g. 'Update' or 'Delete'
+                description: The label to use in the UI for the final user, e.g. 'Access Management'. In the context of Actions, the label to use in the UI for the final user. E.g. 'Update' or 
+                  'Delete'
                 type: string
                 minLength: 3
                 maxLength: 50
@@ -1004,7 +1003,8 @@ components:
                 description: Number of days for retaining logs. Default is 2190 representing 6 years.
                 type: number
               effectiveFrom:
-                description: This specifies the time from which this entry will be effective. Format is ISO 8601, in UTC. This will be null for the default 6 year retention period of an organization as there won't be a custom effective date chosen by the organization.
+                description: This specifies the time from which this entry will be effective. Format is ISO 8601, in UTC. This will be null for the default 6 year retention period of an organization 
+                  as there won't be a custom effective date chosen by the organization.
                 x-amf-union:
                 - type: string
                 - type: "null"

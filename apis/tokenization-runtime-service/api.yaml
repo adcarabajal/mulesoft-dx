@@ -4,11 +4,11 @@ info:
   description: Tokenize and detokenize sensitive data using configured tokenization services.
   version: 1.0.0
 servers:
-  - url: https://mocksvc.mulesoft.com/mocks/df05479f-3577-4a01-ae7e-3abb92cb907f
-    description: Mock server
+- url: https://mocksvc.mulesoft.com/mocks/df05479f-3577-4a01-ae7e-3abb92cb907f
+  description: Mock server
 security:
-  - bearerAuth: []
-  - clientAuth: []
+- bearerAuth: []
+- clientAuth: []
 paths:
   /AnypointSecurityTokenization/v1/{operation}:
     post:
@@ -16,15 +16,15 @@ paths:
       description: Request tokenization service with body containing the data that Tokenization Service will operate against.
       operationId: processTokenization
       parameters:
-        - name: operation
-          in: path
-          required: true
-          description: What operation to perform on the list of data in body
-          schema:
-            type: string
-            enum:
-              - tokenization
-              - detokenization
+      - name: operation
+        in: path
+        required: true
+        description: What operation to perform on the list of data in body
+        schema:
+          type: string
+          enum:
+          - tokenization
+          - detokenization
       requestBody:
         description: Array of data items to tokenize or detokenize
         required: true
@@ -36,29 +36,30 @@ paths:
               tokenization:
                 summary: Tokenization example
                 value:
-                  - format: ssnonly
-                    data: '333-33-3333'
-                  - format: us_address
-                    data: '55 Washington Rd, Chicago, IL 60501'
+                - format: ssnonly
+                  data: '333-33-3333'
+                - format: us_address
+                  data: '55 Washington Rd, Chicago, IL 60501'
               tokenizationWithId:
                 summary: Tokenization with ID example
                 value:
-                  - format: ssnonly
-                    data: '333-33-3333'
-                    id: a1234
-                  - format: us_address
-                    data: '55 Washington Rd, Chicago, IL 60501'
-                    id: a1234
+                - format: ssnonly
+                  data: '333-33-3333'
+                  id: a1234
+                - format: us_address
+                  data: '55 Washington Rd, Chicago, IL 60501'
+                  id: a1234
               detokenization:
                 summary: Detokenization example
                 value:
-                  - format: ssnonly
-                    data: '555-55-5555'
-                  - format: us_address
-                    data: '37 geegpqhdjd w3, Ug34dkW, DS 23681'
+                - format: ssnonly
+                  data: '555-55-5555'
+                - format: us_address
+                  data: '37 geegpqhdjd w3, Ug34dkW, DS 23681'
       responses:
         '200':
-          description: Response of the tokenized/detokenized data where all elements in the array were able to be converted properly. If at least one item fails conversion a 422 will be generated instead.
+          description: Response of the tokenized/detokenized data where all elements in the array were able to be converted properly. If at least one item fails conversion a 422 will be generated 
+            instead.
           content:
             application/json:
               schema:
@@ -67,26 +68,26 @@ paths:
                 tokenization:
                   summary: Tokenization success response
                   value:
-                    - status: success
-                      data: '555-55-5555'
-                    - status: success
-                      data: '37 geegpqhdjd w3, Ug34dkW, DS 23681'
+                  - status: success
+                    data: '555-55-5555'
+                  - status: success
+                    data: '37 geegpqhdjd w3, Ug34dkW, DS 23681'
                 tokenizationWithId:
                   summary: Tokenization with ID success response
                   value:
-                    - status: success
-                      data: '555-55-5555'
-                      id: a1234
-                    - status: success
-                      data: '37 geegpqhdjd w3, Ug34dkW, DS 23681'
-                      id: a1234
+                  - status: success
+                    data: '555-55-5555'
+                    id: a1234
+                  - status: success
+                    data: '37 geegpqhdjd w3, Ug34dkW, DS 23681'
+                    id: a1234
                 detokenization:
                   summary: Detokenization success response
                   value:
-                    - status: success
-                      data: '333-33-3333'
-                    - status: success
-                      data: '55 Washington Rd, Chicago, IL 60501'
+                  - status: success
+                    data: '333-33-3333'
+                  - status: success
+                    data: '55 Washington Rd, Chicago, IL 60501'
         '400':
           description: Message is completely bad, wrong content type, wrong method, unable to even start processing.
           content:
@@ -100,7 +101,8 @@ paths:
                     errorcode: 1100
                     error: Invalid json
         '422':
-          description: At least one of the elements in the array had an error and could not be converted. Other items that could be converted correctly will be returned. The caller should expect to find at least one array item to contain a "status" of "failure".
+          description: At least one of the elements in the array had an error and could not be converted. Other items that could be converted correctly will be returned. The caller should expect to 
+            find at least one array item to contain a "status" of "failure".
           content:
             application/json:
               schema:
@@ -109,12 +111,12 @@ paths:
                 partialFailure:
                   summary: Partial failure response
                   value:
-                    - data: '555-55-5555'
-                      status: success
-                    - data: ''
-                      status: failure
-                      errorcode: 1384
-                      error: 'There is no domain instance in this token exchange policy with a matching domain id [ssnonl].'
+                  - data: '555-55-5555'
+                    status: success
+                  - data: ''
+                    status: failure
+                    errorcode: 1384
+                    error: 'There is no domain instance in this token exchange policy with a matching domain id [ssnonl].'
         '500':
           description: Internal server error - service not ready
           content:
@@ -130,21 +132,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: >
-        Bearer token authentication. Login endpoint:
-        https://anypoint.mulesoft.com/accounts/api/login
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: >
-        OAuth2 client credentials. Token endpoint:
-        https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   schemas:
     TokenizationServiceRequest:
       type: array
@@ -155,8 +145,8 @@ components:
       type: object
       description: Object with data to convert
       required:
-        - format
-        - data
+      - format
+      - data
       properties:
         format:
           type: string
@@ -176,14 +166,14 @@ components:
       type: object
       description: Status of tokenized or detokenized data
       required:
-        - status
+      - status
       properties:
         status:
           type: string
           description: Status of the operation
           enum:
-            - success
-            - failure
+          - success
+          - failure
         data:
           type: string
           description: Data being tokenized or detokenized

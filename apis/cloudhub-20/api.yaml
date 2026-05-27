@@ -2738,21 +2738,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Bearer token authentication. Login endpoint: https://anypoint.mulesoft.com/accounts/api/login
-
-        '
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: 'OAuth2 client credentials. Token endpoint: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-
-        '
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   requestBodies:
     EgressRuleGroupPayload:
       content:
@@ -3591,7 +3579,8 @@ components:
         status:
           type: string
         environments:
-          description: If present determines if the target is restricted to a particular set of environments. If it is restricted to all environments then an empty list has to be provided. If not present then there is not target restriction over an environment.
+          description: If present determines if the target is restricted to a particular set of environments. If it is restricted to all environments then an empty list has to be provided. If not 
+            present then there is not target restriction over an environment.
           type: array
           maxItems: 10
           minItems: 0
@@ -3787,10 +3776,13 @@ components:
           description: Enable or disable TLS support
           type: string
         Path:
-          description: Elasticsearch accepts new data on HTTP query path "/_bulk". But it is also possible to serve Elasticsearch behind a reverse proxy on a subpath. This option defines such path on the fluent-bit side. It simply adds a path prefix in the indexing HTTP POST URI.
+          description: Elasticsearch accepts new data on HTTP query path "/_bulk". But it is also possible to serve Elasticsearch behind a reverse proxy on a subpath. This option defines such path on 
+            the fluent-bit side. It simply adds a path prefix in the indexing HTTP POST URI.
           type: string
         Buffer_Size:
-          description: Specify the buffer size used to read the response from the Elasticsearch HTTP service. This option is useful for debugging purposes where is required to read full responses, note that response size grows depending of the number of records inserted. To set an unlimited amount of memory set this value to False, otherwise the value must be according to the Unit Size specification.
+          description: Specify the buffer size used to read the response from the Elasticsearch HTTP service. This option is useful for debugging purposes where is required to read full responses, 
+            note that response size grows depending of the number of records inserted. To set an unlimited amount of memory set this value to False, otherwise the value must be according to the Unit 
+            Size specification.
           type: string
         HTTP_User:
           description: Optional username credential for Elastic X-Pack access
@@ -3805,7 +3797,8 @@ components:
           description: 'Enable Logstash format compatibility. This option takes a boolean value: True/False, On/Off'
           type: string
         Logstash_Prefix:
-          description: 'When Logstash_Format is enabled, the Index name is composed using a prefix and the date, e.g: If Logstash_Prefix is equals to ''mydata'' your index will become ''mydata-YYYY.MM.DD''. The last string appended belongs to the date when the data is being generated.'
+          description: 'When Logstash_Format is enabled, the Index name is composed using a prefix and the date, e.g: If Logstash_Prefix is equals to ''mydata'' your index will become ''mydata-YYYY.MM.DD''.
+            The last string appended belongs to the date when the data is being generated.'
           type: string
         Logstash_DateFormat:
           description: Time format (based on strftime) to generate the second part of the Index name.
@@ -3872,7 +3865,8 @@ components:
           description: Automatically create the log group. Valid values are "true" or "false" (case insensitive). Defaults to false.
           type: string
         log_key:
-          description: If specified a key name with this option, then only the value of that key will be sent to CloudWatch. For example, if you are using the Fluentd Docker log driver, you can specify log_key log and only the log message will be sent to CloudWatch.
+          description: If specified a key name with this option, then only the value of that key will be sent to CloudWatch. For example, if you are using the Fluentd Docker log driver, you can 
+            specify log_key log and only the log message will be sent to CloudWatch.
           type: string
         role_arn:
           description: ARN of an IAM role to assume (for cross account access).
@@ -4097,7 +4091,8 @@ components:
             '
           type: string
         startupAction:
-          description: 'The action to take when the establishing the tunnel for the VPN connection. By default, CGW must initiate the IKE negotiation and bring up the tunnel. Specify start for AWS to initiate the IKE negotiation.
+          description: 'The action to take when the establishing the tunnel for the VPN connection. By default, CGW must initiate the IKE negotiation and bring up the tunnel. Specify start for AWS to initiate
+            the IKE negotiation.
 
             '
           type: string
@@ -4608,7 +4603,8 @@ components:
       - channel
       properties:
         baseVersion:
-          description: Identifier of the Base Version of the Runtime. For example, in the case of a patched 3.8.0 Mule Runtime, the base version is 3.8.0. This is the version that is used in order to get feature validations by the Anypoint Management Center. This is the information shown to customers and the one that has to be used in order to make deployments.
+          description: Identifier of the Base Version of the Runtime. For example, in the case of a patched 3.8.0 Mule Runtime, the base version is 3.8.0. This is the version that is used in order to 
+            get feature validations by the Anypoint Management Center. This is the information shown to customers and the one that has to be used in order to make deployments.
           type: string
         tag:
           description: Identifier of the actual version of the runtime that is used for deployments.
@@ -4664,35 +4660,7 @@ components:
           type: boolean
   parameters:
     XOrigin_organizationId_Path:
-      name: organizationId
-      description: The Organization id where the Private Space lives.
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listMe
-        name: rootOrg
-        description: GET `/me`; use `user.organization.id` as the caller's primary Business Group GUID.
-        values: $.user.organization.id
-        labels: $.user.organization.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: currentOrganization
-        description: GET `/organizations/{organizationId}`; use `id` as the Business Group GUID for the current organization.
-        values: $.id
-        labels: $.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: subOrganizations
-        description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
-        values:
-          - $.id
-          - $.subOrganizationIds[*]
-        labels:
-          - $.name
-          - $.subOrganizationIds[*]  
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/organizationId_Path
     XOrigin_privateSpaceId_Path:
       name: privateSpaceId
       required: true
@@ -4707,18 +4675,7 @@ components:
         labels: $.name
       description: The privateSpace ID to identify the target resource.
     XOrigin_connectionId_Path:
-      name: connectionId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:cloudhub-20
-        operation: getOrganizationsByOrganizationidPrivatespacesByPrivatespaceidConnections
-        description: GET `/organizations/{organizationId}/privatespaces/{privateSpaceId}/connections` in this API; use `id` values as `connectionId`.
-        values: $.id
-        labels: $.name
-      description: The connection ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/connectionId_Path
     XOrigin_tgwId_Path:
       name: tgwId
       required: true
@@ -4733,35 +4690,7 @@ components:
         labels: $.name
       description: The tgw ID to identify the target resource.
     XOrigin_networkOrganizationId_Path:
-      name: organizationId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listMe
-        name: rootOrg
-        description: GET `/me`; use `user.organization.id` as the caller's primary Business Group GUID.
-        values: $.user.organization.id
-        labels: $.user.organization.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: currentOrganization
-        description: GET `/organizations/{organizationId}`; use `id` as the Business Group GUID for the current organization.
-        values: $.id
-        labels: $.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: subOrganizations
-        description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
-        values:
-          - $.id
-          - $.subOrganizationIds[*]
-        labels:
-          - $.name
-          - $.subOrganizationIds[*]  
-      description: The organization ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/organizationId_Path
     XOrigin_attachmentTgwId_Path:
       name: tgwId
       required: true
@@ -4776,32 +4705,4 @@ components:
         labels: $.name
       description: The tgw ID to identify the target resource.
     XOrigin_vpnOrganizationId_Path:
-      name: organizationId
-      description: The Organization id where the Cloudhub VPC lives
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listMe
-        name: rootOrg
-        description: GET `/me`; use `user.organization.id` as the caller's primary Business Group GUID.
-        values: $.user.organization.id
-        labels: $.user.organization.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: currentOrganization
-        description: GET `/organizations/{organizationId}`; use `id` as the Business Group GUID for the current organization.
-        values: $.id
-        labels: $.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: subOrganizations
-        description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
-        values:
-          - $.id
-          - $.subOrganizationIds[*]
-        labels:
-          - $.name
-          - $.subOrganizationIds[*]  
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/organizationId_Path

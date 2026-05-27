@@ -1024,7 +1024,8 @@ paths:
   /{organizationId}/policies:
     description: The collection of policies
     post:
-      description: Create new policy with type 'DOS (Denial of Service)' or 'CAP (Content Attack Prevention)' or 'ACL(Access Control List)' or 'WAF (Web Application Firewall), SID (Sensitive Information Detection)'
+      description: Create new policy with type 'DOS (Denial of Service)' or 'CAP (Content Attack Prevention)' or 'ACL(Access Control List)' or 'WAF (Web Application Firewall), SID (Sensitive 
+        Information Detection)'
       parameters:
       - $ref: '#/components/parameters/XOrigin_organizationId_Path'
       requestBody:
@@ -1577,21 +1578,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Bearer token authentication. Login endpoint: https://anypoint.mulesoft.com/accounts/api/login
-
-        '
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: 'OAuth2 client credentials. Token endpoint: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-
-        '
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   requestBodies:
     PolicyCreateRequest:
       content:
@@ -1846,13 +1835,15 @@ components:
       additionalProperties: false
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         httpDomains:
@@ -1864,13 +1855,15 @@ components:
         virtualServerIds:
           $ref: '#/components/schemas/VirtualServerIds'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
           $ref: '#/components/schemas/Logs'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
     DeployementStatusResponse:
@@ -2246,24 +2239,28 @@ components:
       - organizationId
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         httpDomains:
-          description: 'List of domains (including wildcard domains, and subdomains) that can be used to when accessing the APPs deployed in this RTF/RTFC. For example: acme.com,*.acme.com, sales.acme.com, *.sales.acme.com'
+          description: 'List of domains (including wildcard domains, and subdomains) that can be used to when accessing the APPs deployed in this RTF/RTFC. For example: acme.com,*.acme.com, sales.acme.com,
+            *.sales.acme.com'
           type: array
           items:
             $ref: '#/components/schemas/Domains'
         id:
           $ref: '#/components/schemas/UUID'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
@@ -2271,7 +2268,8 @@ components:
         organizationId:
           $ref: '#/components/schemas/UUID'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
     EdgeConfigMultipleVSResponse:
@@ -2285,13 +2283,15 @@ components:
       - organizationId
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         id:
@@ -2301,7 +2301,8 @@ components:
         virtualServerIds:
           $ref: '#/components/schemas/VirtualServerIds'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
@@ -2309,7 +2310,8 @@ components:
         organizationId:
           $ref: '#/components/schemas/UUID'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
     EdgeHTTPRequest:
@@ -2321,28 +2323,33 @@ components:
       - logs
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         httpDomains:
-          description: 'List of domains (including wildcard domains, and subdomains) that can be used to when accessing the APPs deployed in this RTF/RTFC. For example: acme.com,*.acme.com, sales.acme.com, *.sales.acme.com'
+          description: 'List of domains (including wildcard domains, and subdomains) that can be used to when accessing the APPs deployed in this RTF/RTFC. For example: acme.com,*.acme.com, sales.acme.com,
+            *.sales.acme.com'
           type: array
           items:
             $ref: '#/components/schemas/Domains'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
           $ref: '#/components/schemas/Logs'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
     EdgeConfigMultipleVSRequest:
@@ -2355,17 +2362,20 @@ components:
       - logs
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         tlsConfigs:
-          description: Each item in the array represents a way of creating virtual server for edge. A virtual server can be created in one of the three ways. 1 -> By refering a secret of type tls configuration from secrets manager. 2 -> uploading a PEM and key file with optional ca path file. 3 -> uploading a JKS file.
+          description: Each item in the array represents a way of creating virtual server for edge. A virtual server can be created in one of the three ways. 1 -> By refering a secret of type tls 
+            configuration from secrets manager. 2 -> uploading a PEM and key file with optional ca path file. 3 -> uploading a JKS file.
           type: array
           minItems: 1
           items:
@@ -2373,30 +2383,36 @@ components:
         port:
           $ref: '#/components/schemas/Port'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
           $ref: '#/components/schemas/Logs'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
       patternProperties:
         ^(keys\[[0-9]\])$:
-          description: The encrypted private key. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', keys[0] should be used to indicate key file for tlsConfigs[0]
+          description: The encrypted private key. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', keys[0] should be used to indicate key file for 
+            tlsConfigs[0]
           type: string
           format: binary
         ^(keyStores\[[0-9]\])$:
-          description: File containing one or more certificate entries. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'JKS', keyStores[0] should be used to indicate keyStore file for tlsConfigs[0]
+          description: File containing one or more certificate entries. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'JKS', keyStores[0] should be used to 
+            indicate keyStore file for tlsConfigs[0]
           type: string
           format: binary
         ^(certificates\[[0-9]\])$:
-          description: The public certificate. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', certificates[0] should be used to indicate certificate file for tlsConfigs[0]
+          description: The public certificate. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', certificates[0] should be used to indicate certificate file 
+            for tlsConfigs[0]
           type: string
           format: binary
         ^(capaths\[[0-9]\])$:
-          description: The concatenated chain of CA certificates, except the leaf, leading up to the root CA. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', capaths[0] should be used to indicate ca path file for tlsConfigs[0]
+          description: The concatenated chain of CA certificates, except the leaf, leading up to the root CA. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM',
+            capaths[0] should be used to indicate ca path file for tlsConfigs[0]
           type: string
           format: binary
     EdgeHTTPRequest_1:
@@ -2408,28 +2424,33 @@ components:
       - logs
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         httpDomains:
-          description: 'List of domains (including wildcard domains, and subdomains) that can be used to when accessing the APPs deployed in this RTF/RTFC. For example: acme.com,*.acme.com, sales.acme.com, *.sales.acme.com'
+          description: 'List of domains (including wildcard domains, and subdomains) that can be used to when accessing the APPs deployed in this RTF/RTFC. For example: acme.com,*.acme.com, sales.acme.com,
+            *.sales.acme.com'
           type: array
           items:
             $ref: '#/components/schemas/Domains'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
           $ref: '#/components/schemas/Logs'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
     EdgeConfigMultipleVSUpdateRequest:
@@ -2443,17 +2464,20 @@ components:
       - logs
       properties:
         capPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         advancedOption:
           $ref: '#/components/schemas/AdvancedOption'
         wafPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         tlsConfigs:
-          description: Each item in the array represents a way of creating virtual server for edge. A virtual server can be created in one of the three ways. 1 -> By refering a secret of type tls configuration from secrets manager. 2 -> uploading a PEM and key file with optional ca path file. 3 -> uploading a JKS file.
+          description: Each item in the array represents a way of creating virtual server for edge. A virtual server can be created in one of the three ways. 1 -> By refering a secret of type tls 
+            configuration from secrets manager. 2 -> uploading a PEM and key file with optional ca path file. 3 -> uploading a JKS file.
           type: array
           minItems: 1
           items:
@@ -2463,30 +2487,36 @@ components:
         virtualServerIds:
           $ref: '#/components/schemas/VirtualServerIds'
         aclPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
         logs:
           $ref: '#/components/schemas/Logs'
         dosPolicyId:
-          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be included.
+          description: The anypoint security policies are getting revamped. This field is going to be deprecated in a future release. If this policy is not used, then this element should not be 
+            included.
           type: string
           pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
       patternProperties:
         ^(keyStores\[[0-9]\])$:
-          description: File containing one or more certificate entries. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'JKS', keyStores[0] should be used to indicate keyStore file for tlsConfigs[0]
+          description: File containing one or more certificate entries. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'JKS', keyStores[0] should be used to 
+            indicate keyStore file for tlsConfigs[0]
           type: string
           format: binary
         ^(keys\[[0-9]\])$:
-          description: The encrypted private key. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', keys[0] should be used to indicate key file for tlsConfigs[0]
+          description: The encrypted private key. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', keys[0] should be used to indicate key file for 
+            tlsConfigs[0]
           type: string
           format: binary
         ^(certificates\[[0-9]\])$:
-          description: The public certificate. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', certificates[0] should be used to indicate certificate file for tlsConfigs[0]
+          description: The public certificate. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', certificates[0] should be used to indicate certificate file 
+            for tlsConfigs[0]
           type: string
           format: binary
         ^(capaths\[[0-9]\])$:
-          description: The concatenated chain of CA certificates, except the leaf, leading up to the root CA. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM', capaths[0] should be used to indicate ca path file for tlsConfigs[0]
+          description: The concatenated chain of CA certificates, except the leaf, leading up to the root CA. The index used should match the index of 'tlsConfigs'. So if tlsConfigs[0].source = 'PEM',
+            capaths[0] should be used to indicate ca path file for tlsConfigs[0]
           type: string
           format: binary
     AdvancedOption:
@@ -2507,7 +2537,8 @@ components:
       - memory
       properties:
         mode:
-          description: This field describes the way edge is configured to run. In 'shared' mode, the internal load balancer runs on the controller nodes. Make sure ports 80 and 443 are open. In 'dedicated' mode, it runs on load balancer nodes.
+          description: This field describes the way edge is configured to run. In 'shared' mode, the internal load balancer runs on the controller nodes. Make sure ports 80 and 443 are open. In 
+            'dedicated' mode, it runs on load balancer nodes.
           default: shared
           enum:
           - shared
@@ -3111,7 +3142,8 @@ components:
       - DetectAndAllow
       type: string
     Window1:
-      description: Lowest escalation level DoS window where an administrator defined period of time in which Edge determines that a DoS attack is occurring and automatically applies a DoS action to the DoS attacker’s message requests.
+      description: Lowest escalation level DoS window where an administrator defined period of time in which Edge determines that a DoS attack is occurring and automatically applies a DoS action to 
+        the DoS attacker’s message requests.
       type: object
       additionalProperties: false
       required:
@@ -3126,7 +3158,8 @@ components:
         rate:
           $ref: '#/components/schemas/Rate'
     Window2:
-      description: Supersede escalation level DoS window where an administrator defined period of time in which Edge determines that a DoS attack is occurring and automatically applies a DoS action to the DoS attacker’s message requests.
+      description: Supersede escalation level DoS window where an administrator defined period of time in which Edge determines that a DoS attack is occurring and automatically applies a DoS action to
+        the DoS attacker’s message requests.
       type: object
       additionalProperties: false
       required:
@@ -3144,7 +3177,8 @@ components:
         numberOfPrecedingWindows:
           $ref: '#/components/schemas/NumberOfPrecedingWindows'
     Window3:
-      description: Highest escalation level DoS window where an administrator defined period of time in which Edge determines that a DoS attack is occurring and automatically applies a DoS action to the DoS attacker’s message requests.
+      description: Highest escalation level DoS window where an administrator defined period of time in which Edge determines that a DoS attack is occurring and automatically applies a DoS action to 
+        the DoS attacker’s message requests.
       type: object
       additionalProperties: false
       required:
@@ -3188,48 +3222,9 @@ components:
       maximum: 32
   parameters:
     XOrigin_organizationId_Path:
-      name: organizationId
-      description: The organization id
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listMe
-        name: rootOrg
-        description: GET `/me`; use `user.organization.id` as the caller's primary Business Group GUID.
-        values: $.user.organization.id
-        labels: $.user.organization.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: currentOrganization
-        description: GET `/organizations/{organizationId}`; use `id` as the Business Group GUID for the current organization.
-        values: $.id
-        labels: $.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: subOrganizations
-        description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
-        values:
-          - $.id
-          - $.subOrganizationIds[*]
-        labels:
-          - $.name
-          - $.subOrganizationIds[*]  
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/organizationId_Path
     XOrigin_envId_Path:
-      name: envId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listEnvironments
-        description: GET `/organizations/{organizationId}/environments`; use each `data[].id` value as an environment identifier.
-        values: $.data[*].id
-        labels: $.data[*].name
-      description: The env ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/envId_Path
     XOrigin_edgeConfigId_Path:
       name: edgeConfigId
       required: true
@@ -3244,15 +3239,4 @@ components:
         labels: $.name
       description: The edgeConfig ID to identify the target resource.
     XOrigin_policyId_Path:
-      name: policyId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:anypoint-security-policies
-        operation: getByOrganizationidPolicies
-        description: GET `/{organizationId}/policies` in this API; use `[].id` values as `policyId`.
-        values: $[*].id
-        labels: $[*].name
-      description: The policy ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/policyId_Path

@@ -52,12 +52,37 @@ externalDocs:
   x-amf-title: Support
 x-amf-userDocumentation:
 - url: http://
-  content: "1) Get an access token for the Analytics Export Event API. The response will include an access_token field with your token. This should be used in every request to the Analytics Events Export API. The token should be sent on the Authorization header.\n\n```\ncurl -s \n  https://anypoint.mulesoft.com/accounts/login -d \"username=<YOUR-USERNAME>&password=<YOUR-PASSWORD>\"\n```\n\nResponse : \n```\n{\n  \"access_token\": \"54545454-5454-5454-5454-545454545454\",\n  \"token_type\": \"Bearer\",\n  \"redirectUrl\": \"/home\"\n}\n```\n\n2) Gets the events from the past 2 days that have occured on the API with ID 94713, and version ID 98174, in JSON format. It also queries for fields Status Code, User Agent Name, Violated Policy Name, Verb, Response Size, Response Time, Request Size, OS Family, Country, City, Application Name, Application Resource Path and Request Outcome.\n\n```\ncurl -X GET\n  https://anypoint.mulesoft.com/analytics/1.0/d5acce41-ca54-4834-9a71-13882807556c/environments/766a0242-1d73-4e74-b113-3e7cb60890f3/events?format=json&apiIds=94713&apiVersionIds=98174&duration=2d&fields=Status%20Code.User%20Agent%20Name.Violated%20Policy%20Name.Verb.Response%20Size.Response%20Time.Request%20Size.OS%20Family.Country.City.Application%20Name.Application.Resource%20Path.Request%20Outcome\n  -H 'Content-Type: application/json'\n  -H 'Authorization:Bearer 54545454-5454-5454-5454-545454545454'\n```\nBe aware that the fields list must be URL encoded and separated by periods. The possible values are\n  - Timestamp\n  - API ID\n  - API Version ID\n  - Application\n  - Message ID\n  - Request Size\n  - Response Size\n  - Response Time\n  - Browser\n  - User Agent Name\n  - User Agent Version\n  - OS Family\n  - OS Version\n  - Hardware Platform\n  - Timezone\n  - OS Minor Version\n  - OS Major Version\n  - City\n  - Client IP\n  - Continent\n  - Postal Code\n  - Verb\n  - Country\n  - Resource Path\n  - Status Code\n  - Request Outcome\n  - Violated Policy Name\n  - API Name\n  - API Version Name\n  - Application Name\n\nResponse :\n\n```\n[\n  {\n    \"API ID\": \"94713\",\n    \"API Name\": \"Payment API\",\n    \"API Version ID\": \"98174\",\n    \"API Version Name\": \"v1\",\n    \"Application\": null,\n    \"Application Name\": \"\",\n    \"Timestamp\": \"2018-01-03T17:46:55.972Z\",\n    \"Request Size\": null,\n    \"Response Size\": null,\n    \"Verb\": \"GET\",\n    \"Resource Path\": \"/status\",\n    \"Status Code\": 429,\n    \"User Agent Name\": \"curl\",\n    \"OS Family\": \"Other\",\n    \"City\": \"City Bell\",\n    \"Country\": \"Argentina\",\n    \"Violated Policy Name\": \"Rate limiting\",\n    \"Request Outcome\": \"BLOCKED\",\n    \"Response Time\": 0\n  },\n\n  {\n    \"API ID\": \"94713\",\n    \"API Name\": \"Payment API\",\n    \"API Version ID\": \"98174\",\n    \"API Version Name\": \"v1\",\n    \"Application\": null,\n    \"Application Name\": \"\",\n    \"Timestamp\": \"2018-01-02T23:08:42.387Z\",\n    \"Request Size\": null,\n    \"Response Size\": null,\n    \"Verb\": \"GET\",\n    \"Resource Path\": \"/status\",\n    \"Status Code\": 200,\n    \"User Agent Name\": \"Mozilla\",\n    \"OS Family\": \"Mac OS X\",\n    \"City\": \"Ashburn\",\n    \"Country\": \"United States\",\n    \"Violated Policy Name\": null,\n    \"Request Outcome\": \"PROCESSED\",\n    \"Response Time\": 73\n  }\n]\n```\n\n3) Gets the events from the past 30 days that have occured on the API with ID 94713, and version ID 98174, in CSV format. It also queries for fields Status Code, User Agent Name, Violated Policy Name, Verb, Response Size, Response Time, Request Size, OS Family, Country, City, Application Name, Application Resource Path and Request Outcome.\n\n```\ncurl -X GET\n  https://anypoint.mulesoft.com/analytics/1.0/d5acce41-ca54-4834-9a71-13882807556c/environments/766a0242-1d73-4e74-b113-3e7cb60890f3/events?format=csv&apiIds=94713&apiVersionIds=98174&duration=30d&fields=Status%20Code.User%20Agent%20Name.Violated%20Policy%20Name.Verb.Response%20Size.Response%20Time.Request%20Size.OS%20Family.Country.City.Application%20Name.Application.Resource%20Path.Request%20Outcome\n\
-    \  -H 'Content-Type: application/json'\n  -H 'Authorization:Bearer 54545454-5454-5454-5454-545454545454'\n```\n\nResponse :\n\n```\n\"Status Code\",\"User Agent Name\",\"Violated Policy Name\",Verb,\"Response Size\",\"Response Time\",\"Request Size\",\"OS Family\",Country,City,\"Application Name\",Application,\"Resource Path\",\"Request Outcome\",Timestamp,\"API ID\",\"API Version ID\",\"API Name\",\"API Version Name\"\n404,Mozilla,,GET,18,2002,,\"Mac OS X\",\"United States\",,,,/favicon.ico,PROCESSED,2018-01-02T20:18:13.048Z,94713,98174,\"Payment API\",v1\n404,Mozilla,,GET,18,89,,\"Mac OS X\",\"United States\",,,,/,PROCESSED,2018-01-02T20:18:26.575Z,94713,98174,\"Payment API\",v1\n400,Mozilla,,GET,,2382,,\"Mac OS X\",\"United States\",,,,/status,PROCESSED,2018-01-02T20:18:34.827Z,94713,98174,\"Payment API\",v1\n400,Mozilla,,GET,,315,,\"Mac OS X\",\"United States\",,,,/status,PROCESSED,2018-01-02T20:19:29.765Z,94713,98174,\"Payment API\",v1\n404,Mozilla,,GET,18,77,,\"Mac OS X\",\"United States\",,,,/,PROCESSED,2018-01-02T20:05:00.337Z,94713,98174,\"Payment API\",v1\n200,Mozilla,,GET,,73,,\"Mac OS X\",\"United States\",Ashburn,,,/status,PROCESSED,2018-01-02T23:08:42.387Z,94713,98174,\"Payment API\",v1\n404,Mozilla,,GET,18,81,,\"Mac OS X\",\"United States\",,,,/,PROCESSED,2018-01-02T20:05:42.114Z,94713,98174,\"Payment API\",v1\n500,Mozilla,,GET,,808,,\"Mac OS X\",\"United States\",,,,/status,PROCESSED,2018-01-02T20:05:46.429Z,94713,98174,\"Payment API\",v1\n500,Mozilla,,GET,,7,,Windows,Canada,Markham,,,/,PROCESSED,2018-01-03T05:57:38.662Z,94713,98174,\"Payment API\",v1\n```"
+  content: "1) Get an access token for the Analytics Export Event API. The response will include an access_token field with your token. This should be used in every request to the Analytics Events Export
+    API. The token should be sent on the Authorization header.\n\n```\ncurl -s \n  https://anypoint.mulesoft.com/accounts/login -d \"username=<YOUR-USERNAME>&password=<YOUR-PASSWORD>\"\n```\n\nResponse
+    : \n```\n{\n  \"access_token\": \"54545454-5454-5454-5454-545454545454\",\n  \"token_type\": \"Bearer\",\n  \"redirectUrl\": \"/home\"\n}\n```\n\n2) Gets the events from the past 2 days that have occured
+    on the API with ID 94713, and version ID 98174, in JSON format. It also queries for fields Status Code, User Agent Name, Violated Policy Name, Verb, Response Size, Response Time, Request Size, OS Family,
+    Country, City, Application Name, Application Resource Path and Request Outcome.\n\n```\ncurl -X GET\n  https://anypoint.mulesoft.com/analytics/1.0/d5acce41-ca54-4834-9a71-13882807556c/environments/766a0242-1d73-4e74-b113-3e7cb60890f3/events?format=json&apiIds=94713&apiVersionIds=98174&duration=2d&fields=Status%20Code.User%20Agent%20Name.Violated%20Policy%20Name.Verb.Response%20Size.Response%20Time.Request%20Size.OS%20Family.Country.City.Application%20Name.Application.Resource%20Path.Request%20Outcome\n\
+    \  -H 'Content-Type: application/json'\n  -H 'Authorization:Bearer 54545454-5454-5454-5454-545454545454'\n```\nBe aware that the fields list must be URL encoded and separated by periods. The possible
+    values are\n  - Timestamp\n  - API ID\n  - API Version ID\n  - Application\n  - Message ID\n  - Request Size\n  - Response Size\n  - Response Time\n  - Browser\n  - User Agent Name\n  - User Agent Version\n\
+    \  - OS Family\n  - OS Version\n  - Hardware Platform\n  - Timezone\n  - OS Minor Version\n  - OS Major Version\n  - City\n  - Client IP\n  - Continent\n  - Postal Code\n  - Verb\n  - Country\n  - Resource
+    Path\n  - Status Code\n  - Request Outcome\n  - Violated Policy Name\n  - API Name\n  - API Version Name\n  - Application Name\n\nResponse :\n\n```\n[\n  {\n    \"API ID\": \"94713\",\n    \"API Name\"\
+    : \"Payment API\",\n    \"API Version ID\": \"98174\",\n    \"API Version Name\": \"v1\",\n    \"Application\": null,\n    \"Application Name\": \"\",\n    \"Timestamp\": \"2018-01-03T17:46:55.972Z\"\
+    ,\n    \"Request Size\": null,\n    \"Response Size\": null,\n    \"Verb\": \"GET\",\n    \"Resource Path\": \"/status\",\n    \"Status Code\": 429,\n    \"User Agent Name\": \"curl\",\n    \"OS Family\"\
+    : \"Other\",\n    \"City\": \"City Bell\",\n    \"Country\": \"Argentina\",\n    \"Violated Policy Name\": \"Rate limiting\",\n    \"Request Outcome\": \"BLOCKED\",\n    \"Response Time\": 0\n  },\n\
+    \n  {\n    \"API ID\": \"94713\",\n    \"API Name\": \"Payment API\",\n    \"API Version ID\": \"98174\",\n    \"API Version Name\": \"v1\",\n    \"Application\": null,\n    \"Application Name\": \"\
+    \",\n    \"Timestamp\": \"2018-01-02T23:08:42.387Z\",\n    \"Request Size\": null,\n    \"Response Size\": null,\n    \"Verb\": \"GET\",\n    \"Resource Path\": \"/status\",\n    \"Status Code\": 200,\n\
+    \    \"User Agent Name\": \"Mozilla\",\n    \"OS Family\": \"Mac OS X\",\n    \"City\": \"Ashburn\",\n    \"Country\": \"United States\",\n    \"Violated Policy Name\": null,\n    \"Request Outcome\"\
+    : \"PROCESSED\",\n    \"Response Time\": 73\n  }\n]\n```\n\n3) Gets the events from the past 30 days that have occured on the API with ID 94713, and version ID 98174, in CSV format. It also queries
+    for fields Status Code, User Agent Name, Violated Policy Name, Verb, Response Size, Response Time, Request Size, OS Family, Country, City, Application Name, Application Resource Path and Request Outcome.\n\
+    \n```\ncurl -X GET\n  https://anypoint.mulesoft.com/analytics/1.0/d5acce41-ca54-4834-9a71-13882807556c/environments/766a0242-1d73-4e74-b113-3e7cb60890f3/events?format=csv&apiIds=94713&apiVersionIds=98174&duration=30d&fields=Status%20Code.User%20Agent%20Name.Violated%20Policy%20Name.Verb.Response%20Size.Response%20Time.Request%20Size.OS%20Family.Country.City.Application%20Name.Application.Resource%20Path.Request%20Outcome\n\
+    \  -H 'Content-Type: application/json'\n  -H 'Authorization:Bearer 54545454-5454-5454-5454-545454545454'\n```\n\nResponse :\n\n```\n\"Status Code\",\"User Agent Name\",\"Violated Policy Name\",Verb,\"\
+    Response Size\",\"Response Time\",\"Request Size\",\"OS Family\",Country,City,\"Application Name\",Application,\"Resource Path\",\"Request Outcome\",Timestamp,\"API ID\",\"API Version ID\",\"API Name\"\
+    ,\"API Version Name\"\n404,Mozilla,,GET,18,2002,,\"Mac OS X\",\"United States\",,,,/favicon.ico,PROCESSED,2018-01-02T20:18:13.048Z,94713,98174,\"Payment API\",v1\n404,Mozilla,,GET,18,89,,\"Mac OS X\"\
+    ,\"United States\",,,,/,PROCESSED,2018-01-02T20:18:26.575Z,94713,98174,\"Payment API\",v1\n400,Mozilla,,GET,,2382,,\"Mac OS X\",\"United States\",,,,/status,PROCESSED,2018-01-02T20:18:34.827Z,94713,98174,\"\
+    Payment API\",v1\n400,Mozilla,,GET,,315,,\"Mac OS X\",\"United States\",,,,/status,PROCESSED,2018-01-02T20:19:29.765Z,94713,98174,\"Payment API\",v1\n404,Mozilla,,GET,18,77,,\"Mac OS X\",\"United States\"\
+    ,,,,/,PROCESSED,2018-01-02T20:05:00.337Z,94713,98174,\"Payment API\",v1\n200,Mozilla,,GET,,73,,\"Mac OS X\",\"United States\",Ashburn,,,/status,PROCESSED,2018-01-02T23:08:42.387Z,94713,98174,\"Payment
+    API\",v1\n404,Mozilla,,GET,18,81,,\"Mac OS X\",\"United States\",,,,/,PROCESSED,2018-01-02T20:05:42.114Z,94713,98174,\"Payment API\",v1\n500,Mozilla,,GET,,808,,\"Mac OS X\",\"United States\",,,,/status,PROCESSED,2018-01-02T20:05:46.429Z,94713,98174,\"\
+    Payment API\",v1\n500,Mozilla,,GET,,7,,Windows,Canada,Markham,,,/,PROCESSED,2018-01-03T05:57:38.662Z,94713,98174,\"Payment API\",v1\n```"
   title: Usage Examples
 paths:
   /events:
-    description: Use this endpoint to gain access to the API events that have occurred in all of your environments. Important`:` This endpoint is supported only on Pre-Crowd deployed APIs. It must be considered legacy endpoint and it's available only for backward compatibility purposes.
+    description: Use this endpoint to gain access to the API events that have occurred in all of your environments. Important`:` This endpoint is supported only on Pre-Crowd deployed APIs. It must be 
+      considered legacy endpoint and it's available only for backward compatibility purposes.
     get:
       description: Queries for API events that can be exported in either JSON or CSV format
       parameters:
@@ -76,7 +101,9 @@ paths:
         schema:
           type: string
       - name: fields
-        description: "The event fields to include in the export. Required for CSV export. For JSON export it will include all fields if omitted.\nFor a full list of fields, perform a GET request on the /events/fields endpoint, described on this API. \nA list that can be either comma- or period-delimited.\nTimestamp, API Name, API ID, API Version, API Version ID are always included as part of the response."
+        description: "The event fields to include in the export. Required for CSV export. For JSON export it will include all fields if omitted.\nFor a full list of fields, perform a GET request on the
+          /events/fields endpoint, described on this API. \nA list that can be either comma- or period-delimited.\nTimestamp, API Name, API ID, API Version, API Version ID are always included as part of
+          the response."
         required: false
         in: query
         schema:
@@ -138,7 +165,8 @@ paths:
           x-amf-responsePayloads:
           - mediaType: text/csv
             schema:
-              example: '"Status Code","User Agent Name","Violated Policy Name",Verb,"Response Size","Response Time","Request Size","OS Family",Country,City,"Application Name",Application,"Resource Path","Request Outcome",Timestamp,"API ID","API Version ID","API Name","API Version Name"
+              example: '"Status Code","User Agent Name","Violated Policy Name",Verb,"Response Size","Response Time","Request Size","OS Family",Country,City,"Application Name",Application,"Resource Path","Request
+                Outcome",Timestamp,"API ID","API Version ID","API Name","API Version Name"
 
                 404,Mozilla,,GET,18,2002,,"Mac OS X","United States",,,,/favicon.ico,PROCESSED,2018-01-02T20:18:13.048Z,94713,98174,"Payment API",v1
 
@@ -247,7 +275,9 @@ paths:
         schema:
           type: string
       - name: fields
-        description: "The event fields to include in the export. Required for CSV export. For JSON export it will include all fields if omitted.\nFor a full list of fields, perform a GET request on the /events/fields endpoint, described on this API. \nA list that can be either comma- or period-delimited.\nTimestamp, API Name, API ID, API Version, API Version ID are always included as part of the response."
+        description: "The event fields to include in the export. Required for CSV export. For JSON export it will include all fields if omitted.\nFor a full list of fields, perform a GET request on the
+          /events/fields endpoint, described on this API. \nA list that can be either comma- or period-delimited.\nTimestamp, API Name, API ID, API Version, API Version ID are always included as part of
+          the response."
         required: false
         in: query
         schema:
@@ -273,7 +303,8 @@ paths:
           x-amf-responsePayloads:
           - mediaType: text/csv
             schema:
-              example: '"Status Code","User Agent Name","Violated Policy Name",Verb,"Response Size","Response Time","Request Size","OS Family",Country,City,"Application Name",Application,"Resource Path","Request Outcome",Timestamp,"API ID","API Version ID","API Name","API Version Name"
+              example: '"Status Code","User Agent Name","Violated Policy Name",Verb,"Response Size","Response Time","Request Size","OS Family",Country,City,"Application Name",Application,"Resource Path","Request
+                Outcome",Timestamp,"API ID","API Version ID","API Name","API Version Name"
 
                 404,Mozilla,,GET,18,2002,,"Mac OS X","United States",,,,/favicon.ico,PROCESSED,2018-01-02T20:18:13.048Z,94713,98174,"Payment API",v1
 
@@ -322,32 +353,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Bearer token authentication. Login endpoint: https://anypoint.mulesoft.com/accounts/api/login
-
-        '
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: 'OAuth2 client credentials. Token endpoint: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-
-        '
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   parameters:
     XOrigin_envId_Path:
-      name: envId
-      description: The ID of the environment in which the query will be executed
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listEnvironments
-        description: GET `/organizations/{organizationId}/environments`; use each `data[].id` value as an environment identifier.
-        values: $.data[*].id
-        labels: $.data[*].name
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/envId_Path

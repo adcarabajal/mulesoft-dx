@@ -20,10 +20,13 @@ security:
 - clientAuth: []
 paths:
   /servers:
-    description: 'A server refers to an instance of Mule Runtime or to the Gateway runtime on older versions. A server is registered in Runtime Manager and can itself be a target, or can be a part of a target that forms part of a server group or cluster.
+    description: 'A server refers to an instance of Mule Runtime or to the Gateway runtime on older versions. A server is registered in Runtime Manager and can itself be a target, or can be a part of a
+      target that forms part of a server group or cluster.
 
 
-      Servers managed by Runtime Manager must first be registered into a platform. Each server is identified with a signed certificate, which is unique across all registered servers. Runtime Manager acts as a certificate authority and accepts connections from servers that have a signed certificate. Registered runtimes have more restrictive access in that they can only accept connections from the certificate authority in Runtime Manager.
+      Servers managed by Runtime Manager must first be registered into a platform. Each server is identified with a signed certificate, which is unique across all registered servers. Runtime Manager acts
+      as a certificate authority and accepts connections from servers that have a signed certificate. Registered runtimes have more restrictive access in that they can only accept connections from the certificate
+      authority in Runtime Manager.
 
       '
     post:
@@ -361,7 +364,9 @@ paths:
               example: *id009
       operationId: patchServersByServerid
     delete:
-      description: "remove the server from Runtime Manager: \n\nDeletes related server artifacts from all deployments. Does not attempt to undeploy the server artifacts from the server. Records are simply deleted.\n\nIf the server is connected, the connection is terminated and cannot be accepted in future.\n\nTo cleanly delete a server, first:\n\nRemove the server from its group/cluster.\n\nDelete all deployments whose deployment target is this server.\n\nWait until all applications are undeployed.\n"
+      description: "remove the server from Runtime Manager: \n\nDeletes related server artifacts from all deployments. Does not attempt to undeploy the server artifacts from the server. Records are simply
+        deleted.\n\nIf the server is connected, the connection is terminated and cannot be accepted in future.\n\nTo cleanly delete a server, first:\n\nRemove the server from its group/cluster.\n\nDelete
+        all deployments whose deployment target is this server.\n\nWait until all applications are undeployed.\n"
       parameters:
       - name: isForce
         description: 'variable enable/disables the function to force delete a server.
@@ -479,7 +484,8 @@ paths:
       operationId: patchServersRegistrationtoken
       description: Updates registrationToken.
   /serverGroups:
-    description: A server group is group of servers that are considered a unique target. The servers in a server group do not cooperate as a cluster topology. However, they are treated as a unit by Runtime Manager's deployment, and configuration tasks are performed along all the servers in a server group.
+    description: A server group is group of servers that are considered a unique target. The servers in a server group do not cooperate as a cluster topology. However, they are treated as a unit by 
+      Runtime Manager's deployment, and configuration tasks are performed along all the servers in a server group.
     get:
       description: Get a list of all registered server groups.
       parameters:
@@ -926,7 +932,8 @@ paths:
           description: Operation completed successfully with no content returned.
       operationId: deleteServergroupsByServergroupidServersByServerid
   /clusters:
-    description: A server cluster consists of a set of tightly connected servers that work together and can be viewed as a single system. Unlike server groups, server clusters share information and status between nodes.
+    description: A server cluster consists of a set of tightly connected servers that work together and can be viewed as a single system. Unlike server groups, server clusters share information and 
+      status between nodes.
     post:
       description: Create a cluster from a set of registered servers. The servers cannot already belong to another cluster or server group.
       parameters:
@@ -1213,7 +1220,8 @@ paths:
   /clusters/{clusterId}/servers:
     description: Perform actions on a particular server in a cluster.
     post:
-      description: Add a server to the cluster. Any artifacts that were already deployed to this cluster also deploy to the new server. Returns the updated server. Only include the server's IP address when adding servers to a unicast cluster.
+      description: Add a server to the cluster. Any artifacts that were already deployed to this cluster also deploy to the new server. Returns the updated server. Only include the server's IP address
+        when adding servers to a unicast cluster.
       parameters:
       - name: clusterId
         required: true
@@ -1471,7 +1479,8 @@ paths:
       operationId: patchTargetsByTargetidComponentsByComponentid
       description: Updates a components.
   /applications:
-    description: An application refers to a Mule application or proxy that is running in a Mule Runtime. It's important to differentiate the application from its corresponding binary. The same binary can be deployed twice and represents two different applications.
+    description: An application refers to a Mule application or proxy that is running in a Mule Runtime. It's important to differentiate the application from its corresponding binary. The same binary 
+      can be deployed twice and represents two different applications.
     post:
       description: Deploy an artifact to a deployment target. Initiates deployment and creates server artifacts.
       parameters:
@@ -1888,7 +1897,9 @@ paths:
           description: Undeployment is in progress.
       operationId: deleteApplicationsByApplicationid
     patch:
-      description: Redeploys the app with a new artifact. If the file is not specified in the request then Runtime Manager redeploys the same file that was already in the server. If the content type is application/json then it changes the status of the deployed application from started to stopped or from stopped to started. No other application status changes are allowed. If the file is not specified and the content-type of the request body is multipart/form-data the application is RESTARTED.
+      description: Redeploys the app with a new artifact. If the file is not specified in the request then Runtime Manager redeploys the same file that was already in the server. If the content type 
+        is application/json then it changes the status of the deployed application from started to stopped or from stopped to started. No other application status changes are allowed. If the file is 
+        not specified and the content-type of the request body is multipart/form-data the application is RESTARTED.
       parameters:
       - $ref: '#/components/parameters/XOrigin_applicationId_Path'
       - $ref: '#/components/parameters/XOrigin_X_ANYPNT_ENV_ID_Header'
@@ -2665,7 +2676,8 @@ paths:
       operationId: createApplicationsByApplicationidSchedulers
       description: Creates a schedulers.
   /alerts:
-    description: Alerts are the composition of a trigger and an event which is triggered based on conditions that are evaluated for Runtime Manager resources. This endpoint allows you to administrate the alerts that can be triggered by Runtime Manager.
+    description: Alerts are the composition of a trigger and an event which is triggered based on conditions that are evaluated for Runtime Manager resources. This endpoint allows you to administrate 
+      the alerts that can be triggered by Runtime Manager.
     get:
       description: Get a list of alerts.
       parameters:
@@ -3037,21 +3049,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Bearer token authentication. Login endpoint: https://anypoint.mulesoft.com/accounts/api/login
-
-        '
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: 'OAuth2 client credentials. Token endpoint: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-
-        '
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   requestBodies:
     Generated:
       content:
@@ -3061,18 +3061,7 @@ components:
       description: Request payload for Generated operations.
   parameters:
     XOrigin_X_ANYPNT_ENV_ID_Header:
-      name: X-ANYPNT-ENV-ID
-      description: Identifier of the environment where the api user is currently working.
-      required: true
-      in: header
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listEnvironments
-        description: GET `/organizations/{organizationId}/environments`; use each `data[].id` value as an environment identifier.
-        values: $.data[*].id
-        labels: $.data[*].name
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/X-ANYPNT-ENV-ID_Header
     XOrigin_X_ANYPNT_ORG_ID_Header:
       name: X-ANYPNT-ORG-ID
       description: Identifier of the sub org where the api user is currently working.
@@ -3098,11 +3087,11 @@ components:
         name: subOrganizations
         description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
         values:
-          - $.id
-          - $.subOrganizationIds[*]
+        - $.id
+        - $.subOrganizationIds[*]
         labels:
-          - $.name
-          - $.subOrganizationIds[*]  
+        - $.name
+        - $.subOrganizationIds[*]
     XOrigin_serverId_Path:
       name: serverId
       required: true
@@ -3130,40 +3119,8 @@ components:
         labels: $.name
       description: The serverGroup ID to identify the target resource.
     XOrigin_componentId_Path:
-      name: componentId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:arm-rest-services
-        operation: getTargetsByTargetidComponents
-        description: GET `/targets/{targetId}/components` in this API; use `id` values as `componentId`.
-        values: $.id
-      description: The component ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/componentId_Path
     XOrigin_applicationId_Path:
-      name: applicationId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:arm-rest-services
-        operation: getApplications
-        description: GET `/applications` in this API; use `id` values as `applicationId`.
-        values: $.id
-        labels: $.name
-      description: The application ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/applicationId_Path
     XOrigin_flowId_Path:
-      name: flowId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:arm-rest-services
-        operation: getApplicationsByApplicationidFlows
-        description: GET `/applications/{applicationId}/flows` in this API; use `id` values as `flowId`.
-        values: $.id
-        labels: $.name
-      description: The flow ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/flowId_Path

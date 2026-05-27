@@ -27,7 +27,8 @@ servers:
       description: API version identifier.
 externalDocs:
   url: http://
-  description: "Here's the flow for managing the lifecycle of secrets :\n 1. Create a secret group.\n 2. Acquire lock on the secret group.\n 3. Create and/or update secrets as you would like.\n 4. Once done with creations/updates, release the lock."
+  description: "Here's the flow for managing the lifecycle of secrets :\n 1. Create a secret group.\n 2. Acquire lock on the secret group.\n 3. Create and/or update secrets as you would like.\n 4. Once
+    done with creations/updates, release the lock."
   x-amf-title: Flow to create/update secrets
 x-amf-userDocumentation:
 - url: http://
@@ -398,7 +399,11 @@ paths:
                       - message
                       properties:
                         code:
-                          description: "Custom error code, following are the category wise error codes:\n\nPath parameter validation error codes:\n- PT-1001 : Invalid path parameter value\n\nHeader parameter validation error codes:\n- HD-1001 : Invalid header parameter value\n\nQuery parameter validation error codes:\n- QR-1001 : Invalid query parameter value\n\nRequest body validation error codes:\n- RB-1001 : JSON parsing failure\n- RB-1002 : Name already in use \n- RB-1003 : Invalid field value\n- RB-1004 : Missing field OR field with empty value\n- RB-1005 : Referenced secret not found\n- RB-1006 : Conditional validation failure\n- RB-1007 : Certificate expired\n- RB-1008 : Limit exceeded\n\nOther validation error codes:\n- OE-1001 : Secret expired\n- OE-1003 : Shared secret of type VDPContext present\n"
+                          description: "Custom error code, following are the category wise error codes:\n\nPath parameter validation error codes:\n- PT-1001 : Invalid path parameter value\n\nHeader parameter
+                            validation error codes:\n- HD-1001 : Invalid header parameter value\n\nQuery parameter validation error codes:\n- QR-1001 : Invalid query parameter value\n\nRequest body validation
+                            error codes:\n- RB-1001 : JSON parsing failure\n- RB-1002 : Name already in use \n- RB-1003 : Invalid field value\n- RB-1004 : Missing field OR field with empty value\n- RB-1005
+                            : Referenced secret not found\n- RB-1006 : Conditional validation failure\n- RB-1007 : Certificate expired\n- RB-1008 : Limit exceeded\n\nOther validation error codes:\n- OE-1001
+                            : Secret expired\n- OE-1003 : Shared secret of type VDPContext present\n"
                           enum:
                           - PT-1001
                           - HD-1001
@@ -701,9 +706,11 @@ paths:
                 $ref: '#/components/schemas/grantsResponse'
               example: &id004
               - path: certificates/bc8746e1-23a1-41ad-87f9-fb8b08dc2385
-                accessGrant: QWNjZXNzSWQ9MjM0MzI0aGtmdHJraHV5dWl5JkV4cGlyZXM9MjUzODE1OTUwMCZTaWduYXR1cmU9Qmd5dHk1NjVnaGhqZ2RnZFJUWVJ0eXJibm1ibm1ibW5iWVR1eXR1eXQ1Njc1NiUyQm1XQlBxd2dVWWNPU3N6Q1BsZ1dSRWVGN29QR293a2VLazdnYXNoamdzZGhqZjU2NzU2N3NkZmpoa2p5dWl5ODc2c2RmODc2a2poZWpmaFJUdmdmZ2hUWVJnZ2ZvRGVBR25mekNkNGZUc1djTGJhbDlzRnBxWHNRSThJUWkxNDkzbXclM0Q=
+                accessGrant: 
+                  QWNjZXNzSWQ9MjM0MzI0aGtmdHJraHV5dWl5JkV4cGlyZXM9MjUzODE1OTUwMCZTaWduYXR1cmU9Qmd5dHk1NjVnaGhqZ2RnZFJUWVJ0eXJibm1ibm1ibW5iWVR1eXR1eXQ1Njc1NiUyQm1XQlBxd2dVWWNPU3N6Q1BsZ1dSRWVGN29QR293a2VLazdnYXNoamdzZGhqZjU2NzU2N3NkZmpoa2p5dWl5ODc2c2RmODc2a2poZWpmaFJUdmdmZ2hUWVJnZ2ZvRGVBR25mekNkNGZUc1djTGJhbDlzRnBxWHNRSThJUWkxNDkzbXclM0Q=
               - path: keystores/fc1579cf-a5ba-486f-925c-d537c22eff54
-                accessGrant: QWNjZXNzSWQ9MjM0MzI0aGtmdHJkZnV5dWl5JkV4cGlyZXM9MjUzODE1OTUwMCZTaWduYXR1cmU9Qmd5dHk1NjVnaGVyZ2RnZFJUWVJ0eXJibm1ibm1ibW5iWVR1eXR1eXQ1Njc1NiUyQm1XQlBxd2dVWWNPU3N6Q1BsZ1dSRWVGN29QR293a2VLazdnYXNoamdzZGhqZjU2NzU2N3NkZmpoa2p5dWl5ODc2c2RmODc2a2poZWpmaFJUdmdmZ2hUWVJnZ2ZvRGVBR25mekNkNGZUc1djTGJhbDlzRnBxWHNRSThJUWkxNDkzbXclM0Q=
+                accessGrant: 
+                  QWNjZXNzSWQ9MjM0MzI0aGtmdHJkZnV5dWl5JkV4cGlyZXM9MjUzODE1OTUwMCZTaWduYXR1cmU9Qmd5dHk1NjVnaGVyZ2RnZFJUWVJ0eXJibm1ibm1ibW5iWVR1eXR1eXQ1Njc1NiUyQm1XQlBxd2dVWWNPU3N6Q1BsZ1dSRWVGN29QR293a2VLazdnYXNoamdzZGhqZjU2NzU2N3NkZmpoa2p5dWl5ODc2c2RmODc2a2poZWpmaFJUdmdmZ2hUWVJnZ2ZvRGVBR25mekNkNGZUc1djTGJhbDlzRnBxWHNRSThJUWkxNDkzbXclM0Q=
         '400':
           description: Bad request. The request was malformed or contains invalid parameters.
           x-amf-mediaType: application/json
@@ -1614,7 +1621,8 @@ paths:
                   field: string
       operationId: getByOrganizationidEnvironmentsByEnvironmentidSecretgroupsBySecretgroupidTruststoresBySecretid
   /{organizationId}/environments/{environmentId}/secretGroups/{secretGroupId}/keystores:
-    description: This secret represents combination of a private key, corresponding public certificate, and CAPath till the root CA. The private key is required to be encrypted. Types supported - PEM, JKS, JCEKS, PKCS12
+    description: This secret represents combination of a private key, corresponding public certificate, and CAPath till the root CA. The private key is required to be encrypted. Types supported - PEM,
+      JKS, JCEKS, PKCS12
     get:
       description: Get a list of keystores.
       parameters:
@@ -2623,7 +2631,8 @@ paths:
                 blob-request:
                   name: crm-app
                   type: Blob
-                  content: 4oCo4oCoew0KICAia2V5IjogImZkZmd1eXVpaG5ramdoZGtmamdoamtsamtsaj09IiwNCiAgImNvbmZpZ3VyYXRpb24iOiB7DQogICAgInVybCI6ICJodHRwOi8vZXhhbXBsZS5jb20iDQogIH0sDQogICJpZGVudGlmaWVyIjogIjkzMTVhNTAzLTFkNTctNGQ4Zi04YjgxLTQ5ODBiYWY0OTYyNCINCn0=
+                  content: 
+                    4oCo4oCoew0KICAia2V5IjogImZkZmd1eXVpaG5ramdoZGtmamdoamtsamtsaj09IiwNCiAgImNvbmZpZ3VyYXRpb24iOiB7DQogICAgInVybCI6ICJodHRwOi8vZXhhbXBsZS5jb20iDQogIH0sDQogICJpZGVudGlmaWVyIjogIjkzMTVhNTAzLTFkNTctNGQ4Zi04YjgxLTQ5ODBiYWY0OTYyNCINCn0=
               x-amf-union:
               - $ref: '#/components/schemas/sharedSecretUsernamePassword'
               - $ref: '#/components/schemas/sharedSecretSymmetricKey'
@@ -4274,21 +4283,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Bearer token authentication. Login endpoint: https://anypoint.mulesoft.com/accounts/api/login
-
-        '
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: 'OAuth2 client credentials. Token endpoint: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-
-        '
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   requestBodies:
     Generated:
       content:
@@ -4353,7 +4350,8 @@ components:
           message: Conflict occured while performing operation.
           errors:
           - code: OE-1003
-            message: The secret group contains at least one shared secret of type VDPContext. Deleting this secret group will cause tokenization service instances, making use of these shared secrets, to stop working.
+            message: The secret group contains at least one shared secret of type VDPContext. Deleting this secret group will cause tokenization service instances, making use of these shared secrets, 
+              to stop working.
         server-at-capacity:
           message: 'Service Unavailable: Back-end server is at capacity'
         secret-group-not-in-cloning:
@@ -4383,7 +4381,11 @@ components:
             - message
             properties:
               code:
-                description: "Custom error code, following are the category wise error codes:\n\nPath parameter validation error codes:\n- PT-1001 : Invalid path parameter value\n\nHeader parameter validation error codes:\n- HD-1001 : Invalid header parameter value\n\nQuery parameter validation error codes:\n- QR-1001 : Invalid query parameter value\n\nRequest body validation error codes:\n- RB-1001 : JSON parsing failure\n- RB-1002 : Name already in use \n- RB-1003 : Invalid field value\n- RB-1004 : Missing field OR field with empty value\n- RB-1005 : Referenced secret not found\n- RB-1006 : Conditional validation failure\n- RB-1007 : Certificate expired\n- RB-1008 : Limit exceeded\n\nOther validation error codes:\n- OE-1001 : Secret expired\n- OE-1003 : Shared secret of type VDPContext present\n"
+                description: "Custom error code, following are the category wise error codes:\n\nPath parameter validation error codes:\n- PT-1001 : Invalid path parameter value\n\nHeader parameter validation
+                  error codes:\n- HD-1001 : Invalid header parameter value\n\nQuery parameter validation error codes:\n- QR-1001 : Invalid query parameter value\n\nRequest body validation error codes:\n\
+                  - RB-1001 : JSON parsing failure\n- RB-1002 : Name already in use \n- RB-1003 : Invalid field value\n- RB-1004 : Missing field OR field with empty value\n- RB-1005 : Referenced secret
+                  not found\n- RB-1006 : Conditional validation failure\n- RB-1007 : Certificate expired\n- RB-1008 : Limit exceeded\n\nOther validation error codes:\n- OE-1001 : Secret expired\n- OE-1003
+                  : Shared secret of type VDPContext present\n"
                 enum:
                 - PT-1001
                 - HD-1001
@@ -4486,7 +4488,11 @@ components:
             - message
             properties:
               code:
-                description: "Custom error code, following are the category wise error codes:\n\nPath parameter validation error codes:\n- PT-1001 : Invalid path parameter value\n\nHeader parameter validation error codes:\n- HD-1001 : Invalid header parameter value\n\nQuery parameter validation error codes:\n- QR-1001 : Invalid query parameter value\n\nRequest body validation error codes:\n- RB-1001 : JSON parsing failure\n- RB-1002 : Name already in use \n- RB-1003 : Invalid field value\n- RB-1004 : Missing field OR field with empty value\n- RB-1005 : Referenced secret not found\n- RB-1006 : Conditional validation failure\n- RB-1007 : Certificate expired\n- RB-1008 : Limit exceeded\n\nOther validation error codes:\n- OE-1001 : Secret expired\n- OE-1003 : Shared secret of type VDPContext present\n"
+                description: "Custom error code, following are the category wise error codes:\n\nPath parameter validation error codes:\n- PT-1001 : Invalid path parameter value\n\nHeader parameter validation
+                  error codes:\n- HD-1001 : Invalid header parameter value\n\nQuery parameter validation error codes:\n- QR-1001 : Invalid query parameter value\n\nRequest body validation error codes:\n\
+                  - RB-1001 : JSON parsing failure\n- RB-1002 : Name already in use \n- RB-1003 : Invalid field value\n- RB-1004 : Missing field OR field with empty value\n- RB-1005 : Referenced secret
+                  not found\n- RB-1006 : Conditional validation failure\n- RB-1007 : Certificate expired\n- RB-1008 : Limit exceeded\n\nOther validation error codes:\n- OE-1001 : Secret expired\n- OE-1003
+                  : Shared secret of type VDPContext present\n"
                 enum:
                 - PT-1001
                 - HD-1001
@@ -4663,7 +4669,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of this certificate. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of this certificate. Once the secret expires, a grant can not be requested for 
+            it.
           type: string
           format: date
         certStore:
@@ -4910,7 +4917,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates from this truststore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates 
+            from this truststore. Once the secret expires, a grant can not be requested for it.
           type: string
           format: date
         name:
@@ -4941,7 +4949,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates from this truststore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates 
+            from this truststore. Once the secret expires, a grant can not be requested for it.
           type: string
           format: date
         name:
@@ -4978,7 +4987,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates from this truststore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates 
+            from this truststore. Once the secret expires, a grant can not be requested for it.
           type: string
           format: date
         name:
@@ -5015,7 +5025,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates from this truststore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the certificate which is earliest when compared with all the certificates 
+            from this truststore. Once the secret expires, a grant can not be requested for it.
           type: string
           format: date
         name:
@@ -5112,7 +5123,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant 
+            can not be requested for it.
           type: string
           format: date
         key:
@@ -5158,7 +5170,8 @@ components:
       - alias
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant 
+            can not be requested for it.
           type: string
           format: date
         name:
@@ -5206,7 +5219,8 @@ components:
       - alias
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant 
+            can not be requested for it.
           type: string
           format: date
         name:
@@ -5254,7 +5268,8 @@ components:
       - alias
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to notAfter date of the public certificate from this keystore. Once the secret expires, a grant 
+            can not be requested for it.
           type: string
           format: date
         name:
@@ -5382,7 +5397,8 @@ components:
       - certificatePinset
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         name:
@@ -5607,7 +5623,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         password:
@@ -5639,7 +5656,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         key:
@@ -5670,7 +5688,8 @@ components:
       - type
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         accessKeyId:
@@ -5704,7 +5723,8 @@ components:
       - content
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         name:
@@ -5734,7 +5754,8 @@ components:
       - content
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         name:
@@ -5902,7 +5923,8 @@ components:
       - acceptableTlsVersions
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         acceptableCipherSuites:
@@ -5910,7 +5932,8 @@ components:
         name:
           $ref: '#/components/schemas/Name'
         keystore:
-          description: Refers to a secret of type keystore. In most cases, ECDSA will double performance vs. a 2K RSA key. Supported curves are secp521r1 (P-521), secp384r1 (P-384), and secp256r1 aka prime256v1 (P-256).
+          description: Refers to a secret of type keystore. In most cases, ECDSA will double performance vs. a 2K RSA key. Supported curves are secp521r1 (P-521), secp384r1 (P-384), and secp256r1 aka 
+            prime256v1 (P-256).
           type: object
           required:
           - path
@@ -5952,7 +5975,8 @@ components:
       - insecure
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         cipherSuites:
@@ -5960,7 +5984,8 @@ components:
         name:
           $ref: '#/components/schemas/Name'
         keystore:
-          description: Refers to secret of type keystore. Except 'PEM', all other types of keystores are supported. Even though this is marked as optional, at least one of this or truststore has to be set.
+          description: Refers to secret of type keystore. Except 'PEM', all other types of keystores are supported. Even though this is marked as optional, at least one of this or truststore has to be
+            set.
           type: object
           required:
           - path
@@ -5969,7 +5994,8 @@ components:
               description: Relative path of the secret to be referenced.
               type: string
         truststore:
-          description: Refers to secret of type truststore. Except 'PEM', all other types of truststores are supported. Even though this is marked as optional, at least one of this or keystore has to be set.
+          description: Refers to secret of type truststore. Except 'PEM', all other types of truststores are supported. Even though this is marked as optional, at least one of this or keystore has to 
+            be set.
           type: object
           required:
           - path
@@ -6006,7 +6032,8 @@ components:
       - inboundSettings
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         outboundSettings:
@@ -6257,7 +6284,8 @@ components:
       - caCertificate
       properties:
         expirationDate:
-          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a grant can not be requested for it.
+          description: Date on which this secret should expire. If not set, by default, it will be set to one year from the date on which this secret is created/updated. Once the secret expires, a 
+            grant can not be requested for it.
           type: string
           format: date
         completeCrlIssuerUrl:
@@ -6272,7 +6300,8 @@ components:
         name:
           $ref: '#/components/schemas/Name'
         distributorCertificate:
-          description: Refers to a secret of type certificate. This certificate is used to check integrity of retrieved CRL files. If not defined the retrieved CRL file will be used without signature verification step being performed.
+          description: Refers to a secret of type certificate. This certificate is used to check integrity of retrieved CRL files. If not defined the retrieved CRL file will be used without signature 
+            verification step being performed.
           type: object
           required:
           - path
@@ -6301,7 +6330,8 @@ components:
             flag setting configured as described below.
 
 
-            - If the TLS Context secret has the ''Require CRL for all CAs'' flag set to false, then the CA certificate should be selected. If not selected then prior to successful retrieval and processing of the CRL file there exists a window of time when a revoked CA certificate could be considered valid in chain-of-trust processing.
+            - If the TLS Context secret has the ''Require CRL for all CAs'' flag set to false, then the CA certificate should be selected. If not selected then prior to successful retrieval and processing
+            of the CRL file there exists a window of time when a revoked CA certificate could be considered valid in chain-of-trust processing.
 
             - Else if its set to true, then its not necessary to select the CA
 
@@ -6547,7 +6577,9 @@ components:
           items:
             $ref: '#/components/schemas/CertificateDetails'
     AcceptableCipherSuitesSF:
-      description: List of accepted cipher suites by Security Fabric target, at least one should be set to true. If you are are not using the defaults and select individual ciphers, please select ciphers that match the configured keystore to ensure that TLS can setup a connection. For a keystore with an RSA key (the most common type), select ciphers which contain the string RSA (there are some exceptions). If using ECC ciphers, select ciphers which contain the string "ECDSA".  TLS standards and documentation can be consulted for more background information.
+      description: List of accepted cipher suites by Security Fabric target, at least one should be set to true. If you are are not using the defaults and select individual ciphers, please select 
+        ciphers that match the configured keystore to ensure that TLS can setup a connection. For a keystore with an RSA key (the most common type), select ciphers which contain the string RSA (there 
+        are some exceptions). If using ECC ciphers, select ciphers which contain the string "ECDSA".  TLS standards and documentation can be consulted for more background information.
       type: object
       properties:
         aes128GcmSha256:
@@ -6645,7 +6677,11 @@ components:
       - certCheckingStrength
       properties:
         certificatePolicyChecking:
-          description: Controls certificate policy processing as defined in RFC 3280, 5280. A certificate can contain zero or more policies. A policy is represented as an object identifier (OID). In an end entity certificate, this policy information indicate the policy under which the certificate has been issued and the purposes for which the certificate may be used. In a CA certificate, this policy information limits the set of policies for certification paths that include this certificate. Applications with specific policy requirements are expected to have a list of those policies that they will accept and to compare the policy OIDs in the certificate to that list. If this extension is critical, the path validation software MUST be able to interpret this extension (including the optional qualifier), or MUST reject the certificate
+          description: Controls certificate policy processing as defined in RFC 3280, 5280. A certificate can contain zero or more policies. A policy is represented as an object identifier (OID). In 
+            an end entity certificate, this policy information indicate the policy under which the certificate has been issued and the purposes for which the certificate may be used. In a CA 
+            certificate, this policy information limits the set of policies for certification paths that include this certificate. Applications with specific policy requirements are expected to have a
+            list of those policies that they will accept and to compare the policy OIDs in the certificate to that list. If this extension is critical, the path validation software MUST be able to 
+            interpret this extension (including the optional qualifier), or MUST reject the certificate
           default: false
           type: boolean
         verificationDepth:
@@ -6718,7 +6754,9 @@ components:
           default: false
           type: boolean
         certificatePolicies:
-          description: List of Object identifier (OID). OIDs are intended to be globally unique. They are formed by taking a unique numeric string (e.g. 1.3.5.7.9.24.68) and adding additional digits in a unique fashion (e.g. 1.3.5.7.9.24.68.1, 1.3.5.7.9.24.68.2, 1.3.5.7.9.24.68.1.1, etc.) An institution will acquire an arc (eg 1.3.5.7.9.24.68) and then extend the arc (called subarcs) as indicated above to create additional OID’s and arcs. There is no limit to the length of an OID, and virtually no computational burden to having a long OID.
+          description: List of Object identifier (OID). OIDs are intended to be globally unique. They are formed by taking a unique numeric string (e.g. 1.3.5.7.9.24.68) and adding additional digits 
+            in a unique fashion (e.g. 1.3.5.7.9.24.68.1, 1.3.5.7.9.24.68.2, 1.3.5.7.9.24.68.1.1, etc.) An institution will acquire an arc (eg 1.3.5.7.9.24.68) and then extend the arc (called subarcs) 
+            as indicated above to create additional OID’s and arcs. There is no limit to the length of an OID, and virtually no computational burden to having a long OID.
           type: array
           minItems: 1
           items:
@@ -6798,7 +6836,9 @@ components:
           default: false
           type: boolean
     CipherSuitesFlexGw:
-      description: List of acceptable cipher suites for Omni Gateway target if min TLS version is < 1.3. If you are are not using the defaults and select individual ciphers, please select ciphers that match the configured keystore to ensure that TLS can setup a connection. For a keystore with an RSA key (the most common type), select ciphers which contain the string RSA (there are some exceptions). If using ECC ciphers, select ciphers which contain the string "ECDSA".  TLS standards and documentation can be consulted for more background information.
+      description: List of acceptable cipher suites for Omni Gateway target if min TLS version is < 1.3. If you are are not using the defaults and select individual ciphers, please select ciphers that
+        match the configured keystore to ensure that TLS can setup a connection. For a keystore with an RSA key (the most common type), select ciphers which contain the string RSA (there are some 
+        exceptions). If using ECC ciphers, select ciphers which contain the string "ECDSA".  TLS standards and documentation can be consulted for more background information.
       type: array
       items:
         enum:
@@ -7006,48 +7046,9 @@ components:
               type: string
   parameters:
     XOrigin_organizationId_Path:
-      name: organizationId
-      description: The organization id
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listMe
-        name: rootOrg
-        description: GET `/me`; use `user.organization.id` as the caller's primary Business Group GUID.
-        values: $.user.organization.id
-        labels: $.user.organization.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: currentOrganization
-        description: GET `/organizations/{organizationId}`; use `id` as the Business Group GUID for the current organization.
-        values: $.id
-        labels: $.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: subOrganizations
-        description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
-        values:
-          - $.id
-          - $.subOrganizationIds[*]
-        labels:
-          - $.name
-          - $.subOrganizationIds[*]  
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/organizationId_Path
     XOrigin_environmentId_Path:
-      name: environmentId
-      description: The environment id
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listEnvironments
-        description: GET `/organizations/{organizationId}/environments`; use each `data[].id` value as an environment identifier.
-        values: $.data[*].id
-        labels: $.data[*].name
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/environmentId_Path
     XOrigin_secretGroupId_Path:
       name: secretGroupId
       description: The secret group id, generated during creation of this secret group

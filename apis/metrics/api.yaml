@@ -142,7 +142,8 @@ paths:
       description: Fetch metrics with rich filtering and aggregation capabilities.
       parameters:
       - name: limit
-        description: Set a query limit as part of URI instead of the body. Primarily used for pagination. If different limits are defined for the body and query parameter, the API returns "400 Bad Request" due to the collision.
+        description: Set a query limit as part of URI instead of the body. Primarily used for pagination. If different limits are defined for the body and query parameter, the API returns "400 Bad 
+          Request" due to the collision.
         required: false
         in: query
         schema:
@@ -150,7 +151,8 @@ paths:
           minimum: 1
           maximum: 2000
       - name: offset
-        description: Sets a query offset for result set. Primarily used for pagination. If different offset values are defined for the body and query parameter, the API returns "400 Bad Request" due to the collision.
+        description: Sets a query offset for result set. Primarily used for pagination. If different offset values are defined for the body and query parameter, the API returns "400 Bad Request" due 
+          to the collision.
         required: false
         in: query
         schema:
@@ -202,21 +204,9 @@ paths:
 components:
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: >
-        Bearer token authentication. Login endpoint:
-        https://anypoint.mulesoft.com/accounts/api/login
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: >
-        OAuth2 client credentials. Token endpoint:
-        https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   schemas:
     MetricType:
       type: object
@@ -343,7 +333,8 @@ components:
     SearchQuery:
       description: Accepts a complex JSON object with SQL-like approach to define a query with selections, aggregations (with grouping), filtering, sorting, and pagination.
       example:
-        query: select timestamp, "http.status_code_group" as status_code_group, count(requests) as totalCount from "mulesoft.api.summary" where timestamp between 1686087009573 and 1686088299573 group by "http.status_code_group" timeseries
+        query: select timestamp, "http.status_code_group" as status_code_group, count(requests) as totalCount from "mulesoft.api.summary" where timestamp between 1686087009573 and 1686088299573 group 
+          by "http.status_code_group" timeseries
       type: object
       required:
       - query
@@ -409,7 +400,8 @@ components:
             next: https://anypoint.mulesoft.com/observability/api/v1/metrics:search?limit=50&offset=50
             queryMethod: POST
             query:
-              query: select "http.status_code_group" as status_code_group, count(requests) as totalCount from "mulesoft.api.summary" where timestamp between 1686087009573 and 1686088299573 group by "http.status_code_group"
+              query: select "http.status_code_group" as status_code_group, count(requests) as totalCount from "mulesoft.api.summary" where timestamp between 1686087009573 and 1686088299573 group by 
+                "http.status_code_group"
       type: object
       required:
       - data

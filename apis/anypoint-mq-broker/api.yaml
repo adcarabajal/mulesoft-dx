@@ -41,7 +41,14 @@ externalDocs:
   x-amf-title: Introduction
 x-amf-userDocumentation:
 - url: http://
-  content: "The Message\n======================================\n\nThe primary goal of the CourierREST protocol is to produce and to consume messages. Therefore the Courier message plays a central role of the CourierREST protocol.\n\nCourier messages are not very different from other messaging protocols messages. A CourierREST message has three parts: headers, properties, and a payload.\n\n    ┌────────────────┐\n    │    Headers     │\n    ├────────────────┤\n    │   Properties   │\n    ├────────────────┤\n    │                │\n    │                │\n    │    Payload     │\n    │                │\n    │                │\n    └────────────────┘\n\nA Courier message has three elements: a header, properties, and a body. The mandatory parts are the properties and the body.\n\n* Headers, courier defined metadata\n* Properties, user defined metadata\n* Body, payload of the message\n\n\nHeaders\n--------------------------------------\n\nCourier message properties can be used to add custom information that does not belong, although it is probably related, to the payload.\n\n\n\nProperties\n--------------------------------------\n\nCourier-specific properties like `lockId`, `messageId`, or `deliveryCount`.\n\n\nPayload\n--------------------------------------\n\nCourier messages can only carry one kind of payload, a stream of uninterpreted bytes. This enables with proper encoding to send and to receive data in many different forms.\n"
+  content: "The Message\n======================================\n\nThe primary goal of the CourierREST protocol is to produce and to consume messages. Therefore the Courier message plays a central role
+    of the CourierREST protocol.\n\nCourier messages are not very different from other messaging protocols messages. A CourierREST message has three parts: headers, properties, and a payload.\n\n    ┌────────────────┐\n\
+    \    │    Headers     │\n    ├────────────────┤\n    │   Properties   │\n    ├────────────────┤\n    │                │\n    │                │\n    │    Payload     │\n    │                │\n    │\
+    \                │\n    └────────────────┘\n\nA Courier message has three elements: a header, properties, and a body. The mandatory parts are the properties and the body.\n\n* Headers, courier defined
+    metadata\n* Properties, user defined metadata\n* Body, payload of the message\n\n\nHeaders\n--------------------------------------\n\nCourier message properties can be used to add custom information
+    that does not belong, although it is probably related, to the payload.\n\n\n\nProperties\n--------------------------------------\n\nCourier-specific properties like `lockId`, `messageId`, or `deliveryCount`.\n\
+    \n\nPayload\n--------------------------------------\n\nCourier messages can only carry one kind of payload, a stream of uninterpreted bytes. This enables with proper encoding to send and to receive
+    data in many different forms.\n"
   title: The Message
 paths:
   /organizations: {}
@@ -238,7 +245,8 @@ paths:
 
             '
         '404':
-          description: Destination not found. For example, this can be returned when trying to publish messages to a fallback queue after cross region fallback feature has been disabled on the primary queue.
+          description: Destination not found. For example, this can be returned when trying to publish messages to a fallback queue after cross region fallback feature has been disabled on the primary
+            queue.
           x-amf-mediaType: application/json
           content:
             application/json:
@@ -520,7 +528,8 @@ paths:
 
             '
         '404':
-          description: Destination not found. For example, this can be returned when trying to publish messages to a fallback queue after cross region fallback feature has been disabled on the primary queue.
+          description: Destination not found. For example, this can be returned when trying to publish messages to a fallback queue after cross region fallback feature has been disabled on the primary
+            queue.
           x-amf-mediaType: application/json
           content:
             application/json:
@@ -861,21 +870,9 @@ components:
       description: Request payload for ackNackBatch operations.
   securitySchemes:
     bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Bearer token authentication. Login endpoint: https://anypoint.mulesoft.com/accounts/api/login
-
-        '
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
-      type: oauth2
-      description: 'OAuth2 client credentials. Token endpoint: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-
-        '
-      flows:
-        clientCredentials:
-          tokenUrl: https://anypoint.mulesoft.com/accounts/api/v2/oauth2/token
-          scopes: {}
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
   schemas:
     receiveBatchResponse:
       example: *id005
@@ -1112,45 +1109,6 @@ components:
           type: string
   parameters:
     XOrigin_organizationId_Path:
-      name: organizationId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listMe
-        name: rootOrg
-        description: GET `/me`; use `user.organization.id` as the caller's primary Business Group GUID.
-        values: $.user.organization.id
-        labels: $.user.organization.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: currentOrganization
-        description: GET `/organizations/{organizationId}`; use `id` as the Business Group GUID for the current organization.
-        values: $.id
-        labels: $.name
-      - api: urn:api:access-management
-        operation: getOrganizations
-        name: subOrganizations
-        description: 'Each element of **subOrganizationIds** in the same response is a child Business Group GUID; use as **organizationId** when APIs are scoped to that subgroup.'
-        values:
-          - $.id
-          - $.subOrganizationIds[*]
-        labels:
-          - $.name
-          - $.subOrganizationIds[*]  
-      description: The organization ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/organizationId_Path
     XOrigin_environmentId_Path:
-      name: environmentId
-      required: true
-      in: path
-      schema:
-        type: string
-      x-origin:
-      - api: urn:api:access-management
-        operation: listEnvironments
-        description: GET `/organizations/{organizationId}/environments`; use each `data[].id` value as an environment identifier.
-        values: $.data[*].id
-        labels: $.data[*].name
-      description: The environment ID to identify the target resource.
+      $ref: ../../fragments/anypoint_fragment.yaml#/components/parameters/environmentId_Path
