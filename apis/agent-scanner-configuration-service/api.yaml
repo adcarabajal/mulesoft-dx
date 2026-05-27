@@ -1491,3 +1491,4 @@ components:
       $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/bearerAuth
     clientAuth:
       $ref: ../../fragments/anypoint_fragment.yaml#/components/securitySchemes/clientAuth
+  
