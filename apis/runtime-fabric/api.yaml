@@ -2536,13 +2536,10 @@ components:
           description: Enable or disable TLS support
           type: string
         Path:
-          description: Elasticsearch accepts new data on HTTP query path "/_bulk". But it is also possible to serve Elasticsearch behind a reverse proxy on a subpath. This option defines such path on 
-            the fluent-bit side. It simply adds a path prefix in the indexing HTTP POST URI.
+          description: Elasticsearch accepts new data on HTTP query path "/_bulk". But it is also possible to serve Elasticsearch behind a reverse proxy on a subpath. This option defines such path on the fluent-bit side. It simply adds a path prefix in the indexing HTTP POST URI.
           type: string
         Buffer_Size:
-          description: Specify the buffer size used to read the response from the Elasticsearch HTTP service. This option is useful for debugging purposes where is required to read full responses, 
-            note that response size grows depending of the number of records inserted. To set an unlimited amount of memory set this value to False, otherwise the value must be according to the Unit 
-            Size specification.
+          description: Specify the buffer size used to read the response from the Elasticsearch HTTP service. This option is useful for debugging purposes where is required to read full responses, note that response size grows depending of the number of records inserted. To set an unlimited amount of memory set this value to False, otherwise the value must be according to the Unit Size specification.
           type: string
         HTTP_User:
           description: Optional username credential for Elastic X-Pack access
@@ -2557,8 +2554,7 @@ components:
           description: 'Enable Logstash format compatibility. This option takes a boolean value: True/False, On/Off'
           type: string
         Logstash_Prefix:
-          description: 'When Logstash_Format is enabled, the Index name is composed using a prefix and the date, e.g: If Logstash_Prefix is equals to ''mydata'' your index will become ''mydata-YYYY.MM.DD''.
-            The last string appended belongs to the date when the data is being generated.'
+          description: 'When Logstash_Format is enabled, the Index name is composed using a prefix and the date, e.g: If Logstash_Prefix is equals to ''mydata'' your index will become ''mydata-YYYY.MM.DD''. The last string appended belongs to the date when the data is being generated.'
           type: string
         Logstash_DateFormat:
           description: Time format (based on strftime) to generate the second part of the Index name.
@@ -2625,8 +2621,7 @@ components:
           description: Automatically create the log group. Valid values are "true" or "false" (case insensitive). Defaults to false.
           type: string
         log_key:
-          description: If specified a key name with this option, then only the value of that key will be sent to CloudWatch. For example, if you are using the Fluentd Docker log driver, you can 
-            specify log_key log and only the log message will be sent to CloudWatch.
+          description: If specified a key name with this option, then only the value of that key will be sent to CloudWatch. For example, if you are using the Fluentd Docker log driver, you can specify log_key log and only the log message will be sent to CloudWatch.
           type: string
         role_arn:
           description: ARN of an IAM role to assume (for cross account access).

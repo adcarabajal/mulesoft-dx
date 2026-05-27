@@ -68,16 +68,16 @@ paths:
           type: string
           example: rest-api
           enum:
-          - rest-api
-          - soap-api
-          - http-api
-          - raml-fragment
-          - connector
-          - template
-          - example
-          - custom
-          - mcp
-          - agent
+            - rest-api
+            - soap-api
+            - http-api
+            - raml-fragment
+            - connector
+            - template
+            - example
+            - custom
+            - mcp
+            - agent
       - name: rootOrganizationId
         description: Root organization ID to scope the asset search
         in: query
@@ -1601,8 +1601,7 @@ paths:
       - $ref: '#/components/parameters/Version'
       responses:
         '200':
-          description: Transition list was calculated and returned. Possible error codes are INVALID_TRANSITION, SNAPSHOT_TRANSITION, OLD_ASSET_HARD_DELETION, DEVELOPMENT_DEPENDENCIES, 
-            ASSET_HAS_DEPENDENTS
+          description: Transition list was calculated and returned. Possible error codes are INVALID_TRANSITION, SNAPSHOT_TRANSITION, OLD_ASSET_HARD_DELETION, DEVELOPMENT_DEPENDENCIES, ASSET_HAS_DEPENDENTS
           content:
             application/json:
               schema:
@@ -2299,8 +2298,7 @@ paths:
             application/json:
               schema:
                 example: &id018
-                  publicationStatusLink: 
-                    https://anypoint.mulesoft.com/exchange/api/v2/organizations/1da12ec1-7614-43a3-bf24-ff754cab8ddf/assets/1da12ec1-7614-43a3-bf24-ff754cab8ddf/mulapp/1.0.0/publication/status/543254325432
+                  publicationStatusLink: https://anypoint.mulesoft.com/exchange/api/v2/organizations/1da12ec1-7614-43a3-bf24-ff754cab8ddf/assets/1da12ec1-7614-43a3-bf24-ff754cab8ddf/mulapp/1.0.0/publication/status/543254325432
                 type: object
               example: *id018
       operationId: createOrganizationsByOrganizationidAssetsByGroupidByAssetidByVersion
@@ -2329,8 +2327,7 @@ paths:
             application/json:
               schema:
                 example: &id019
-                  mutableDataStatusLink: 
-                    https://anypoint.mulesoft.com/exchange/api/v2/organizations/1da12ec1-7614-43a3-bf24-ff754cab8ddf/assets/1da12ec1-7614-43a3-bf24-ff754cab8ddf/mulapp/1.0.0/mutabledata/status/543254325432
+                  mutableDataStatusLink: https://anypoint.mulesoft.com/exchange/api/v2/organizations/1da12ec1-7614-43a3-bf24-ff754cab8ddf/assets/1da12ec1-7614-43a3-bf24-ff754cab8ddf/mulapp/1.0.0/mutabledata/status/543254325432
               example: *id019
       operationId: patchOrganizationsByOrganizationidAssetsByGroupidByAssetidByVersionMutabledata
   /organizations/{organizationId}/groups/{groupId}/assets/{assetId}/nextAvailableVersion:
@@ -3509,8 +3506,7 @@ components:
       schema:
         example: 2.22.45
         type: string
-        pattern: 
-          ^v{0,1}(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
+        pattern: ^v{0,1}(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$
       x-origin:
       - api: urn:api:exchange-experience
         operation: getAssetsSearch
@@ -3893,8 +3889,7 @@ components:
     Strict:
       name: strict
       in: query
-      description: 'Asset related versions populated into `otherVersions` property will also have the filters for this query applied, e.g.: if status filter is applied, then related versions will have the
-        status filter also applied, otherwise all possible status will be returned. Defaults to `true`'
+      description: 'Asset related versions populated into `otherVersions` property will also have the filters for this query applied, e.g.: if status filter is applied, then related versions will have the status filter also applied, otherwise all possible status will be returned. Defaults to `true`'
       schema:
         $ref: '#/components/schemas/NullableBoolean'
     XOrigin_organizationId_Path:

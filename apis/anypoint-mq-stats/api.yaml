@@ -367,8 +367,7 @@ paths:
         '
       parameters:
       - name: startDate
-        description: 'Start date of the desired time window. Note that the earliest start date one can specify is 3 months before the current time for 1hour granularity, 12 months for 1day granularity,
-          24 months for 1month granularity.
+        description: 'Start date of the desired time window. Note that the earliest start date one can specify is 3 months before the current time for 1hour granularity, 12 months for 1day granularity, 24 months for 1month granularity.
 
           '
         required: true
@@ -525,8 +524,7 @@ paths:
         '
       parameters:
       - name: startDate
-        description: 'Start date of the desired time window. Note that the earliest start date one can specify is 3 months before the current time for 1hour granularity, 12 months for 1day granularity,
-          24 months for 1month granularity.
+        description: 'Start date of the desired time window. Note that the earliest start date one can specify is 3 months before the current time for 1hour granularity, 12 months for 1day granularity, 24 months for 1month granularity.
 
           '
         required: true

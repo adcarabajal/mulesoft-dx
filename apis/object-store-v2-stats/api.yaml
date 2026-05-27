@@ -12,8 +12,7 @@ paths:
   /organizations: {}
   /organizations/{organizationId}:
     get:
-      description: Get list of request counts. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 
-        documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of request counts. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true
@@ -113,8 +112,7 @@ paths:
       operationId: getOrganizationsByOrganizationid
   /organizations/{organizationId}/environments:
     get:
-      description: Get list of environments with data for a specific queried time frame. This api will also return list of deleted environments. If you are using connected app, "Store Metrics Viewer" 
-        scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of environments with data for a specific queried time frame. This api will also return list of deleted environments. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true
@@ -157,8 +155,7 @@ paths:
       operationId: getOrganizationsByOrganizationidEnvironments
   /organizations/{organizationId}/environments/{environmentId}:
     get:
-      description: Get list of request counts. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 
-        documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of request counts. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true
@@ -250,8 +247,7 @@ paths:
       operationId: getOrganizationsByOrganizationidEnvironmentsByEnvironmentid
   /organizations/{organizationId}/environments/{environmentId}/regions:
     get:
-      description: Get list of regions with data for a specific queried time frame. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to 
-        [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of regions with data for a specific queried time frame. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true
@@ -295,8 +291,7 @@ paths:
       operationId: getOrganizationsByOrganizationidEnvironmentsByEnvironmentidRegions
   /organizations/{organizationId}/environments/{environmentId}/regions/{regionId}:
     get:
-      description: Get list of request count per region. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 
-        documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of request count per region. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true
@@ -389,8 +384,7 @@ paths:
       operationId: getOrganizationsByOrganizationidEnvironmentsByEnvironmentidRegionsByRegionid
   /organizations/{organizationId}/environments/{environmentId}/regions/{regionId}/stores:
     get:
-      description: Get list of stores with data for a specific queried time frame. This api will also return list of deleted stores. If you are using connected app, "Store Metrics Viewer" scope is 
-        needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of stores with data for a specific queried time frame. This api will also return list of deleted stores. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true
@@ -436,8 +430,7 @@ paths:
       operationId: getOrganizationsByOrganizationidEnvironmentsByEnvironmentidRegionsByRegionidStores
   /organizations/{organizationId}/environments/{environmentId}/regions/{regionId}/stores/{storeId}:
     get:
-      description: Get list of request count per store. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 
-        documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
+      description: Get list of request count per store. If you are using connected app, "Store Metrics Viewer" scope is needed. For query timeframes and retention refer to [OSv2 documentation](https://docs.mulesoft.com/object-store/osv2-apis#osv2-usage-limits)
       parameters:
       - name: startDate
         required: true

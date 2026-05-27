@@ -32,8 +32,7 @@ paths:
               example: {}
       operationId: getAgent
     put:
-      description: ' <p>Upgrades the Mule Agent plugin with the provided .jar file.</p> <p>Upgrading the Agent will only install the the jar passed in the request and won''t change any configuration</p>
-        <p>Since v2.2.0 the configuration of Authentication Proxy and MCM endpoints was changed so in order to reconect the server further configuration would be needed</p>'
+      description: ' <p>Upgrades the Mule Agent plugin with the provided .jar file.</p> <p>Upgrading the Agent will only install the the jar passed in the request and won''t change any configuration</p> <p>Since v2.2.0 the configuration of Authentication Proxy and MCM endpoints was changed so in order to reconect the server further configuration would be needed</p>'
       requestBody:
         content:
           application/octet-stream:
@@ -1096,8 +1095,7 @@ paths:
       operationId: updateAgentByComponentidDisable
   /agent/{componentId}/{applicationName}:
     put:
-      description: 'Completely changes the configuration of the service by overriding the configuration provided in the agent descriptor with the properties passed in the JSON. If the body is not sent in
-        the request the service will respond with the current information.
+      description: 'Completely changes the configuration of the service by overriding the configuration provided in the agent descriptor with the properties passed in the JSON. If the body is not sent in the request the service will respond with the current information.
 
         '
       parameters:
@@ -1199,8 +1197,7 @@ paths:
               example: *id039
       operationId: updateAgentByComponentidByApplicationname
     patch:
-      description: 'Partially changes the configuration of the service for a given application by overriding the configuration provided in the agent descriptor with the properties passed in the JSON. If
-        the body is not sent in the request the service will respond with the current information.
+      description: 'Partially changes the configuration of the service for a given application by overriding the configuration provided in the agent descriptor with the properties passed in the JSON. If the body is not sent in the request the service will respond with the current information.
 
         '
       parameters:
@@ -1331,8 +1328,7 @@ paths:
                   description: The reason of the action.
                   type: string
                 actionType:
-                  description: 'The type of Action to be performed on the runtime. <ul> <li>RESTART: Will restart the runtime.</li> <li>SHUTDOWN: Will shutdown the runtime.</li> <li>RENEW_CERTIFICATE: Will
-                    renew the runtime certificate ${mule_home}/conf/mule-agent.jks but only if it hasn''t expired.</li> </ul>'
+                  description: 'The type of Action to be performed on the runtime. <ul> <li>RESTART: Will restart the runtime.</li> <li>SHUTDOWN: Will shutdown the runtime.</li> <li>RENEW_CERTIFICATE: Will renew the runtime certificate ${mule_home}/conf/mule-agent.jks but only if it hasn''t expired.</li> </ul>'
                   enum:
                   - RESTART
                   - SHUTDOWN
@@ -2264,8 +2260,7 @@ paths:
               description: The properties configuration for the application
               x-amf-examples:
                 configuration:
-                  value: "{\n    \"mule.agent.application.properties.service\": {\n        \"applicationName\": \"application_name\",\n        \"properties\": {\n            \"property_name\": \"property_value\"\
-                    ,\n            \"property_name_2\": \"property_value_2\"\n        }\n    }\n}"
+                  value: "{\n    \"mule.agent.application.properties.service\": {\n        \"applicationName\": \"application_name\",\n        \"properties\": {\n            \"property_name\": \"property_value\",\n            \"property_name_2\": \"property_value_2\"\n        }\n    }\n}"
               type: string
             file:
               description: A .jar or .zip (depending of the runtime version 4.x or 3.x) file with the application to deploy.
@@ -3076,8 +3071,7 @@ paths:
           - mediaType: application/text
             schema:
               x-amf-examples:
-                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                  line: 1, column: 10]"
+                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
           content:
             application/text:
               schema:
@@ -3541,14 +3535,12 @@ paths:
             application/text:
               schema:
                 x-amf-examples:
-                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                    line: 1, column: 10]"
+                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
               example: {}
             application/json:
               schema:
                 x-amf-examples:
-                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                    line: 1, column: 10]"
+                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
               example: {}
         '403':
           description: Forbidden if the monitoring service or external handler is disabled.
@@ -3602,8 +3594,7 @@ paths:
               example: *id134
       operationId: createMonitoring
     delete:
-      description: 'Removes a list of beans of those currently being tracked the monitoring service. The beans to delete that are send in the json body must be identicaly the same as the registered ones.
-        Not available on PCE.
+      description: 'Removes a list of beans of those currently being tracked the monitoring service. The beans to delete that are send in the json body must be identicaly the same as the registered ones. Not available on PCE.
 
         '
       requestBody:
@@ -3625,14 +3616,12 @@ paths:
             application/json:
               schema:
                 x-amf-examples:
-                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                    line: 1, column: 10]"
+                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
               example: {}
             application/text:
               schema:
                 x-amf-examples:
-                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                    line: 1, column: 10]"
+                  error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
               example: {}
         '403':
           description: Forbidden if the monitoring service or external handler is disabled.
@@ -3798,8 +3787,7 @@ paths:
           - mediaType: application/text
             schema:
               x-amf-examples:
-                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                  line: 1, column: 10]"
+                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
           content:
             application/json:
               schema:
@@ -4003,8 +3991,7 @@ paths:
           - mediaType: application/text
             schema:
               x-amf-examples:
-                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                  line: 1, column: 10]"
+                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
           content:
             application/json:
               schema:
@@ -4088,8 +4075,7 @@ paths:
           - mediaType: application/text
             schema:
               x-amf-examples:
-                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream);
-                  line: 1, column: 10]"
+                error_message: "Unexpected character ('b' (code 98)): was expecting double-quote to start field name\n at [Source: (org.glassfish.jersey.message.internal.ReaderInterceptorExecutor$UnCloseableInputStream); line: 1, column: 10]"
           content:
             application/text:
               schema:
@@ -5888,8 +5874,7 @@ components:
                 - ALL
                 type: string
     AuthenticationProxyConfiguration:
-      description: '<p>To configure:</p> <ul> <li>mule.agent.ingest.application.metrics.internal.handler</li> <li>mule.agent.ingest.target.metrics.internal.handler</li> <li>mule.agent.tracking.handler.analytics</li>
-        </ul> '
+      description: '<p>To configure:</p> <ul> <li>mule.agent.ingest.application.metrics.internal.handler</li> <li>mule.agent.ingest.target.metrics.internal.handler</li> <li>mule.agent.tracking.handler.analytics</li> </ul> '
       type: object
       additionalProperties: true
       required:
@@ -5936,11 +5921,7 @@ components:
         category:
           type: string
     BufferConfiguration:
-      description: '<p>To configure:</p> <ul> <li>primary.node.notification.internal.message.handler</li> <li>scheduling.notification.internal.message.handler</li> <li>mule.agent.tracking.handler.analytics</li>
-        <li>mule.agent.tracking.handler.messageHistory</li> <li>configuration.notification.internal.message.handler</li> <li>tracking.notification.internal.message.handler</li> <li>flow.status.notification.internal.message.handler</li>
-        <li>application.deployment.notification.internal.message.handler</li> <li>mule.agent.tracking.handler.log</li> <li>mule.agent.nagios.jmx.internal.handler</li> <li>mule.agent.gw.http.handler.splunk</li>
-        <li>mule.agent.tracking.handler.splunk</li> <li>mule.agent.gw.http.handler.log</li> <li>action.status.internal.message.handler</li> <li>domain.deployment.notification.internal.message.handler</li>
-        <li>mule.agent.ingest.target.metrics.internal.handler</li> <li>membership.change.notification.internal.message.handler</li> <li>mule.agent.ingest.application.metrics.internal.handler</li> </ul> '
+      description: '<p>To configure:</p> <ul> <li>primary.node.notification.internal.message.handler</li> <li>scheduling.notification.internal.message.handler</li> <li>mule.agent.tracking.handler.analytics</li> <li>mule.agent.tracking.handler.messageHistory</li> <li>configuration.notification.internal.message.handler</li> <li>tracking.notification.internal.message.handler</li> <li>flow.status.notification.internal.message.handler</li> <li>application.deployment.notification.internal.message.handler</li> <li>mule.agent.tracking.handler.log</li> <li>mule.agent.nagios.jmx.internal.handler</li> <li>mule.agent.gw.http.handler.splunk</li> <li>mule.agent.tracking.handler.splunk</li> <li>mule.agent.gw.http.handler.log</li> <li>action.status.internal.message.handler</li> <li>domain.deployment.notification.internal.message.handler</li> <li>mule.agent.ingest.target.metrics.internal.handler</li> <li>membership.change.notification.internal.message.handler</li> <li>mule.agent.ingest.application.metrics.internal.handler</li> </ul> '
       type: object
       additionalProperties: true
       required:
@@ -5977,8 +5958,7 @@ components:
         discardMessagesOnFlushFailure:
           type: boolean
     ReplayLevel:
-      description: The level of replay assigned to a flow or application represents which flows will be possible to do replay over. <ul> <li>NONE - Does not allow replay over the flows.</li> 
-        <li>SOURCED - Allows doing replay over the flows that have a message source.</li> <li>ALL - Allows doing replay over all the flows of the application.</li> </ul>
+      description: The level of replay assigned to a flow or application represents which flows will be possible to do replay over. <ul> <li>NONE - Does not allow replay over the flows.</li> <li>SOURCED - Allows doing replay over the flows that have a message source.</li> <li>ALL - Allows doing replay over all the flows of the application.</li> </ul>
       enum:
       - NONE
       - SOURCED
@@ -6021,10 +6001,7 @@ components:
                 description: The current status of the scheduler.
                 type: boolean
     TrackingLevel:
-      description: <p>The level of tracking assigned, represents the set of notifications about that application that will be received by the Event Tracking Service.</p> <ul> <li>NONE - No 
-        notification will be received</li> <li>BE - (Buesiness Events) AsyncMessageNotifications, PipelineMessageNotifications, ExceptionNotifications and EventNotifications will be received.</li> 
-        <li>TRACKING - EndpointMessageNotifications, ExceptionStrategyNotifications, and TransactionNotifications will be received as well as those received by the BE level.</li> <li>DEBUG - 
-        ComponentMessageNotifications and MessageProcessorNotification will be received as well as those received by the TRACKING level.</li> </ul>
+      description: <p>The level of tracking assigned, represents the set of notifications about that application that will be received by the Event Tracking Service.</p> <ul> <li>NONE - No notification will be received</li> <li>BE - (Buesiness Events) AsyncMessageNotifications, PipelineMessageNotifications, ExceptionNotifications and EventNotifications will be received.</li> <li>TRACKING - EndpointMessageNotifications, ExceptionStrategyNotifications, and TransactionNotifications will be received as well as those received by the BE level.</li> <li>DEBUG - ComponentMessageNotifications and MessageProcessorNotification will be received as well as those received by the TRACKING level.</li> </ul>
       enum:
       - NONE
       - BE
@@ -6135,8 +6112,7 @@ components:
           applicationName:
             type: string
           forcePayloadInclusion:
-            description: ' Whether to force the inclusion of the payload in the tracking event despite its mime-type. There are some cases that Mule may corrupt the payload when retrieving it as String
-              if the if it''s not representable as a String. The payload is excluded depending on its mime-type to avoid those cases but it can be forced to be included anyways.'
+            description: ' Whether to force the inclusion of the payload in the tracking event despite its mime-type. There are some cases that Mule may corrupt the payload when retrieving it as String if the if it''s not representable as a String. The payload is excluded depending on its mime-type to avoid those cases but it can be forced to be included anyways.'
             type: boolean
           appName:
             description: The name of the application
@@ -6158,12 +6134,10 @@ components:
               items:
                 $ref: '#/components/schemas/TrackedFlow'
           useEventModel:
-            description: ' Whether to the {org.mule.tooling.event.model.EventModel} should be used to represent the {org.mule.runtime.api.message.Message}. If not the payload as String would be populated
-              instead.'
+            description: ' Whether to the {org.mule.tooling.event.model.EventModel} should be used to represent the {org.mule.runtime.api.message.Message}. If not the payload as String would be populated instead.'
             type: boolean
     type_1:
-      description: <p>To configure de following components:</p> <ul> <li>mule.agent.ingest.application.metrics.internal.handler</li> <li>mule.agent.ingest.target.metrics.internal.handler</li> 
-        <li>mule.agent.tracking.handler.analytics</li> </ul>
+      description: <p>To configure de following components:</p> <ul> <li>mule.agent.ingest.application.metrics.internal.handler</li> <li>mule.agent.ingest.target.metrics.internal.handler</li> <li>mule.agent.tracking.handler.analytics</li> </ul>
       type: object
       additionalProperties: true
       required:
@@ -6185,18 +6159,14 @@ components:
       - type: string
       - type: 'null'
     type_2:
-      description: The level of replay assigned to a flow or application represents which flows will be possible to do replay over. <ul> <li>NONE - Does not allow replay over the flows.</li> 
-        <li>SOURCED - Allows doing replay over the flows that have a message source.</li> <li>ALL - Allows doing replay over all the flows of the application.</li> </ul>
+      description: The level of replay assigned to a flow or application represents which flows will be possible to do replay over. <ul> <li>NONE - Does not allow replay over the flows.</li> <li>SOURCED - Allows doing replay over the flows that have a message source.</li> <li>ALL - Allows doing replay over all the flows of the application.</li> </ul>
       enum:
       - NONE
       - SOURCED
       - ALL
       type: string
     type_3:
-      description: <p>The level of tracking assigned, represents the set of notifications about that application that will be received by the Event Tracking Service.</p> <ul> <li>NONE - No 
-        notification will be received</li> <li>BE - (Buesiness Events) AsyncMessageNotifications, PipelineMessageNotifications, ExceptionNotifications and EventNotifications will be received.</li> 
-        <li>TRACKING - EndpointMessageNotifications, ExceptionStrategyNotifications, and TransactionNotifications will be received as well as those received by the BE level.</li> <li>DEBUG - 
-        ComponentMessageNotifications and MessageProcessorNotification will be received as well as those received by the TRACKING level.</li> </ul>
+      description: <p>The level of tracking assigned, represents the set of notifications about that application that will be received by the Event Tracking Service.</p> <ul> <li>NONE - No notification will be received</li> <li>BE - (Buesiness Events) AsyncMessageNotifications, PipelineMessageNotifications, ExceptionNotifications and EventNotifications will be received.</li> <li>TRACKING - EndpointMessageNotifications, ExceptionStrategyNotifications, and TransactionNotifications will be received as well as those received by the BE level.</li> <li>DEBUG - ComponentMessageNotifications and MessageProcessorNotification will be received as well as those received by the TRACKING level.</li> </ul>
       enum:
       - NONE
       - BE
@@ -6224,18 +6194,13 @@ components:
           description: The exclusion of payload for the application.
           type: boolean
         forcePayloadInclusion:
-          description: ' Whether to force the inclusion of the payload in the tracking event despite its mime-type. There are some cases that Mule may corrupt the payload when retrieving it as String if
-            the if it''s not representable as a String. The payload is excluded depending on its mime-type to avoid those cases but it can be forced to be included anyways.'
+          description: ' Whether to force the inclusion of the payload in the tracking event despite its mime-type. There are some cases that Mule may corrupt the payload when retrieving it as String if the if it''s not representable as a String. The payload is excluded depending on its mime-type to avoid those cases but it can be forced to be included anyways.'
           type: boolean
         useEventModel:
-          description: ' Whether to the {org.mule.tooling.event.model.EventModel} should be used to represent the {org.mule.runtime.api.message.Message}. If not the payload as String would be populated
-            instead.'
+          description: ' Whether to the {org.mule.tooling.event.model.EventModel} should be used to represent the {org.mule.runtime.api.message.Message}. If not the payload as String would be populated instead.'
           type: boolean
     type_4:
-      description: <p>The level of tracking assigned, represents the set of notifications about that application that will be received by the Event Tracking Service.</p> <ul> <li>NONE - No 
-        notification will be received</li> <li>BE - (Buesiness Events) AsyncMessageNotifications, PipelineMessageNotifications, ExceptionNotifications and EventNotifications will be received.</li> 
-        <li>TRACKING - EndpointMessageNotifications, ExceptionStrategyNotifications, and TransactionNotifications will be received as well as those received by the BE level.</li> <li>DEBUG - 
-        ComponentMessageNotifications and MessageProcessorNotification will be received as well as those received by the TRACKING level.</li> </ul>
+      description: <p>The level of tracking assigned, represents the set of notifications about that application that will be received by the Event Tracking Service.</p> <ul> <li>NONE - No notification will be received</li> <li>BE - (Buesiness Events) AsyncMessageNotifications, PipelineMessageNotifications, ExceptionNotifications and EventNotifications will be received.</li> <li>TRACKING - EndpointMessageNotifications, ExceptionStrategyNotifications, and TransactionNotifications will be received as well as those received by the BE level.</li> <li>DEBUG - ComponentMessageNotifications and MessageProcessorNotification will be received as well as those received by the TRACKING level.</li> </ul>
       enum:
       - NONE
       - BE
@@ -6243,8 +6208,7 @@ components:
       - DEBUG
       type: string
     type_5:
-      description: The level of replay assigned to a flow or application represents which flows will be possible to do replay over. <ul> <li>NONE - Does not allow replay over the flows.</li> 
-        <li>SOURCED - Allows doing replay over the flows that have a message source.</li> <li>ALL - Allows doing replay over all the flows of the application.</li> </ul>
+      description: The level of replay assigned to a flow or application represents which flows will be possible to do replay over. <ul> <li>NONE - Does not allow replay over the flows.</li> <li>SOURCED - Allows doing replay over the flows that have a message source.</li> <li>ALL - Allows doing replay over all the flows of the application.</li> </ul>
       enum:
       - NONE
       - SOURCED

@@ -21,8 +21,7 @@ security:
 paths:
   /apimanager/xapi/v1/organizations/{organizationId}/exchange-policy-templates:
     get:
-      description: Retrieve all policy templates (OOTB or custom) stored in Exchange for a given organization. Optionally filter by environment, API instance, Mule runtime version, or automation 
-        scope.
+      description: Retrieve all policy templates (OOTB or custom) stored in Exchange for a given organization. Optionally filter by environment, API instance, Mule runtime version, or automation scope.
       operationId: getExchangePolicyTemplates
       parameters:
       - name: apiInstanceId
@@ -167,8 +166,8 @@ components:
       description: Order for sorting.
       schema:
         allOf:
-        - x-force-coercion-to: boolean
-        - type: boolean
+          - x-force-coercion-to: boolean
+          - type: boolean
     trait_searchable_query:
       name: query
       in: query

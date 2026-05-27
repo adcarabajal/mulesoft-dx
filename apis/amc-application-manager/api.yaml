@@ -1468,8 +1468,7 @@ components:
           example: true
         type:
           type: string
-          description: 'Use FixedFrequencyScheduler to trigger a flow at a regular intervals or CronScheduler to trigger a flow using a date-time expression.<br/>The possible values are: FixedFrequencyScheduler,
-            CronScheduler'
+          description: 'Use FixedFrequencyScheduler to trigger a flow at a regular intervals or CronScheduler to trigger a flow using a date-time expression.<br/>The possible values are: FixedFrequencyScheduler, CronScheduler'
           example: FixedFrequencyScheduler
         startDelay:
           type: string
@@ -1481,8 +1480,7 @@ components:
           example: '15'
         timeUnit:
           type: string
-          description: 'Only for FixedFrequencyScheduler or null otherwise.<br/>The time unit for the values of Frequency and Start Delay.<br/>The possible values are: MILLISECONDS, SECONDS, MINUTES, HOURS,
-            DAYS'
+          description: 'Only for FixedFrequencyScheduler or null otherwise.<br/>The time unit for the values of Frequency and Start Delay.<br/>The possible values are: MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS'
           example: MINUTES
           enum:
           - NANOSECONDS
@@ -1517,8 +1515,7 @@ components:
       properties:
         timeUnit:
           type: string
-          description: 'Only for FixedFrequencyScheduler or null otherwise.<br/>The time unit for the values of Frequency and Start Delay.<br/>The possible values are: MILLISECONDS, SECONDS, MINUTES, HOURS,
-            DAYS'
+          description: 'Only for FixedFrequencyScheduler or null otherwise.<br/>The time unit for the values of Frequency and Start Delay.<br/>The possible values are: MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS'
           example: MINUTES
           enum:
           - NANOSECONDS

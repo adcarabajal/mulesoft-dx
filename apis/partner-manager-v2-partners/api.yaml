@@ -533,8 +533,7 @@ paths:
                             secretGroupId: 6e128fa8-dba2-416e-a0fb-4773c3bbe729
                             grantResponse:
                               path: sharedSecrets/6584ec3e-90c3-4b1b-9f45-76a1d22fc560
-                              accessGrant: 
-                                QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI1MzgxNTj3MDAmU2lnbmF0dXJlPXZhdWx0OnYxOldnSlg0NFk1c1Z1NTVzeGxETkpEQ2hOQ0NWazIveDRpZ2U3T1hKalRNYzBVZTV0TU1JeWZmSHNLbHp2WXJWenZ0N3RpdWVyNW9zUW94RHlLRGRreEF3PT0=
+                              accessGrant: QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI1MzgxNTj3MDAmU2lnbmF0dXJlPXZhdWx0OnYxOldnSlg0NFk1c1Z1NTVzeGxETkpEQ2hOQ0NWazIveDRpZ2U3T1hKalRNYzBVZTV0TU1JeWZmSHNLbHp2WXJWenZ0N3RpdWVyNW9zUW94RHlLRGRreEF3PT0=
                           username: userExample
                           password: 6584ec3e-90c3-4b1b-9f45-76a1d22f0000
                         path: /sftpuser/SFTP
@@ -567,8 +566,7 @@ paths:
                             secretGroupId: 6e128fa8-dba2-416e-a0fb-4773c3bbe729
                             grantResponse:
                               path: sharedSecrets/9132af99-f438-46a2-804a-b1f8b39ec8bb
-                              accessGrant: 
-                                QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI1MzgxNTj3MDAmU2lnbmF0dXJlPXZhdWx0OnYxOldnSlg0NFk1c1Z1NTVzeGxETkpEQ2hOQ0NWazIveDRpZ2U3T1hKalRNYzBVZTV0TU1JeWZmSHNLbHp2WXJWenZ0N3RpdWVyNW9zUW94RHlLRGRreEF3PT0=
+                              accessGrant: QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI1MzgxNTj3MDAmU2lnbmF0dXJlPXZhdWx0OnYxOldnSlg0NFk1c1Z1NTVzeGxETkpEQ2hOQ0NWazIveDRpZ2U3T1hKalRNYzBVZTV0TU1JeWZmSHNLbHp2WXJWenZ0N3RpdWVyNW9zUW94RHlLRGRreEF3PT0=
                           username: userExample
                           password: 9132af99-f438-46a2-804a-b1f8b39e0000
                         path: /sftpuser/SFTP/received
@@ -604,8 +602,7 @@ paths:
                     documentMapping:
                     - id: 28019ccd-303b-4b71-b649-cef58a58740b
                       mappingType: DWL_FILE
-                      mappingContent: 
-                        data:application/octet-stream;base64,JWR3IDIuMA0Kb3V0cHV0IGFwcGxpY2F0aW9uL2pzb24NCi0tLQ0Kew0KCSJPYmplY3QiOiBwYXlsb2FkLlRyYW5zYWN0aW9uU2V0cy52MDA0MDUwWyc4MjAnXQ0KfQ0K
+                      mappingContent: data:application/octet-stream;base64,JWR3IDIuMA0Kb3V0cHV0IGFwcGxpY2F0aW9uL2pzb24NCi0tLQ0Kew0KCSJPYmplY3QiOiBwYXlsb2FkLlRyYW5zYWN0aW9uU2V0cy52MDA0MDUwWyc4MjAnXQ0KfQ0K
                       mappingSourceRef: 820_v004050_to_Json.dwl
                     comment: Updated
                     messageStatus: ''
@@ -666,8 +663,7 @@ paths:
                             secretGroupId: 6e128fa8-dba2-416e-a0fb-4773c3bbe729
                             grantResponse:
                               path: sharedSecrets/6584ec3e-90c3-4b1b-9f45-76a1d22fc560
-                              accessGrant: 
-                                QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZwWFVmc3JlVyt4MlUwRTV5d2JlNFpqRXJKck5iZ3BOM2MvNmJ6MkJZZkF3MUR3PT0=
+                              accessGrant: QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZwWFVmc3JlVyt4MlUwRTV5d2JlNFpqRXJKck5iZ3BOM2MvNmJ6MkJZZkF3MUR3PT0=
                             jsonDetails: ''
                           username: username
                           password: 6584ec3e-90c3-4b1b-9f45-76a1d22f0000
@@ -702,8 +698,7 @@ paths:
                             secretGroupId: 6e128fa8-dba2-416e-a0fb-4773c3bbe729
                             grantResponse:
                               path: sharedSecrets/9132af99-f438-46a2-804a-b1f8b39ec8bb
-                              accessGrant: 
-                                QWNjZXNzSWQ9a3ZoYmFzbTBWMkNleHBPOEhPZGhyOEk3OSZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZpWUFlOXU4RXlFM2RjMDNBYkUvNmJ6MkJZZkF3MUR3PT0=
+                              accessGrant: QWNjZXNzSWQ9a3ZoYmFzbTBWMkNleHBPOEhPZGhyOEk3OSZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZpWUFlOXU4RXlFM2RjMDNBYkUvNmJ6MkJZZkF3MUR3PT0=
                             jsonDetails: ''
                           username: username
                           password: 9132af99-f438-46a2-804a-b1f8b39e0000
@@ -741,8 +736,7 @@ paths:
                     documentMapping:
                     - id: 28019ccd-303b-4b71-b649-cef58a58740b
                       mappingType: DWL_FILE
-                      mappingContent: 
-                        data:application/octet-stream;base64,JWR3IDIuMA0Kb3V0cHV0IGFwcGxpY2F0aW9uL2pzb24NCi0tLQ0Kew0KCSJPYmplY3QiOiBwYXlsb2FkLlRyYW5zYWN0aW9uU2V0cy52MDA0MDUwWyc4MjAnXQ0KfQ0K
+                      mappingContent: data:application/octet-stream;base64,JWR3IDIuMA0Kb3V0cHV0IGFwcGxpY2F0aW9uL2pzb24NCi0tLQ0Kew0KCSJPYmplY3QiOiBwYXlsb2FkLlRyYW5zYWN0aW9uU2V0cy52MDA0MDUwWyc4MjAnXQ0KfQ0K
                       mappingSourceRef: 820_v004050_to_Json.dwl
                     comment: Updated
                     messageStatus: ''
@@ -950,9 +944,7 @@ paths:
   /organizations/{organizationId}/environments/{environmentId}/documentflows/{documentflowId}:
     description: Single documentflow
     patch:
-      description: "Post APM release 2.21.0, Message flows can be created with or without identifier based routing.\n\r Example **DocumentFlowWithGranularRouting** depicts flow with identifier based routing
-        where an identifier from host and another identifier from partner profile is provided for message routing.\n\r Example **DocumentFlowWithOutGranularRouting** depicts flow without identifier based
-        routing, that flow accepts any of the configured identifiers for message flow routing."
+      description: "Post APM release 2.21.0, Message flows can be created with or without identifier based routing.\n\r Example **DocumentFlowWithGranularRouting** depicts flow with identifier based routing where an identifier from host and another identifier from partner profile is provided for message routing.\n\r Example **DocumentFlowWithOutGranularRouting** depicts flow without identifier based routing, that flow accepts any of the configured identifiers for message flow routing."
       parameters:
       - $ref: '#/components/parameters/XOrigin_organizationId_Path'
       - $ref: '#/components/parameters/XOrigin_environmentId_Path'
@@ -1558,8 +1550,7 @@ paths:
                           documentFlowDirection: INBOUND
                           flowDependencyCount: 0
                           messageFlowDependenciesInfo: []
-                          messageDataScript: 
-                            JWR3IDIuMApvdXRwdXQgYXBwbGljYXRpb24vanNvbgotLS0KewoJcGFydG5lclJlZmVyZW5jZUlkOiBwYXlsb2FkLnNlbmRlciwKCWhvc3RSZWZlcmVuY2VJZDogcGF5bG9hZC5yZWNlaXZlciBkZWZhdWx0ICJTVEFSIiwKCWJ1c2luZXNzRG9jdW1lbnRLZXk6IHBheWxvYWQuY2xhaW1JZCwKCWN1c3RvbUF0dHJpYnV0ZXM6IFsKCQl7CgkJCWFsaWFzOiAiY2xhaW1OdW1iZXIiLAoJCQl2YWx1ZXM6IFtwYXlsb2FkLmNsYWltSWQgZGVmYXVsdCAiVU5LTk9XTiJdCgl9LAoJewoJCQlhbGlhczogImNsYWltQW1vdW50IiwKCQkJdmFsdWVzOiBbcGF5bG9hZC5hbW91bnQgZGVmYXVsdCAiMCJdCgl9Cl0KfQ==
+                          messageDataScript: JWR3IDIuMApvdXRwdXQgYXBwbGljYXRpb24vanNvbgotLS0KewoJcGFydG5lclJlZmVyZW5jZUlkOiBwYXlsb2FkLnNlbmRlciwKCWhvc3RSZWZlcmVuY2VJZDogcGF5bG9hZC5yZWNlaXZlciBkZWZhdWx0ICJTVEFSIiwKCWJ1c2luZXNzRG9jdW1lbnRLZXk6IHBheWxvYWQuY2xhaW1JZCwKCWN1c3RvbUF0dHJpYnV0ZXM6IFsKCQl7CgkJCWFsaWFzOiAiY2xhaW1OdW1iZXIiLAoJCQl2YWx1ZXM6IFtwYXlsb2FkLmNsYWltSWQgZGVmYXVsdCAiVU5LTk9XTiJdCgl9LAoJewoJCQlhbGlhczogImNsYWltQW1vdW50IiwKCQkJdmFsdWVzOiBbcGF5bG9hZC5hbW91bnQgZGVmYXVsdCAiMCJdCgl9Cl0KfQ==
                           customAttributes:
                           - id: 3b9fcc46-5f3c-4c38-886e-3e808bb88277
                             alias: claimAmount
@@ -3964,8 +3955,7 @@ paths:
                     customAttributes: []
                   - customSchemaId: 4b01ca15-8384-4e26-9462-653f68410dd0
                     schemaType: customSchemaType
-                    schemaContent: 
-                      Zm9ybTogWDEyCnZlcnNpb246ICcwMDMwMjAnCmltcG9ydHM6IFsgJy94MTIvMDAzMDIwL2Jhc2VkZWZzLmVzbCcgXQppZDogJzEwNCcKbmFtZTogJ0FpciBTaGlwbWVudCBJbmZvcm1hdGlvbicKY2xhc3M6ICdTQScKaGVhZGluZzogCi0geyBpZFJlZjogJ1NUJywgcG9zaXRpb246ICcwMTAnLCB1c2FnZTogTSB9Ci0geyBpZFJlZjogJ04xJywgcG9zaXRpb246ICcwMjAnLCB1c2FnZTogTSB9Ci0geyBpZFJlZjogJ04yJywgcG9zaXRpb246ICcwMzAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ04zJywgcG9zaXRpb246ICcwNDAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ040JywgcG9zaXRpb246ICcwNTAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ045JywgcG9zaXRpb246ICcwNjAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KLSB7IGlkUmVmOiAnUEVSJywgcG9zaXRpb246ICcwNzAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ1AxJywgcG9zaXRpb246ICcwODAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ0c0NycsIHBvc2l0aW9uOiAnMDkwJywgdXNhZ2U6IE8gfQotIHsgaWRSZWY6ICdGOScsIHBvc2l0aW9uOiAnMTAwJywgdXNhZ2U6IE8gfQpkZXRhaWw6IAotIGdyb3VwSWQ6ICdGT0JfTG9vcCcKICBjb3VudDogOTk5OTkKICB1c2FnZTogTQogIGl0ZW1zOiAKICAtIHsgaWRSZWY6ICdGT0InLCBwb3NpdGlvbjogJzAyMCcsIHVzYWdlOiBNIH0KICAtIHsgaWRSZWY6ICdTTDEnLCBwb3NpdGlvbjogJzAzMCcsIHVzYWdlOiBNIH0KICAtIHsgaWRSZWY6ICdOOScsIHBvc2l0aW9uOiAnMDQwJywgdXNhZ2U6IE0sIGNvdW50OiAxMCB9CiAgLSB7IGlkUmVmOiAnVEQ0JywgcG9zaXRpb246ICcwNTAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAtIHsgaWRSZWY6ICdIMScsIHBvc2l0aW9uOiAnMDYwJywgdXNhZ2U6IE8gfQogIC0geyBpZFJlZjogJ0gyJywgcG9zaXRpb246ICcwNzAnLCB1c2FnZTogTyB9CiAgLSB7IGlkUmVmOiAnSDMnLCBwb3NpdGlvbjogJzA4MCcsIHVzYWdlOiBPIH0KICAtIHsgaWRSZWY6ICdEVE0nLCBwb3NpdGlvbjogJzA5MCcsIHVzYWdlOiBPIH0KICAtIHsgaWRSZWY6ICdNMScsIHBvc2l0aW9uOiAnMTAwJywgdXNhZ2U6IE8gfQogIC0geyBpZFJlZjogJ0MzJywgcG9zaXRpb246ICcxMTAnLCB1c2FnZTogTyB9CiAgLSB7IGlkUmVmOiAnWDEnLCBwb3NpdGlvbjogJzEyMCcsIHVzYWdlOiBPIH0KICAtIHsgaWRSZWY6ICdYMicsIHBvc2l0aW9uOiAnMTMwJywgdXNhZ2U6IE8gfQogIC0geyBpZFJlZjogJ05URScsIHBvc2l0aW9uOiAnMTQwJywgdXNhZ2U6IE8sIGNvdW50OiAxMCB9CiAgLSBncm91cElkOiAnTjFfTG9vcCcKICAgIGNvdW50OiAyCiAgICB1c2FnZTogTQogICAgaXRlbXM6IAogICAgLSB7IGlkUmVmOiAnTjEnLCBwb3NpdGlvbjogJzE1MCcsIHVzYWdlOiBNIH0KICAgIC0geyBpZFJlZjogJ04yJywgcG9zaXRpb246ICcxNjAnLCB1c2FnZTogTyB9CiAgICAtIHsgaWRSZWY6ICdOMycsIHBvc2l0aW9uOiAnMTcwJywgdXNhZ2U6IE8gfQogICAgLSB7IGlkUmVmOiAnTjQnLCBwb3NpdGlvbjogJzE4MCcsIHVzYWdlOiBPIH0KICAgIC0geyBpZFJlZjogJ045JywgcG9zaXRpb246ICcxOTAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAgIC0geyBpZFJlZjogJ1BFUicsIHBvc2l0aW9uOiAnMjAwJywgdXNhZ2U6IE8gfQogIC0gZ3JvdXBJZDogJ0w1X0xvb3AnCiAgICBjb3VudDogMTAwCiAgICB1c2FnZTogTQogICAgaXRlbXM6IAogICAgLSB7IGlkUmVmOiAnTDUnLCBwb3NpdGlvbjogJzIxMCcsIHVzYWdlOiBNIH0KICAgIC0geyBpZFJlZjogJ0wwJywgcG9zaXRpb246ICcyMjAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAgIC0geyBpZFJlZjogJ0wxJywgcG9zaXRpb246ICcyMzAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAgIC0geyBpZFJlZjogJ0w0JywgcG9zaXRpb246ICcyNDAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAtIHsgaWRSZWY6ICdBQ1MnLCBwb3NpdGlvbjogJzI1MCcsIHVzYWdlOiBPLCBjb3VudDogMTAwIH0Kc3VtbWFyeTogCi0geyBpZFJlZjogJ0wzJywgcG9zaXRpb246ICcwMTAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ05URScsIHBvc2l0aW9uOiAnMDIwJywgdXNhZ2U6IE8sIGNvdW50OiAxMCB9Ci0geyBpZFJlZjogJ1NFJywgcG9zaXRpb246ICcwMzAnLCB1c2FnZTogTSB9Cg==
+                    schemaContent: Zm9ybTogWDEyCnZlcnNpb246ICcwMDMwMjAnCmltcG9ydHM6IFsgJy94MTIvMDAzMDIwL2Jhc2VkZWZzLmVzbCcgXQppZDogJzEwNCcKbmFtZTogJ0FpciBTaGlwbWVudCBJbmZvcm1hdGlvbicKY2xhc3M6ICdTQScKaGVhZGluZzogCi0geyBpZFJlZjogJ1NUJywgcG9zaXRpb246ICcwMTAnLCB1c2FnZTogTSB9Ci0geyBpZFJlZjogJ04xJywgcG9zaXRpb246ICcwMjAnLCB1c2FnZTogTSB9Ci0geyBpZFJlZjogJ04yJywgcG9zaXRpb246ICcwMzAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ04zJywgcG9zaXRpb246ICcwNDAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ040JywgcG9zaXRpb246ICcwNTAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ045JywgcG9zaXRpb246ICcwNjAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KLSB7IGlkUmVmOiAnUEVSJywgcG9zaXRpb246ICcwNzAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ1AxJywgcG9zaXRpb246ICcwODAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ0c0NycsIHBvc2l0aW9uOiAnMDkwJywgdXNhZ2U6IE8gfQotIHsgaWRSZWY6ICdGOScsIHBvc2l0aW9uOiAnMTAwJywgdXNhZ2U6IE8gfQpkZXRhaWw6IAotIGdyb3VwSWQ6ICdGT0JfTG9vcCcKICBjb3VudDogOTk5OTkKICB1c2FnZTogTQogIGl0ZW1zOiAKICAtIHsgaWRSZWY6ICdGT0InLCBwb3NpdGlvbjogJzAyMCcsIHVzYWdlOiBNIH0KICAtIHsgaWRSZWY6ICdTTDEnLCBwb3NpdGlvbjogJzAzMCcsIHVzYWdlOiBNIH0KICAtIHsgaWRSZWY6ICdOOScsIHBvc2l0aW9uOiAnMDQwJywgdXNhZ2U6IE0sIGNvdW50OiAxMCB9CiAgLSB7IGlkUmVmOiAnVEQ0JywgcG9zaXRpb246ICcwNTAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAtIHsgaWRSZWY6ICdIMScsIHBvc2l0aW9uOiAnMDYwJywgdXNhZ2U6IE8gfQogIC0geyBpZFJlZjogJ0gyJywgcG9zaXRpb246ICcwNzAnLCB1c2FnZTogTyB9CiAgLSB7IGlkUmVmOiAnSDMnLCBwb3NpdGlvbjogJzA4MCcsIHVzYWdlOiBPIH0KICAtIHsgaWRSZWY6ICdEVE0nLCBwb3NpdGlvbjogJzA5MCcsIHVzYWdlOiBPIH0KICAtIHsgaWRSZWY6ICdNMScsIHBvc2l0aW9uOiAnMTAwJywgdXNhZ2U6IE8gfQogIC0geyBpZFJlZjogJ0MzJywgcG9zaXRpb246ICcxMTAnLCB1c2FnZTogTyB9CiAgLSB7IGlkUmVmOiAnWDEnLCBwb3NpdGlvbjogJzEyMCcsIHVzYWdlOiBPIH0KICAtIHsgaWRSZWY6ICdYMicsIHBvc2l0aW9uOiAnMTMwJywgdXNhZ2U6IE8gfQogIC0geyBpZFJlZjogJ05URScsIHBvc2l0aW9uOiAnMTQwJywgdXNhZ2U6IE8sIGNvdW50OiAxMCB9CiAgLSBncm91cElkOiAnTjFfTG9vcCcKICAgIGNvdW50OiAyCiAgICB1c2FnZTogTQogICAgaXRlbXM6IAogICAgLSB7IGlkUmVmOiAnTjEnLCBwb3NpdGlvbjogJzE1MCcsIHVzYWdlOiBNIH0KICAgIC0geyBpZFJlZjogJ04yJywgcG9zaXRpb246ICcxNjAnLCB1c2FnZTogTyB9CiAgICAtIHsgaWRSZWY6ICdOMycsIHBvc2l0aW9uOiAnMTcwJywgdXNhZ2U6IE8gfQogICAgLSB7IGlkUmVmOiAnTjQnLCBwb3NpdGlvbjogJzE4MCcsIHVzYWdlOiBPIH0KICAgIC0geyBpZFJlZjogJ045JywgcG9zaXRpb246ICcxOTAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAgIC0geyBpZFJlZjogJ1BFUicsIHBvc2l0aW9uOiAnMjAwJywgdXNhZ2U6IE8gfQogIC0gZ3JvdXBJZDogJ0w1X0xvb3AnCiAgICBjb3VudDogMTAwCiAgICB1c2FnZTogTQogICAgaXRlbXM6IAogICAgLSB7IGlkUmVmOiAnTDUnLCBwb3NpdGlvbjogJzIxMCcsIHVzYWdlOiBNIH0KICAgIC0geyBpZFJlZjogJ0wwJywgcG9zaXRpb246ICcyMjAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAgIC0geyBpZFJlZjogJ0wxJywgcG9zaXRpb246ICcyMzAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAgIC0geyBpZFJlZjogJ0w0JywgcG9zaXRpb246ICcyNDAnLCB1c2FnZTogTywgY291bnQ6IDEwIH0KICAtIHsgaWRSZWY6ICdBQ1MnLCBwb3NpdGlvbjogJzI1MCcsIHVzYWdlOiBPLCBjb3VudDogMTAwIH0Kc3VtbWFyeTogCi0geyBpZFJlZjogJ0wzJywgcG9zaXRpb246ICcwMTAnLCB1c2FnZTogTyB9Ci0geyBpZFJlZjogJ05URScsIHBvc2l0aW9uOiAnMDIwJywgdXNhZ2U6IE8sIGNvdW50OiAxMCB9Ci0geyBpZFJlZjogJ1NFJywgcG9zaXRpb246ICcwMzAnLCB1c2FnZTogTSB9Cg==
                     schemaFileName: 104.esl
                     id: 6d5bc9e7-78cc-4a39-8dd5-7651c5477713
                     name: X12-3020-104-custom
@@ -4052,8 +4042,7 @@ paths:
                     documentFlowDirection: INBOUND
                     flowDependencyCount: 1
                     messageFlowDependenciesInfo: []
-                    messageDataScript: 
-                      JWR3IDIuMApvdXRwdXQgYXBwbGljYXRpb24vanNvbgotLS0KewoJcGFydG5lclJlZmVyZW5jZUlkOiBwYXlsb2FkLnNlbmRlciwKCWhvc3RSZWZlcmVuY2VJZDogcGF5bG9hZC5yZWNlaXZlciBkZWZhdWx0ICJTVEFSIiwKCWJ1c2luZXNzRG9jdW1lbnRLZXk6IHBheWxvYWQuY2xhaW1JZCwKCWN1c3RvbUF0dHJpYnV0ZXM6IFsKCQl7CgkJCWFsaWFzOiAiY2xhaW1OdW1iZXIiLAoJCQl2YWx1ZXM6IFtwYXlsb2FkLmNsYWltSWQgZGVmYXVsdCAiVU5LTk9XTiJdCgl9LAoJewoJCQlhbGlhczogImNsYWltQW1vdW50IiwKCQkJdmFsdWVzOiBbcGF5bG9hZC5hbW91bnQgZGVmYXVsdCAiMCJdCgl9Cl0KfQ==
+                    messageDataScript: JWR3IDIuMApvdXRwdXQgYXBwbGljYXRpb24vanNvbgotLS0KewoJcGFydG5lclJlZmVyZW5jZUlkOiBwYXlsb2FkLnNlbmRlciwKCWhvc3RSZWZlcmVuY2VJZDogcGF5bG9hZC5yZWNlaXZlciBkZWZhdWx0ICJTVEFSIiwKCWJ1c2luZXNzRG9jdW1lbnRLZXk6IHBheWxvYWQuY2xhaW1JZCwKCWN1c3RvbUF0dHJpYnV0ZXM6IFsKCQl7CgkJCWFsaWFzOiAiY2xhaW1OdW1iZXIiLAoJCQl2YWx1ZXM6IFtwYXlsb2FkLmNsYWltSWQgZGVmYXVsdCAiVU5LTk9XTiJdCgl9LAoJewoJCQlhbGlhczogImNsYWltQW1vdW50IiwKCQkJdmFsdWVzOiBbcGF5bG9hZC5hbW91bnQgZGVmYXVsdCAiMCJdCgl9Cl0KfQ==
                     customAttributes:
                     - id: 3b9fcc46-5f3c-4c38-886e-3e808bb88277
                       alias: claimAmount
@@ -5074,15 +5063,13 @@ paths:
               schema:
                 example: &id005
                   title: logo-response
-                  LogoResponse: 
-                    data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCADIAMgDASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQDAggB/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAIDBAUBBv/aAAwDAQACEAMQAAAB/VIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABU5wtghMAAqdsnAITAA4K9zUXo4b5/Mq0+2uZlcDu8ZdN2gco982qs5VubyWqme/c46xXMm3eMpPo/Pt9hLousHk8vO7fcC32Eg5u8ACjeE55bsea7Vn+hmEfdrjuhikaLPcEvPjfcw0/m7sCW5vx0f8AQ/5mtT2H7bLyyh30ae4PXxvuYafzdwYdgBSLvLKEdQAAA+Hn2qfvZhpOtktIpVdd1fP1HSD0ADFpzi1rb8bXoeveyXrdJrJq9ktxxU/fybRTp3wq6URf/fM42ytItvPo4lvqtxr9HZ8OWv2C7j2yqd8fXvnLlTblR3Aq6QGXajDTNvMynk0j6u5DPrBcoaqR7SsXKqr9durdmCy1
+                  LogoResponse: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCADIAMgDASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQDAggB/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAIDBAUBBv/aAAwDAQACEAMQAAAB/VIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABU5wtghMAAqdsnAITAA4K9zUXo4b5/Mq0+2uZlcDu8ZdN2gco982qs5VubyWqme/c46xXMm3eMpPo/Pt9hLousHk8vO7fcC32Eg5u8ACjeE55bsea7Vn+hmEfdrjuhikaLPcEvPjfcw0/m7sCW5vx0f8AQ/5mtT2H7bLyyh30ae4PXxvuYafzdwYdgBSLvLKEdQAAA+Hn2qfvZhpOtktIpVdd1fP1HSD0ADFpzi1rb8bXoeveyXrdJrJq9ktxxU/fybRTp3wq6URf/fM42ytItvPo4lvqtxr9HZ8OWv2C7j2yqd8fXvnLlTblR3Aq6QGXajDTNvMynk0j6u5DPrBcoaqR7SsXKqr9durdmCy1
               example: *id005
             application/json:
               schema:
                 example: &id006
                   title: logo-response
-                  LogoResponse: 
-                    data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCADIAMgDASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQDAggB/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAIDBAUBBv/aAAwDAQACEAMQAAAB/VIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABU5wtghMAAqdsnAITAA4K9zUXo4b5/Mq0+2uZlcDu8ZdN2gco982qs5VubyWqme/c46xXMm3eMpPo/Pt9hLousHk8vO7fcC32Eg5u8ACjeE55bsea7Vn+hmEfdrjuhikaLPcEvPjfcw0/m7sCW5vx0f8AQ/5mtT2H7bLyyh30ae4PXxvuYafzdwYdgBSLvLKEdQAAA+Hn2qfvZhpOtktIpVdd1fP1HSD0ADFpzi1rb8bXoeveyXrdJrJq9ktxxU/fybRTp3wq6URf/fM42ytItvPo4lvqtxr9HZ8OWv2C7j2yqd8fXvnLlTblR3Aq6QGXajDTNvMynk0j6u5DPrBcoaqR7SsXKqr9durdmCy1
+                  LogoResponse: data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgMCAgMDAwMEAwMEBQgFBQQEBQoHBwYIDAoMDAsKCwsNDhIQDQ4RDgsLEBYQERMUFRUVDA8XGBYUGBIUFRT/2wBDAQMEBAUEBQkFBQkUDQsNFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBT/wgARCADIAMgDASIAAhEBAxEB/8QAHAABAAMBAQEBAQAAAAAAAAAAAAUGBwQDAggB/8QAGgEBAAMBAQEAAAAAAAAAAAAAAAIDBAUBBv/aAAwDAQACEAMQAAAB/VIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABU5wtghMAAqdsnAITAA4K9zUXo4b5/Mq0+2uZlcDu8ZdN2gco982qs5VubyWqme/c46xXMm3eMpPo/Pt9hLousHk8vO7fcC32Eg5u8ACjeE55bsea7Vn+hmEfdrjuhikaLPcEvPjfcw0/m7sCW5vx0f8AQ/5mtT2H7bLyyh30ae4PXxvuYafzdwYdgBSLvLKEdQAAA+Hn2qfvZhpOtktIpVdd1fP1HSD0ADFpzi1rb8bXoeveyXrdJrJq9ktxxU/fybRTp3wq6URf/fM42ytItvPo4lvqtxr9HZ8OWv2C7j2yqd8fXvnLlTblR3Aq6QGXajDTNvMynk0j6u5DPrBcoaqR7SsXKqr9durdmCy1
               example: *id006
         '404':
           description: Not found. The requested resource does not exist.
@@ -6238,8 +6225,7 @@ components:
                         secretGroupId: 6e128fa8-dba2-416e-a0fb-4773c3bbe729
                         grantResponse:
                           path: sharedSecrets/6584ec3e-90c3-4b1b-9f45-76a1d22fc560
-                          accessGrant: 
-                            QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZwWFVmc3JlVyt4MlUwRTV5d2JlNFpqRXJKck5iZ3BOM2MvNmJ6MkJZZkF3MUR3PT0=
+                          accessGrant: QWNjZXNzSWQ9SWVQYVFKRnkyTG9zNHE3UFBBdnFFcWt2QiZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZwWFVmc3JlVyt4MlUwRTV5d2JlNFpqRXJKck5iZ3BOM2MvNmJ6MkJZZkF3MUR3PT0=
                         jsonDetails: ''
                       username: username
                       password: 6584ec3e-90c3-4b1b-9f45-76a1d22f0000
@@ -6274,8 +6260,7 @@ components:
                         secretGroupId: 6e128fa8-dba2-416e-a0fb-4773c3bbe729
                         grantResponse:
                           path: sharedSecrets/9132af99-f438-46a2-804a-b1f8b39ec8bb
-                          accessGrant: 
-                            QWNjZXNzSWQ9a3ZoYmFzbTBWMkNleHBPOEhPZGhyOEk3OSZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZpWUFlOXU4RXlFM2RjMDNBYkUvNmJ6MkJZZkF3MUR3PT0=
+                          accessGrant: QWNjZXNzSWQ9a3ZoYmFzbTBWMkNleHBPOEhPZGhyOEk3OSZFeHBpcmVzPTI5LDM4MTU5NTAwMCZTaWduYXR1cmU9dmF1bDp2MTpDYWNUYTFXVUZUNGJwR1VmeUpvdzArVzhQd1ZPTXZGdTNNTllDY2ZpWUFlOXU4RXlFM2RjMDNBYkUvNmJ6MkJZZkF3MUR3PT0=
                         jsonDetails: ''
                       username: username
                       password: 9132af99-f438-46a2-804a-b1f8b39e0000

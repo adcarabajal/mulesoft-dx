@@ -39,8 +39,7 @@ servers:
       description: The organization ID for the Anypoint Platform account.
 externalDocs:
   url: http://
-  description: "Here's the flow for managing the lifecycle of a service :\n 1. Create one or more formats.\n 2. Create a service and associate the format(s) in the step above.\n 3. Update the service when
-    required."
+  description: "Here's the flow for managing the lifecycle of a service :\n 1. Create one or more formats.\n 2. Create a service and associate the format(s) in the step above.\n 3. Update the service when required."
   x-amf-title: Flow to create/update a tokenization service
 paths:
   /formats:
@@ -652,13 +651,7 @@ paths:
     parameters:
     - $ref: '#/components/parameters/XOrigin_envId_Path'
   /environments/{envId}/services:
-    description: "Service is used to config tokenization funcionality and manage it's runtime life cycle. A service can have one of the following status:\n* CREATING - A new tokenization service is being
-      created, update of a service is not possible when in this stage\n* FAILED - creation of VDP table failed. The user is free to retry creation\n* READY - The service is either ready for deployment or
-      is already deployed(refer to deploymentInfo property in raml              for more information)\n* UPDATING - An update of an existing tokenization service which was previously in READY or UPDATE_FAILED:
-      stage is in            progress, update of service is not possible when in this stage.\n* UPDATE_FAILED: The update of service failed, the user can retry to update the service now.\n* REKEYING: rekey
-      of VDP table operation in progess.\n* REKEY_FAILED: rekey of VDP table operation has failed, the user can retry to operation now. \nNOTE: If a unexpected failure occurs, the service can be stuck in
-      CREATING or UPDATING or REKEYING stage. If this happens, the api                will run a scheduled task and mark the status as FAILED or UPDATE_FAILED respectively after the service has been in
-      that state for a long time(roughly between an two to four hours)\n"
+    description: "Service is used to config tokenization funcionality and manage it's runtime life cycle. A service can have one of the following status:\n* CREATING - A new tokenization service is being created, update of a service is not possible when in this stage\n* FAILED - creation of VDP table failed. The user is free to retry creation\n* READY - The service is either ready for deployment or is already deployed(refer to deploymentInfo property in raml              for more information)\n* UPDATING - An update of an existing tokenization service which was previously in READY or UPDATE_FAILED: stage is in            progress, update of service is not possible when in this stage.\n* UPDATE_FAILED: The update of service failed, the user can retry to update the service now.\n* REKEYING: rekey of VDP table operation in progess.\n* REKEY_FAILED: rekey of VDP table operation has failed, the user can retry to operation now. \nNOTE: If a unexpected failure occurs, the service can be stuck in CREATING or UPDATING or REKEYING stage. If this happens, the api                will run a scheduled task and mark the status as FAILED or UPDATE_FAILED respectively after the service has been in that state for a long time(roughly between an two to four hours)\n"
     post:
       description: 'Create a new service.
 
@@ -964,10 +957,7 @@ paths:
                           - socialSecurityNumber
                           outputLocation: vdp_1536344601478.vdp
                         exchangeResponse:
-                          message: 'Unable to create an asset in 91d6681d-e388-4972-9dd9-74ee44a5088a, StatusCodeError: 502 - {"name":"BadGatewayError","status":502,"details":[{"arguments":[{"key":"service","value":"custom-assets-facade"},{"key":"asset","value":{"organizationId":"91d6681d-e388-4972-9dd9-74ee44a5088a","groupId":"91d6681d-e388-4972-9dd9-74ee44a5088a","assetId":"ssnServiceTestNew108-1536344928122","version":"1.0.1536344928"}}],"code":"CUSTOM_ASSET_INIT","message":"The
-                            asset cannot be created."},{"code":"UNKNOWN_ERROR","message":"An error occurred while communicating to the Authentication Service: ServiceUnavailableError: Service over capacity.
-                            Please try again.","arguments":[{"key":"status","value":502}]}],"message":"The asset cannot be created. An error occurred while communicating to the Authentication Service: ServiceUnavailableError:
-                            Service over capacity. Please try again."}'
+                          message: 'Unable to create an asset in 91d6681d-e388-4972-9dd9-74ee44a5088a, StatusCodeError: 502 - {"name":"BadGatewayError","status":502,"details":[{"arguments":[{"key":"service","value":"custom-assets-facade"},{"key":"asset","value":{"organizationId":"91d6681d-e388-4972-9dd9-74ee44a5088a","groupId":"91d6681d-e388-4972-9dd9-74ee44a5088a","assetId":"ssnServiceTestNew108-1536344928122","version":"1.0.1536344928"}}],"code":"CUSTOM_ASSET_INIT","message":"The asset cannot be created."},{"code":"UNKNOWN_ERROR","message":"An error occurred while communicating to the Authentication Service: ServiceUnavailableError: Service over capacity. Please try again.","arguments":[{"key":"status","value":502}]}],"message":"The asset cannot be created. An error occurred while communicating to the Authentication Service: ServiceUnavailableError: Service over capacity. Please try again."}'
                           code: 2000
                         finishTimestamp: 2018-09-07 18:28:48+00:00
                       logs:
@@ -2388,10 +2378,7 @@ components:
           - $ref: '#/components/schemas/VDPCode'
           - type: 'null'
         deploymentInfo:
-          description: 'Represents the deployment information. If null the deployer was not called or the call failed so there is no associated deployment for this service. If a value of DeploymentInfoObject
-            exists then there is an ''deployerId'' associated which means that a deployment request is created for this service and any further manipulation of the service will lead to update of the an
-            object associated to this ''deploymentId''. The field ''deployerCallSuccessful'' indicates whether the last call to the deployer was made successfully. This is especially helpful in scenarios
-            where an update of service happened and we want to confirm that deployer request went through.
+          description: 'Represents the deployment information. If null the deployer was not called or the call failed so there is no associated deployment for this service. If a value of DeploymentInfoObject exists then there is an ''deployerId'' associated which means that a deployment request is created for this service and any further manipulation of the service will lead to update of the an object associated to this ''deploymentId''. The field ''deployerCallSuccessful'' indicates whether the last call to the deployer was made successfully. This is especially helpful in scenarios where an update of service happened and we want to confirm that deployer request went through.
 
             '
           x-amf-union:

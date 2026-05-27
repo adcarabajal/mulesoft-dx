@@ -1518,9 +1518,7 @@ paths:
                   assetId: api-test
                   assetVersion: 1.0.0
                   productVersion: v1
-                  description: accusamus dolorem et rerum placeat libero doloremque id quia vitae illo et suscipit sed nam ipsa qui in eum reiciendis incidunt corporis est iusto voluptas magnam 
-                    pariatur adipisci fugiat voluptatibus odio aut sed culpa dignissimos sit quis quo est corrupti omnis quaerat voluptatum enim asperiores voluptatem exercitationem et accusantium 
-                    illum
+                  description: accusamus dolorem et rerum placeat libero doloremque id quia vitae illo et suscipit sed nam ipsa qui in eum reiciendis incidunt corporis est iusto voluptas magnam pariatur adipisci fugiat voluptatibus odio aut sed culpa dignissimos sit quis quo est corrupti omnis quaerat voluptatum enim asperiores voluptatem exercitationem et accusantium illum
                   tags:
                   - accusantium
                   - voluptatem
@@ -3946,8 +3944,7 @@ paths:
       description: Returns a list of elements.
       parameters:
       - name: query[tags]
-        description: 'A list of keywords for matching API version tags in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the
-          query parameter ''query'' would be disregarded.
+        description: 'A list of keywords for matching API version tags in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the query parameter ''query'' would be disregarded.
 
           '
         required: true
@@ -3967,8 +3964,7 @@ paths:
         schema:
           type: string
       - name: query[name]
-        description: 'A list of keywords for matching API name in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the query
-          parameter ''query'' would be disregarded.
+        description: 'A list of keywords for matching API name in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the query parameter ''query'' would be disregarded.
 
           '
         required: true
@@ -3976,8 +3972,7 @@ paths:
         schema:
           type: string
       - name: query[version]
-        description: 'A list of keywords for matching API version name in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the
-          query parameter ''query'' would be disregarded.
+        description: 'A list of keywords for matching API version name in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the query parameter ''query'' would be disregarded.
 
           '
         required: true
@@ -3994,8 +3989,7 @@ paths:
           maximum: 2147483647
           default: 0
       - name: deep
-        description: 'A boolean value that, when set, would cause the search be perform on the organization associated with ''organizationId'' param, as well as all the sub-organizations under it - as long
-          as the login user has permission to view the content.
+        description: 'A boolean value that, when set, would cause the search be perform on the organization associated with ''organizationId'' param, as well as all the sub-organizations under it - as long as the login user has permission to view the content.
 
           '
         required: true
@@ -4009,8 +4003,7 @@ paths:
         schema:
           type: boolean
       - name: query[description]
-        description: 'A list of keywords for matching API version description in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used,
-          the query parameter ''query'' would be disregarded.
+        description: 'A list of keywords for matching API version description in a search. Used in conjunction with other ''query[xxx]'' to perform advanced search. Note: when any of ''query[xxx]'' is used, the query parameter ''query'' would be disregarded.
 
           '
         required: true
@@ -4051,8 +4044,7 @@ paths:
         schema:
           type: string
       - name: query[matchAll]
-        description: 'A boolean value that determines how other ''query[xxx]'' values should work together in an advanced search When ''matchAll'' is true, all other ''query[xxx]'' would be chained with
-          an ''AND'' when performing a search, otherwise they are chained with an ''OR'' Note: when any of ''query[xxx]'' is used, the query parameter ''query'' would be disregarded.
+        description: 'A boolean value that determines how other ''query[xxx]'' values should work together in an advanced search When ''matchAll'' is true, all other ''query[xxx]'' would be chained with an ''AND'' when performing a search, otherwise they are chained with an ''OR'' Note: when any of ''query[xxx]'' is used, the query parameter ''query'' would be disregarded.
 
           '
         required: true

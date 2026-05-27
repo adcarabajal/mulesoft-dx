@@ -509,8 +509,7 @@ paths:
       operationId: deleteV1OrganizationsByOrganizationidEnvironmentsByEnvironmentidRegionsByRegionidDestinationsQueuesByQueueid
   /v1/organizations/{organizationId}/environments/{environmentId}/regions/{regionId}/destinations/queues/{queueId}/messages:
     delete:
-      description: 'Deletes the messages contained in the queue (effectively purging it). *The deleted messages cannot be retrieved any more* Messages present in the queue prior to this call are deleted;
-        messages sent after this call may also be deleted.
+      description: 'Deletes the messages contained in the queue (effectively purging it). *The deleted messages cannot be retrieved any more* Messages present in the queue prior to this call are deleted; messages sent after this call may also be deleted.
 
         If you are using connected app, "Administer destinations" scope is needed.
 
@@ -543,8 +542,7 @@ paths:
       operationId: deleteV1OrganizationsByOrganizationidEnvironmentsByEnvironmentidRegionsByRegionidDestinationsQueuesByQueueidMessages
   /v1/organizations/{organizationId}/environments/{environmentId}/regions/{regionId}/destinations/queues/{queueId}/fallback:
     put:
-      description: 'Enables or disables cross-region failover configuration for a queue. This configuration is used to evaluate if messages published to or consumed from a queue using Anypoint MQ Connector
-        temporarily redirect to a fallback queue in a fallback region when the primary region is unavailable.<br/><br/>If you are using a connected app, "Administer destinations" scope is required.
+      description: 'Enables or disables cross-region failover configuration for a queue. This configuration is used to evaluate if messages published to or consumed from a queue using Anypoint MQ Connector temporarily redirect to a fallback queue in a fallback region when the primary region is unavailable.<br/><br/>If you are using a connected app, "Administer destinations" scope is required.
 
         '
       parameters:
@@ -982,8 +980,7 @@ paths:
     - $ref: '#/components/parameters/XOrigin_regionId_Path'
   ? /v1/organizations/{organizationId}/environments/{environmentId}/regions/{regionId}/bindings/exchanges/{exchangeId}/queues/{queueId}/rules/routing
   : put:
-      description: 'Creates a routing rule on a binding between a message exchange and a queue. This rule is used to evaluate if a message published to an exchange should be forwarded to a specific queue.
-        <br/><br/>This will override existing routing rules on the binding with the new rules specified in this request.
+      description: 'Creates a routing rule on a binding between a message exchange and a queue. This rule is used to evaluate if a message published to an exchange should be forwarded to a specific queue. <br/><br/>This will override existing routing rules on the binding with the new rules specified in this request.
 
         If you are using connected app, "Administer destinations" scope is needed.
 
@@ -1035,23 +1032,10 @@ paths:
                         description: 'Supported property types: NUMERIC, STRING.'
                         type: string
                       matcherType:
-                        description: "This is used to determine how the value in this rule is evaluated against the header and property values in the message published to Anypoint MQ. \n\nSupported matcher
-                          types:\n<table><tr><td>propertyType</td><td>matcherType</td><td>Description</td></tr><tr><td>STRING</td><td>EQ</td><td>Message property value is an exact match for the value in
-                          this rule</td></tr><tr><td></td><td>PREFIX</td><td>Message property value starts with the value in this rule</td></tr><tr><td></td><td>ANY_OF</td><td>Message property value matches
-                          any of the values in this rule</td></tr><tr><td></td><td>NONE_OF</td><td>Message property value matches none of the values in this rule</td></tr><tr><td></td><td>EXISTS</td><td>Message
-                          has a property whose name matches the property name in this rule</td></tr><tr><td>NUMERIC</td><td>EQ</td><td>Message property value equals to the value in this rule</td></tr><tr><td></td><td>LT</td><td>Message
-                          property value is less than the value in this rule</td></tr><tr><td></td><td>LE</td><td>Message property value is less than or equals to the value in this rule</td></tr><tr><td></td><td>GT</td><td>Message
-                          property value is greater than the value in this rule</td></tr><tr><td></td><td>GE</td><td>Message property value is greater than or equals to the value in this rule</td></tr><tr><td></td><td>RANGE</td><td>Message
-                          property value falls within the range of values specified in this rule (lower and upper limits of the range inclusive)</td></tr><tr><td></td><td>NONE_OF</td><td>Message property
-                          value matches none of the values in this rule</td></tr><tr><td></td><td>EXISTS</td><td>Message has a property whose name matches the property name in this rule</td></tr></table>"
+                        description: "This is used to determine how the value in this rule is evaluated against the header and property values in the message published to Anypoint MQ. \n\nSupported matcher types:\n<table><tr><td>propertyType</td><td>matcherType</td><td>Description</td></tr><tr><td>STRING</td><td>EQ</td><td>Message property value is an exact match for the value in this rule</td></tr><tr><td></td><td>PREFIX</td><td>Message property value starts with the value in this rule</td></tr><tr><td></td><td>ANY_OF</td><td>Message property value matches any of the values in this rule</td></tr><tr><td></td><td>NONE_OF</td><td>Message property value matches none of the values in this rule</td></tr><tr><td></td><td>EXISTS</td><td>Message has a property whose name matches the property name in this rule</td></tr><tr><td>NUMERIC</td><td>EQ</td><td>Message property value equals to the value in this rule</td></tr><tr><td></td><td>LT</td><td>Message property value is less than the value in this rule</td></tr><tr><td></td><td>LE</td><td>Message property value is less than or equals to the value in this rule</td></tr><tr><td></td><td>GT</td><td>Message property value is greater than the value in this rule</td></tr><tr><td></td><td>GE</td><td>Message property value is greater than or equals to the value in this rule</td></tr><tr><td></td><td>RANGE</td><td>Message property value falls within the range of values specified in this rule (lower and upper limits of the range inclusive)</td></tr><tr><td></td><td>NONE_OF</td><td>Message property value matches none of the values in this rule</td></tr><tr><td></td><td>EXISTS</td><td>Message has a property whose name matches the property name in this rule</td></tr></table>"
                         type: string
                       value:
-                        description: "Value must not be null, empty and can only contain these characters: a-z, A-Z, 0-9, '(', ')', '@', '!', '&', '|', '#', '$', '%', whitespace, hyphen(-), underscore(_),
-                          colon(;), semi-colon(:), comma(,), period(.), single-quote('). Numeric values must be within the range -10^9 to 10^9. \n\nMax size of property value is 45 KB. \n\nSupported values:\n\
-                          \n<table><tr><td>propertyType</td><td>matcherType</td><td>value</td><td>Example</td></tr><tr><td>STRING</td><td>EQ<br/>PREFIX</td><td>Non-empty string</td><td>\"Order A\"</td></tr><tr><td></td><td>ANY_OF<br/>NONE_OF</td><td>Non-empty
-                          array of strings. Array size cannot exceed 150</td><td>[\"Order A\", \"Order B\"]</td></tr><tr><td></td><td>EXISTS</td><td>Boolean value</td><td>true</td></tr><tr><td>NUMERIC</td><td>EQ<br/>LT<br/>LE<br/>GT<br/>GE</td><td>A
-                          non-null number</td><td>5.5</td></tr><tr><td></td><td>RANGE</td><td>An array of two numbers where the first number is less than the second number</td><td>[1, 7.8]</td></tr><tr><td></td><td>NONE_OF</td><td>Non-empty
-                          array of numbers. Array size cannot exceed 150</td><td>[1.0, 2, 3.456]</td></tr><tr><td></td><td>EXISTS</td><td>Boolean value</td><td>false</td></tr></table>"
+                        description: "Value must not be null, empty and can only contain these characters: a-z, A-Z, 0-9, '(', ')', '@', '!', '&', '|', '#', '$', '%', whitespace, hyphen(-), underscore(_), colon(;), semi-colon(:), comma(,), period(.), single-quote('). Numeric values must be within the range -10^9 to 10^9. \n\nMax size of property value is 45 KB. \n\nSupported values:\n\n<table><tr><td>propertyType</td><td>matcherType</td><td>value</td><td>Example</td></tr><tr><td>STRING</td><td>EQ<br/>PREFIX</td><td>Non-empty string</td><td>\"Order A\"</td></tr><tr><td></td><td>ANY_OF<br/>NONE_OF</td><td>Non-empty array of strings. Array size cannot exceed 150</td><td>[\"Order A\", \"Order B\"]</td></tr><tr><td></td><td>EXISTS</td><td>Boolean value</td><td>true</td></tr><tr><td>NUMERIC</td><td>EQ<br/>LT<br/>LE<br/>GT<br/>GE</td><td>A non-null number</td><td>5.5</td></tr><tr><td></td><td>RANGE</td><td>An array of two numbers where the first number is less than the second number</td><td>[1, 7.8]</td></tr><tr><td></td><td>NONE_OF</td><td>Non-empty array of numbers. Array size cannot exceed 150</td><td>[1.0, 2, 3.456]</td></tr><tr><td></td><td>EXISTS</td><td>Boolean value</td><td>false</td></tr></table>"
         x-amf-mediaType: application/json
         description: The routing data to update.
       responses:

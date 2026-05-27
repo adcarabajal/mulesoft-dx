@@ -1365,8 +1365,7 @@ components:
           description: Summary about run asset status
         assetPayload:
           type: string
-          description: "Asset payload as JSON (e.g. A2A card). When sending JSON, you may use assetPayload, agentCard, or assetDescriptor. Responses include both assetPayload and agentCard (same value)
-            for backward compatibility."
+          description: "Asset payload as JSON (e.g. A2A card). When sending JSON, you may use assetPayload, agentCard, or assetDescriptor. Responses include both assetPayload and agentCard (same value) for backward compatibility."
         agentCard:
           type: string
           description: Same JSON as assetPayload (legacy name)

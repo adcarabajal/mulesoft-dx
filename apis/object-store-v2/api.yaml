@@ -23,8 +23,7 @@ paths:
   /organizations/{organizationId}/environments/{environmentId}/stores:
     description: Get list of object stores
     get:
-      description: Get list of object stores in the given environment. If you are using connected app, either of "View Stores / Manage Stores / Manage Store Data" scopes  are needed.  Note that this 
-        API only returns the list of stores that currently exist. To retrieve a list of stores for a given timeframe (including stores that don't exist anymore), use the Object Store V2 Stats APIs.
+      description: Get list of object stores in the given environment. If you are using connected app, either of "View Stores / Manage Stores / Manage Store Data" scopes  are needed.  Note that this API only returns the list of stores that currently exist. To retrieve a list of stores for a given timeframe (including stores that don't exist anymore), use the Object Store V2 Stats APIs.
       parameters:
       - name: nextPageToken
         description: When requesting a series of result pages, specify which page this request should resume on.
@@ -154,8 +153,7 @@ paths:
   /organizations/{organizationId}/environments/{environmentId}/stores/{storeId}/partitions:
     description: Get list of keys in an object store
     get:
-      description: Return a paginated list of keys in this store, along with a token for making a request for the next page of keys. If you are using connected app, "Manage Store Data" scope is 
-        needed.
+      description: Return a paginated list of keys in this store, along with a token for making a request for the next page of keys. If you are using connected app, "Manage Store Data" scope is needed.
       parameters:
       - name: nextPageToken
         description: When requesting a series of result pages, specify which page this request should resume on.
