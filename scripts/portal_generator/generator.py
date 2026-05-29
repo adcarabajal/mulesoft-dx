@@ -332,6 +332,14 @@ class PortalGenerator:
                 shutil.rmtree(target)
             target.mkdir(parents=True, exist_ok=True)
 
+        # Copy fragments directory so that $ref links in api.yaml resolve correctly
+        source_fragments = self.repo_root / 'fragments'
+        if source_fragments.is_dir():
+            dest_fragments = self.output_dir / 'fragments'
+            if dest_fragments.exists():
+                shutil.rmtree(dest_fragments)
+            shutil.copytree(source_fragments, dest_fragments)
+
         # Fetch MuleSoft header and footer
         print(f"\n🌐 Fetching MuleSoft header and footer...")
         try:
