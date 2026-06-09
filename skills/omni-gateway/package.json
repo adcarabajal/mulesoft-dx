@@ -1,0 +1,25 @@
+{
+  "name": "@salesforce/omni-gateway-skills",
+  "version": "0.1.0",
+  "description": "Omni Gateway installation and operations skill bundle",
+  "license": "Apache-2.0",
+  "files": [
+    "SKILL.md",
+    "*/SKILL.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mulesoft/mulesoft-dx.git",
+    "directory": "skills/omni-gateway"
+  },
+  "keywords": [
+    "mulesoft",
+    "omni-gateway",
+    "flex-gateway",
+    "anypoint"
+  ]
+}
