@@ -2,10 +2,11 @@
 name: validate-gateway-config
 description: |
   Read and validate YAML configuration files in an Omni Gateway conf.d directory.
-  Use when the user wants to check their gateway configuration for errors before
-  deploying, validate that API instances, policy bindings, services, and other
-  resources are correctly defined, identify misconfigurations that could cause
-  4xx/5xx errors, or understand what each configuration resource does.
+  Use when a gateway returns unexpected 4xx/5xx errors after a config change and
+  the user suspects a misconfiguration; when a new PolicyBinding or ApiInstance
+  was added and is silently not taking effect; when conf.d files were edited
+  manually and the user wants to catch errors before restarting the gateway; or
+  when diagnose-gateway-error determines that conf.d is the likely root cause.
 ---
 
 # Validate Gateway Config
@@ -351,4 +352,4 @@ Produce a structured validation report:
 
 - `diagnose-gateway-error` — end-to-end triage when errors are already happening; invokes this skill when conf.d is available
 - `inspect-gateway-logs` — read gateway logs to correlate config issues with runtime errors
-- `register-gateway` — if the registration YAML in conf.d appears malformed
+- `install-omni-gateway` — if the registration YAML in conf.d appears malformed, re-run the registration steps

@@ -27,8 +27,6 @@ flowchart TD
 
     Start -->|CloudHub 2.0 managed deployment| P[provision-managed-gateway]
 
-    Start -->|Connect to Anypoint Platform| R[register-gateway]
-
     Start -->|Read logs / find errors| OL[inspect-gateway-logs]
     Start -->|Check configuration files| OC[validate-gateway-config]
     Start -->|Analyze a dump file| OD[analyze-gateway-dump]
@@ -39,9 +37,8 @@ flowchart TD
 
 | Skill | When to use |
 |-------|-------------|
-| `install-omni-gateway` | Install on Linux, Docker, or Kubernetes (self-managed) |
+| `install-omni-gateway` | Install and register on Linux, Docker, or Kubernetes (self-managed) |
 | `provision-managed-gateway` | Provision a managed gateway on CloudHub 2.0 (v1.1, coming soon) |
-| `register-gateway` | Register a self-managed gateway with Anypoint Platform |
 | `inspect-gateway-logs` | Parse log output and surface errors and anomalies |
 | `validate-gateway-config` | Check `conf.d/` YAML files for misconfigurations |
 | `analyze-gateway-dump` | Interpret the contents of a diagnostic dump ZIP |

@@ -1,12 +1,12 @@
 ---
-
-## name: install-omni-gateway
+name: install-omni-gateway
 description: |
-  Install MuleSoft Omni Gateway on self-managed infrastructure: Linux (Ubuntu/Debian via APT),
-  Docker or Docker Compose, or Kubernetes / OpenShift (Helm). Use when the user
-  wants to install or deploy Omni Gateway and needs platform-specific commands and
-  configuration files to complete the setup. For CloudHub 2.0 managed deployments,
+  Install and register MuleSoft Omni Gateway on self-managed infrastructure: Linux (Ubuntu/Debian via APT),
+  Docker or Docker Compose, or Kubernetes / OpenShift (Helm). Use when the user wants to install Omni
+  Gateway, connect it to Anypoint Platform's control plane, re-register after a token expires or a new
+  environment is needed, and verify the gateway is running. For CloudHub 2.0 managed deployments,
   use provision-managed-gateway instead.
+---
 
 # Install Omni Gateway
 
@@ -19,7 +19,6 @@ flowchart TD
     Start -->|Linux Ubuntu/Debian| L[Linux section]
     Start -->|Docker or Docker Compose| D[Docker section]
     Start -->|Kubernetes or OpenShift| K[Kubernetes section]
-    Start -->|CloudHub 2.0| C[Note: use provision-managed-gateway\ncoming in v1.1]
 ```
 
 
@@ -64,7 +63,7 @@ below do not apply. Ask the user to contact the MuleSoft gateway team for RPM re
 - Ubuntu or Debian host (any LTS release)
 - `sudo` access
 - Internet connectivity to `flex-packages.anypoint.mulesoft.com`
-- For connected mode: an Anypoint Platform organization ID and a connected app token (see `register-gateway`)
+- For connected mode: an Anypoint Platform organization ID and a registration token (see Step 4)
 
 ---
 
@@ -107,6 +106,15 @@ version string, the installation succeeded.
 
 Skip this step if running in local mode.
 
+**Gather registration parameters before running the command:**
+
+1. **Gateway name** (`<gateway-name>`): A unique, human-readable identifier (alphanumeric and hyphens
+   only, e.g., `prod-linux-gw`). Appears in Anypoint Runtime Manager.
+2. **Anypoint organization ID** (`<orgID>`): UUID visible in Anypoint Platform → Admin Settings →
+   Organization (format: `550e8400-e29b-41d4-a716-446655440000`).
+3. **Registration token** (`<token>`): Obtained from Anypoint Runtime Manager → Add Gateway →
+   Self-managed tab → Copy token. Scoped to a specific organization; expires after 24 hours.
+
 Registration contacts Anypoint Platform, creates a gateway record in your organization, and writes
 a `registration.yaml` file to `conf.d/`. This file is the gateway's identity credential — keep it
 secure and do not commit it to source control.
@@ -120,17 +128,15 @@ sudo flexctl registration create <gateway-name> \
   --output-directory=/usr/local/share/mulesoft/flex-gateway/conf.d
 ```
 
-Replace `<gateway-name>` with a descriptive name (e.g., `prod-linux-gw`), `<token>` with a
-connected app bearer token, and `<orgID>` with your Anypoint organization ID.
+The command should complete in 10–15 seconds. Verify the registration artifact was written:
 
-For guidance on obtaining the token and organization ID, see the `register-gateway` skill.
+```bash
+ls -la /usr/local/share/mulesoft/flex-gateway/conf.d/
+cat /usr/local/share/mulesoft/flex-gateway/conf.d/registration.yaml
+```
 
-**Common issues:**
-
-- `**401 Unauthorized`**: The token is invalid, expired, or belongs to a different organization.
-Regenerate the token in Anypoint Platform → Access Management → Connected Apps.
-- `**Permission denied` writing to `conf.d/**`: The command must be run with `sudo` so it can
-write to the system directory.
+The file should start with `kind: Configuration` and include `spec.platformConnection` fields
+with `agentId`, `arm`, `clientId`, and `clientSecret`.
 
 ---
 
@@ -200,6 +206,15 @@ This pulls the `latest` tag. For production deployments, pin to a specific versi
 
 Skip this step if running in local mode.
 
+**Gather registration parameters before running the command:**
+
+1. **Gateway name** (`<gateway-name>`): A unique, human-readable identifier (alphanumeric and hyphens
+   only, e.g., `prod-docker-gw`). Appears in Anypoint Runtime Manager.
+2. **Anypoint organization ID** (`<orgID>`): UUID visible in Anypoint Platform → Admin Settings →
+   Organization (format: `550e8400-e29b-41d4-a716-446655440000`).
+3. **Registration token** (`<token>`): Obtained from Anypoint Runtime Manager → Add Gateway →
+   Self-managed tab → Copy token. Scoped to a specific organization; expires after 24 hours.
+
 Use the bundled `flexctl` binary inside the image to perform registration. The `-u $UID` flag
 runs the registration process as your current user so the output file is owned by you:
 
@@ -215,8 +230,16 @@ docker run --entrypoint flexctl -u $UID \
   <gateway-name>
 ```
 
-This writes `registration.yaml` (and related files) to your current working directory. Move the
-registration YAML to `~/flex-gateway/conf.d/` before starting the gateway container:
+This writes `registration.yaml` (and related files) to your current working directory. Verify the
+artifact before moving it:
+
+```bash
+ls -la registration.yaml
+cat registration.yaml
+```
+
+The file should start with `kind: Configuration` and include `spec.platformConnection` fields.
+Then move the registration YAML to `~/flex-gateway/conf.d/` before starting the gateway container:
 
 ```bash
 mv registration.yaml ~/flex-gateway/conf.d/
@@ -314,9 +337,28 @@ kubectl cluster-info
 Before proceeding, collect:
 
 - **Namespace**: The recommended namespace is `gateway` (it will be created if it does not exist).
-- **Registration YAML**: A `registration.yaml` file for connected mode (see `register-gateway`).
+- **Registration YAML**: For connected mode, generate it using the Docker `flexctl` one-shot command
+  below before running the Helm install. Store the output file in your working directory.
 - **Image tag**: Defaults to `latest`; pin to a specific version for production.
 - **Service type**: `ClusterIP` (internal only), `NodePort`, or `LoadBalancer` (external).
+
+**To generate `registration.yaml` from your workstation (connected mode only):**
+
+```bash
+docker run --entrypoint flexctl -u $UID \
+  -v "$(pwd)":/registration mulesoft/flex-gateway \
+  registration create \
+  --organization=<orgID> \
+  --token=<token> \
+  --output-directory=/registration \
+  --connected=true \
+  --anypoint-url=https://anypoint.mulesoft.com \
+  <gateway-name>
+```
+
+Registration parameters: `<orgID>` from Anypoint Platform → Admin Settings → Organization;
+`<token>` from Runtime Manager → Add Gateway → Self-managed → Copy token (expires 24 hours);
+`<gateway-name>` is the display name in Runtime Manager.
 
 ---
 
@@ -411,8 +453,47 @@ not exist. Check network egress rules and confirm the tag with `docker pull mule
 - `**CrashLoopBackOff**`: Run `kubectl logs -n gateway deployment/ingress` to inspect the
 startup failure. Common causes: missing `registration.yaml` secret, malformed YAML in a
 ConfigMap, or an OpenShift SCC violation.
-- `**Pending` pods**: Check for resource quota or node affinity issues with
+- `**Pending` pods`: Check for resource quota or node affinity issues with
 `kubectl describe pod -n gateway`.
+
+---
+
+## Confirm in Anypoint Runtime Manager (connected mode)
+
+After installation and registration, verify that the gateway is online.
+
+### Option 1: Anypoint Platform UI
+
+1. Navigate to **Anypoint Platform** → **Runtime Manager** → **Flex Gateways**
+2. Find your gateway by name
+3. Confirm the status shows **STARTED** (green indicator)
+
+### Option 2: Flex Gateway Manager API
+
+```
+GET https://anypoint.mulesoft.com/flexgateway/api/v1/organizations/{orgID}/environments/{envID}/gateways/{gatewayID}
+Authorization: Bearer <access-token>
+```
+
+Expect a 200 response with `"status": "STARTED"`.
+
+---
+
+## Troubleshooting
+
+| Problem | Likely Cause | Fix |
+|---------|-------------|-----|
+| `authentication failed` or `401 Unauthorized` | Token expired or belongs to a different organization | Generate a fresh token from Runtime Manager → Add Gateway → Self-managed, then re-run registration |
+| `environment not found` or `404` | Organization ID wrong or token scoped to a different organization | Verify org ID in Anypoint Admin Settings and regenerate token in the correct organization |
+| `permission denied` or `conf.d not writable` | Output directory has restrictive permissions | Run `sudo chown -R $USER /usr/local/share/mulesoft/flex-gateway/conf.d` (Linux) or adjust volume permissions (Docker/Kubernetes) |
+| `409 Conflict` — gateway already registered | A gateway with this name already exists in Anypoint | Use a different `<gateway-name>` or delete the old record from Runtime Manager |
+| Status stays `DISCONNECTED` after restart | Registration file not in conf.d, or gateway using wrong conf.d path | Verify with `ls -la /usr/local/share/mulesoft/flex-gateway/conf.d/`; for Docker/Kubernetes check volume mount path |
+| `flexctl: command not found` (Linux) | `flexctl` is not in `$PATH` | Reinstall flex-gateway or add the installation directory to `$PATH` |
+| Container exits immediately (Docker) | Missing or malformed `registration.yaml`, permissions mismatch on `conf.d/`, or port in use | Run `docker logs flex-gateway` to see the error |
+| `bind: address already in use` | Another process is listening on the mapped port | Change the host-side port (e.g., `-p 18081:8081`) or stop the conflicting process |
+| `ImagePullBackOff` (Kubernetes) | Node cannot reach Docker Hub or image tag does not exist | Check network egress rules; confirm tag with `docker pull mulesoft/flex-gateway:<tag>` |
+| `CrashLoopBackOff` (Kubernetes) | Missing registration secret, malformed ConfigMap YAML, or OpenShift SCC violation | Run `kubectl logs -n gateway deployment/ingress` |
+| `Pending` pods (Kubernetes) | Resource quota or node affinity issues | Run `kubectl describe pod -n gateway` |
 
 ---
 
@@ -420,11 +501,9 @@ ConfigMap, or an OpenShift SCC violation.
 
 Once the gateway is installed and running:
 
-1. **Register with Anypoint (connected mode)** — if registration was not completed during
-  installation, or to verify the gateway appears in Runtime Manager: see `register-gateway`.
-2. **Apply a policy to an API** — configure API proxying and security: see `secure-api`.
-3. **Monitor logs** — parse and interpret gateway log output: see `inspect-gateway-logs`.
-4. **Validate your conf.d configuration** — check YAML resource files for misconfigurations
+1. **Apply a policy to an API** — configure API proxying and security: see `secure-api`.
+2. **Monitor logs** — parse and interpret gateway log output: see `inspect-gateway-logs`.
+3. **Validate your conf.d configuration** — check YAML resource files for misconfigurations
   before deploying changes: see `validate-gateway-config`.
 
 ---
@@ -432,8 +511,6 @@ Once the gateway is installed and running:
 ## Related Jobs
 
 - `provision-managed-gateway` — CloudHub 2.0 managed deployment (v1.1, coming soon)
-- `register-gateway` — Connect a self-managed gateway to Anypoint Platform
 - `validate-gateway-config` — Validate conf.d YAML configuration
 - `inspect-gateway-logs` — Parse and interpret gateway log output
 - `diagnose-gateway-error` — End-to-end triage when the gateway returns errors
-
