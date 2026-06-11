@@ -21,7 +21,7 @@ description: |
 | `upstream connect error` / connection refused | Upstream service health, routes config | `inspect-gateway-logs` |
 | TLS handshake failures | Certificate validity, TLS config in conf.d | `inspect-gateway-logs` |
 | `xDS disconnected` / control plane errors | Anypoint connectivity, registration token validity | `inspect-gateway-logs` |
-| STARTED state never reached | Registration artifact, conf.d correctness | `register-gateway`, then `validate-gateway-config` |
+| STARTED state never reached | Registration artifact, conf.d correctness | `install-omni-gateway` (re-register), then `validate-gateway-config` |
 | Known-good config still failing | Live deployed state may differ from conf.d | `analyze-gateway-dump` |
 
 ## By Available Artifact
