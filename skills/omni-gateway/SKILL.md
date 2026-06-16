@@ -31,6 +31,7 @@ flowchart TD
     Start -->|Check configuration files| OC[validate-gateway-config]
     Start -->|Analyze a dump file| OD[analyze-gateway-dump]
     Start -->|Diagnose an error end-to-end| OE[diagnose-gateway-error]
+    Start -->|Run a performance benchmark| OB[run-gateway-benchmark]
 ```
 
 ## Available Skills
@@ -43,6 +44,7 @@ flowchart TD
 | `validate-gateway-config` | Check `conf.d/` YAML files for misconfigurations |
 | `analyze-gateway-dump` | Interpret the contents of a diagnostic dump ZIP |
 | `diagnose-gateway-error` | Triage any gateway error and get escalation guidance |
+| `run-gateway-benchmark` | Run Flex performance benchmarks on EKS (k6 + Grafana evidence) |
 
 ## Next Steps After Installation
 
