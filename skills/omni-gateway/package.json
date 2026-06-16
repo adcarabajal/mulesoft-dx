@@ -8,9 +8,16 @@
     "CHANGELOG.md",
     "*/SKILL.md",
     "*/ARCHITECTURE.md",
+    "*/Makefile",
+    "*/.env.example",
     "*/scripts/**",
     "*/references/**",
-    "*/templates/**"
+    "*/templates/**",
+    "*/terraform/**",
+    "*/k8s/**",
+    "*/config/**",
+    "*/charts/**",
+    "*/docker/**"
   ],
   "publishConfig": {
     "access": "public",

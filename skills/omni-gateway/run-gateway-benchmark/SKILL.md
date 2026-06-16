@@ -60,7 +60,8 @@ flag set.
 
 ## Step 1 — Verify prerequisites
 
-All commands run from `skills/omni-gateway/run-gateway-benchmark/scripts/`.
+All commands run from `skills/omni-gateway/run-gateway-benchmark/` (where the
+`Makefile` lives — the shell scripts the Makefile calls are under `scripts/`).
 
 Run the bundled preflight; it covers every check below in one pass and prints a remediation
 command for each gap:

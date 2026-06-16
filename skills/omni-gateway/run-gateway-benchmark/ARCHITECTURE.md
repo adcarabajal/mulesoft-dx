@@ -12,25 +12,26 @@ Work item: `W-21368048`
 
 ```
 run-gateway-benchmark/
-└── scripts/
-    ├── Makefile                   # Top-level orchestration
-    ├── .env / .env.example        # Runtime configuration
-    ├── terraform/                 # AWS infrastructure (EKS, VPC, ECR)
-    ├── k8s/
-    │   ├── flex/                  # Flex Gateway Helm values
-    │   ├── k6/                    # k6 Operator TestRun templates
-    │   ├── observability/         # kube-prometheus-stack values
-    │   └── upstream/              # Upstream service manifests
-    ├── config/
-    │   ├── flex-config-header.yaml
-    │   ├── snippets/api-instance.yaml
-    │   └── policies/              # rate-limit.yaml, client-id-enforcement.yaml
-    ├── charts/
-    │   └── flex-bench-extras/     # Custom Helm chart: ServiceMonitor + Grafana dashboards
-    ├── docker/
-    │   └── upstream/Dockerfile    # Upstream HTTP echo server
-    ├── scripts/                   # Shell scripts (deploy, render, run, report)
-    └── reports/                   # Generated benchmark output (PNGs + Markdown)
+├── SKILL.md                   # Skill prose (entry point for agents/users)
+├── ARCHITECTURE.md            # This document
+├── Makefile                   # Top-level orchestration
+├── .env / .env.example        # Runtime configuration
+├── terraform/                 # AWS infrastructure (EKS, VPC, ECR)
+├── k8s/
+│   ├── flex/                  # Flex Gateway Helm values
+│   ├── k6/                    # k6 Operator TestRun templates
+│   ├── observability/         # kube-prometheus-stack values
+│   └── upstream/              # Upstream service manifests
+├── config/
+│   ├── flex-config-header.yaml
+│   ├── snippets/api-instance.yaml
+│   └── policies/              # rate-limit.yaml, client-id-enforcement.yaml
+├── charts/
+│   └── flex-bench-extras/     # Custom Helm chart: ServiceMonitor + Grafana dashboards
+├── docker/
+│   └── upstream/Dockerfile    # Upstream HTTP echo server
+├── scripts/                   # Shell scripts (deploy, render, run, report)
+└── reports/                   # Generated benchmark output (PNGs + Markdown)
 ```
 
 ---
@@ -310,7 +311,7 @@ make benchmark
 ### First-Time Setup
 
 ```bash
-cd skills/omni-gateway/run-gateway-benchmark/scripts
+cd skills/omni-gateway/run-gateway-benchmark
 
 # 1. Configure environment
 cp .env.example .env
