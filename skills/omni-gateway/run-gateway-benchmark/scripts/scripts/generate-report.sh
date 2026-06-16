@@ -19,7 +19,7 @@
 set -euo pipefail
 
 K6_NS="${K6_NS:-k6-operator-system}"
-GRAFANA_PF_PORT="${GRAFANA_PF_PORT:-3000}"
+GRAFANA_PORT="${GRAFANA_PORT:-3000}"
 
 : "${RUN_ID:?required}"
 : "${RUN_SLUG:?required}"
@@ -69,7 +69,10 @@ epoch_ms() { # ISO8601 -> epoch millis, with +/- pad seconds; empty on failure
 import sys, datetime
 iso, pad = sys.argv[1], int(sys.argv[2])
 if not iso: sys.exit(1)
-dt = datetime.datetime.strptime(iso, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+# K8s container terminated.finishedAt sometimes carries fractional seconds
+# (e.g. "2026-06-16T12:34:56.789012Z") and sometimes doesn't ("…:56Z").
+# fromisoformat handles both once the trailing 'Z' is rewritten as +00:00.
+dt = datetime.datetime.fromisoformat(iso.replace("Z", "+00:00"))
 print(int(dt.timestamp()*1000) + pad*1000)
 PY
 }
@@ -78,7 +81,7 @@ to_ms="$(epoch_ms "$end_iso" 30)"
 # Fall back to a relative window if the pod is already gone.
 range_q="from=${from_ms:-now-15m}&to=${to_ms:-now}"
 
-g="http://localhost:${GRAFANA_PF_PORT}"
+g="http://localhost:${GRAFANA_PORT}"
 
 # --- Emit the report --------------------------------------------------------
 {
@@ -114,7 +117,7 @@ g="http://localhost:${GRAFANA_PF_PORT}"
   echo
   echo '```bash'
   echo "make watch    # port-forward + open k6 dashboard, or:"
-  echo "kubectl -n monitoring port-forward svc/kps-grafana ${GRAFANA_PF_PORT}:80"
+  echo "kubectl -n monitoring port-forward svc/kps-grafana ${GRAFANA_PORT}:80"
   echo '```'
   echo
   echo "Then open these dashboards (time range pre-set to this run):"

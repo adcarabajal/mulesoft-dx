@@ -24,6 +24,10 @@ else
   echo "watch-grafana: starting port-forward $NS/$SVC -> localhost:$PORT"
   kubectl -n "$NS" port-forward "svc/$SVC" "$PORT:80" >/tmp/watch-grafana.log 2>&1 &
   pf_pid=$!
+  # While we wait for Grafana to answer, kill the kubectl child if the user
+  # interrupts the script — otherwise an orphan port-forward holds the port
+  # and the next `make watch` falsely sees "an existing tunnel".
+  trap 'kill "$pf_pid" 2>/dev/null || true' INT TERM
   # Wait for Grafana to answer on /api/health (max 30s).
   for _ in {1..30}; do
     if curl -sf -o /dev/null "http://localhost:$PORT/api/health"; then
@@ -36,6 +40,11 @@ else
     kill "$pf_pid" 2>/dev/null || true
     exit 1
   fi
+  # Tunnel is healthy; the user wants it to outlive this script (the printed
+  # `kill $pf_pid` hint is how they tear it down later). Clear the trap and
+  # disown so the bg job keeps running after we exit.
+  trap - INT TERM
+  disown "$pf_pid" 2>/dev/null || true
   echo "watch-grafana: tunnel ready (pid $pf_pid). Stop with: kill $pf_pid"
 fi
 

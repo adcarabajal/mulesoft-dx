@@ -26,24 +26,31 @@ out="$1"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-: > "$out"
-envsubst < config/flex-config-header.yaml >> "$out"
-
 # Empty POLICIES would yield a one-element array containing "" with the
 # default IFS read pattern; skip the read entirely to keep plist truly empty.
 plist=()
 if [[ -n "$POLICIES" ]]; then
   IFS=',' read -ra plist <<< "$POLICIES"
 fi
+
+# Validate every policy file exists BEFORE truncating the output. Otherwise
+# `: > "$out"` clobbers a previously valid flex-config.yaml and leaves the
+# next `kubectl apply` to fail with a cryptic YAML parse error instead of
+# this clear "unknown policy" message.
+for p in "${plist[@]+"${plist[@]}"}"; do
+  if [[ ! -f "config/policies/${p}.yaml" ]]; then
+    echo "unknown policy: $p" >&2; exit 1
+  fi
+done
+
+: > "$out"
+envsubst < config/flex-config-header.yaml >> "$out"
+
 for i in $(seq 1 "$N_APIS"); do
   API_INDEX=$i UPSTREAM_HOST=$UPSTREAM_HOST UPSTREAM_PORT=$UPSTREAM_PORT \
     envsubst < config/snippets/api-instance.yaml >> "$out"
   for p in "${plist[@]+"${plist[@]}"}"; do
-    snippet="config/policies/${p}.yaml"
-    if [[ ! -f "$snippet" ]]; then
-      echo "unknown policy: $p" >&2; exit 1
-    fi
-    API_INDEX=$i envsubst < "$snippet" >> "$out"
+    API_INDEX=$i envsubst < "config/policies/${p}.yaml" >> "$out"
   done
 done
 

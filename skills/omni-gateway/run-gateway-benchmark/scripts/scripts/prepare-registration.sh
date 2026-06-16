@@ -101,24 +101,19 @@ fi
 # --- 5. Write back to .env (one-shot backup) ------------------------------
 cp "$ROOT/.env" "$ROOT/.env.bak"
 
-# Detect sed flavor: macOS/BSD requires the empty '' arg after -i.
-if sed --version >/dev/null 2>&1; then
-  sed_inplace=(sed -i)
-else
-  sed_inplace=(sed -i '')
-fi
-
-# Use # as the delimiter to tolerate / and = in secrets.
-if grep -qE '^CLIENT_ID=' "$ROOT/.env"; then
-  "${sed_inplace[@]}" "s#^CLIENT_ID=.*#CLIENT_ID=$new_id#" "$ROOT/.env"
-else
-  echo "CLIENT_ID=$new_id" >> "$ROOT/.env"
-fi
-if grep -qE '^CLIENT_SECRET=' "$ROOT/.env"; then
-  "${sed_inplace[@]}" "s#^CLIENT_SECRET=.*#CLIENT_SECRET=$new_sc#" "$ROOT/.env"
-else
-  echo "CLIENT_SECRET=$new_sc" >> "$ROOT/.env"
-fi
+# Rewrite .env without sed: secrets containing the sed delimiter (`#`, `/`,
+# `&`, etc.) would otherwise corrupt the in-place edit and either fail with
+# "unterminated `s' command" or silently write garbage into the file. Strip
+# any existing CLIENT_ID/CLIENT_SECRET lines and append fresh values; values
+# pass through verbatim because they're written as plain bash strings, not as
+# sed replacement expressions.
+tmp="$(mktemp "${TMPDIR:-/tmp}/prep-reg.XXXXXX")"
+grep -vE '^(CLIENT_ID|CLIENT_SECRET)=' "$ROOT/.env" > "$tmp" || true
+{
+  printf 'CLIENT_ID=%s\n' "$new_id"
+  printf 'CLIENT_SECRET=%s\n' "$new_sc"
+} >> "$tmp"
+mv "$tmp" "$ROOT/.env"
 
 echo "prepare-registration: CLIENT_ID and CLIENT_SECRET written to .env (CLIENT_SECRET redacted from log)."
 echo "  Backup at .env.bak"

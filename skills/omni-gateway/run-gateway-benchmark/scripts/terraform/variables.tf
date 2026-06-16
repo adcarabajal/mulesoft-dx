@@ -48,6 +48,16 @@ variable "tags" {
   default = { project = "flex-gateway-benchmark", work_item = "W-21368048" }
 }
 
+# CIDR allowlist for the EKS public API endpoint. Default of 0.0.0.0/0 leaves
+# the cluster reachable from the internet, which only makes sense for short-
+# lived benchmark clusters; pass `-var 'public_access_cidrs=["x.y.z.w/32"]'`
+# (e.g. the operator's egress IP) for a tighter posture.
+variable "public_access_cidrs" {
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+  description = "CIDR blocks allowed to reach the EKS public API endpoint"
+}
+
 # Pin the helm charts that run for the lifetime of the cluster so a `terraform
 # apply` six months from now doesn't silently jump to a new major.
 variable "kps_chart_version" {

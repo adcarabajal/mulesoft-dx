@@ -23,9 +23,17 @@ spec:
       - name: FLEX_URL
         value: "${FLEX_URL}"
       - name: CLIENT_ID
-        value: "${CLIENT_ID}"
+        valueFrom:
+          secretKeyRef:
+            name: bench-client-creds-${RUN_SLUG}
+            key: client_id
+            optional: true
       - name: CLIENT_SECRET
-        value: "${CLIENT_SECRET}"
+        valueFrom:
+          secretKeyRef:
+            name: bench-client-creds-${RUN_SLUG}
+            key: client_secret
+            optional: true
       - name: RPS
         value: "${RPS}"
       - name: VUS

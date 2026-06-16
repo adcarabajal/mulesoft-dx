@@ -49,9 +49,11 @@ new_hash=$(
 )
 
 # Read live hash from pod template annotation (forces rollout on change).
-jsonpath_annot="${HASH_ANNOT//\//\\.}"
+# kubectl jsonpath's dot accessor can't address keys with '/' or '.' in their
+# name; bracket+single-quote notation is the documented escape that survives
+# annotation keys like `bench/spec-hash` without any shell-level escaping.
 live_hash=$(kubectl -n "$NS" get deploy "$NAME" \
-  -o jsonpath="{.spec.template.metadata.annotations.${jsonpath_annot}}" 2>/dev/null || true)
+  -o jsonpath="{.spec.template.metadata.annotations['${HASH_ANNOT}']}" 2>/dev/null || true)
 
 if [[ "$new_hash" == "$live_hash" && -n "$live_hash" ]]; then
   echo "deploy-flex: spec unchanged (hash=$new_hash), skipping helm upgrade"

@@ -31,9 +31,11 @@ up: ## Provision EKS via Terraform (idempotent)
 	cd $(TF_DIR) && terraform apply -auto-approve \
 		-var "aws_region=$(AWS_REGION)" \
 		-var "cluster_name=$(CLUSTER_NAME)"
-	# eval so a non-zero `terraform output` aborts the recipe (errexit doesn't
+	# Capture the kubeconfig command into a variable so `set -e` aborts on a
+	# failed `terraform output` — `eval "$$(...)"` would otherwise mask the
+	# substitution's exit status with eval's own (bash errexit doesn't
 	# propagate into $$(...) without `shopt -s inherit_errexit`).
-	eval "$$(cd $(TF_DIR) && terraform output -raw kubeconfig_cmd)"
+	cd $(TF_DIR) && kc_cmd="$$(terraform output -raw kubeconfig_cmd)" && eval "$$kc_cmd"
 
 down: ## terraform destroy (full teardown)
 	cd $(TF_DIR) && terraform destroy -auto-approve \

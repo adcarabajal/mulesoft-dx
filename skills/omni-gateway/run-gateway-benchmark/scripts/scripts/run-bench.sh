@@ -46,7 +46,27 @@ kubectl -n k6-operator-system create configmap "k6-script-$RUN_SLUG" \
   --from-file="scenario.js=$RUN_DIR/scenario.js" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-# 3. Apply the TestRun.
+# 2b. Create the per-run client-credentials Secret. The TestRun env references
+# it via secretKeyRef with optional=true so an empty POLICIES set still works
+# without this Secret existing — but when client-id-enforcement is in play we
+# always materialize it here so the credentials never live in the TestRun
+# spec (which would put them in plaintext in the k8s API server).
+kubectl -n k6-operator-system create secret generic "bench-client-creds-$RUN_SLUG" \
+  --from-literal="client_id=$CLIENT_ID" \
+  --from-literal="client_secret=$CLIENT_SECRET" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# 3. Apply the TestRun. Fail fast if a TestRun with this name already exists —
+# `kubectl apply` would otherwise overwrite the previous run's spec and the
+# in-flight metrics for that run would be lost. Use `make clean-deployment`
+# (or `kubectl delete testrun flex-bench-$RUN_SLUG -n k6-operator-system`)
+# before re-running with the same RUN_ID.
+testrun_name="flex-bench-$RUN_SLUG"
+if kubectl -n k6-operator-system get testrun "$testrun_name" >/dev/null 2>&1; then
+  echo "run-bench: TestRun $testrun_name already exists in k6-operator-system." >&2
+  echo "  Delete it first or re-run with a fresh RUN_ID." >&2
+  exit 1
+fi
 envsubst < "$ROOT/k8s/k6/testrun-template.yaml" | kubectl apply -f -
 
 # Print live Grafana URLs so the user can watch the run in flight. Requires
