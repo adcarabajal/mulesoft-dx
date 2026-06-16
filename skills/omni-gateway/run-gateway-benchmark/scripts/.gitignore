@@ -5,3 +5,4 @@ reports/*
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+.env
