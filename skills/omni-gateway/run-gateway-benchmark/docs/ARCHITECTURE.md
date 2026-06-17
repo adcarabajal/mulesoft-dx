@@ -13,7 +13,8 @@ Work item: `W-21368048`
 ```
 run-gateway-benchmark/
 ├── SKILL.md                   # Skill prose (entry point for agents/users)
-├── ARCHITECTURE.md            # This document
+├── docs/
+│   └── ARCHITECTURE.md        # This document
 ├── Makefile                   # Top-level orchestration
 ├── .env / .env.example        # Runtime configuration
 ├── terraform/                 # AWS infrastructure (EKS, VPC, ECR)

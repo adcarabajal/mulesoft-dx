@@ -20,8 +20,8 @@ dedicated EKS cluster, deploys Flex + an upstream echo service, runs a k6 `TestR
 Grafana dashboards as PNGs, and emits a self-contained Markdown report per run.
 
 Detailed architecture, dashboards, idempotency design, and design rationale are documented
-in `ARCHITECTURE.md` alongside this file. Read it before extending the harness; this skill
-assumes it as background.
+in `docs/ARCHITECTURE.md`. Read it before extending the harness; this skill assumes it
+as background.
 
 ```mermaid
 flowchart TD
