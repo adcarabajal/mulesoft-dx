@@ -4,8 +4,8 @@ description: |
   Install and register MuleSoft Omni Gateway on self-managed infrastructure: Linux (Ubuntu/Debian via APT),
   Docker or Docker Compose, or Kubernetes / OpenShift (Helm). Use when the user wants to install Omni
   Gateway, connect it to Anypoint Platform's control plane, re-register after a token expires or a new
-  environment is needed, and verify the gateway is running. For CloudHub 2.0 managed deployments,
-  use provision-managed-gateway instead.
+  environment is needed, and verify the gateway is running. CloudHub 2.0 managed deployments are not
+  covered by this skill bundle.
 ---
 
 # Install Omni Gateway
@@ -510,7 +510,6 @@ Once the gateway is installed and running:
 
 ## Related Jobs
 
-- `provision-managed-gateway` — CloudHub 2.0 managed deployment (v1.1, coming soon)
 - `validate-gateway-config` — Validate conf.d YAML configuration
 - `inspect-gateway-logs` — Parse and interpret gateway log output
 - `diagnose-gateway-error` — End-to-end triage when the gateway returns errors

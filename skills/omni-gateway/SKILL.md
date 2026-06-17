@@ -2,10 +2,10 @@
 name: omni-gateway
 description: |
   Install, register, and operate MuleSoft Omni Gateway (formerly Flex Gateway).
-  Use when the user wants to install Omni Gateway on Linux, Docker, Kubernetes, or
-  CloudHub 2.0; register a self-managed gateway with Anypoint Platform; inspect
-  gateway logs; validate gateway configuration; analyze diagnostic dump files; or
-  diagnose gateway errors and failures. Routes to the appropriate sub-skill.
+  Use when the user wants to install Omni Gateway on Linux, Docker, or Kubernetes;
+  register a self-managed gateway with Anypoint Platform; inspect gateway logs;
+  validate gateway configuration; analyze diagnostic dump files; or diagnose
+  gateway errors and failures. Routes to the appropriate sub-skill.
 ---
 
 # Omni Gateway
@@ -25,8 +25,6 @@ flowchart TD
     Start -->|Install the gateway| I[install-omni-gateway]
     I -.->|Linux / Docker / Kubernetes| I
 
-    Start -->|CloudHub 2.0 managed deployment| P[provision-managed-gateway]
-
     Start -->|Read logs / find errors| OL[inspect-gateway-logs]
     Start -->|Check configuration files| OC[validate-gateway-config]
     Start -->|Analyze a dump file| OD[analyze-gateway-dump]
@@ -39,7 +37,6 @@ flowchart TD
 | Skill | When to use |
 |-------|-------------|
 | `install-omni-gateway` | Install and register on Linux, Docker, or Kubernetes (self-managed) |
-| `provision-managed-gateway` | Provision a managed gateway on CloudHub 2.0 (v1.1, coming soon) |
 | `inspect-gateway-logs` | Parse log output and surface errors and anomalies |
 | `validate-gateway-config` | Check `conf.d/` YAML files for misconfigurations |
 | `analyze-gateway-dump` | Interpret the contents of a diagnostic dump ZIP |
