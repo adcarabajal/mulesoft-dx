@@ -17,6 +17,26 @@
 #   - Reports under benchmark/reports/ (use clean-runs.sh for those)
 set -euo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: clean-deployment.sh
+
+Tear down per-run workloads while keeping the cluster, observability stack,
+and k6-operator alive. Use between sessions for a fresh slate without paying
+for a full terraform destroy + recreate.
+
+Removes: Flex Helm release + declarative CRDs (ns flex), bench-upstream
+Deployment + Service (ns default), all k6 TestRuns, and the k6-script-* /
+bench-client-creds-* ConfigMaps/Secrets (ns k6-operator-system).
+
+Keeps: EKS cluster, kube-prometheus-stack, k6-operator, ECR repo, and reports.
+
+Takes no arguments or environment configuration.
+EOF
+    exit 0 ;;
+esac
+
 NS_FLEX="flex"
 NS_DEFAULT="default"
 NS_K6="k6-operator-system"

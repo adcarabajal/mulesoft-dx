@@ -38,19 +38,19 @@ fi
 # next `kubectl apply` to fail with a cryptic YAML parse error instead of
 # this clear "unknown policy" message.
 for p in "${plist[@]+"${plist[@]}"}"; do
-  if [[ ! -f "config/policies/${p}.yaml" ]]; then
+  if [[ ! -f "assets/config/policies/${p}.yaml" ]]; then
     echo "unknown policy: $p" >&2; exit 1
   fi
 done
 
 : > "$out"
-envsubst < config/flex-config-header.yaml >> "$out"
+envsubst < assets/config/flex-config-header.yaml >> "$out"
 
 for i in $(seq 1 "$N_APIS"); do
   API_INDEX=$i UPSTREAM_HOST=$UPSTREAM_HOST UPSTREAM_PORT=$UPSTREAM_PORT \
-    envsubst < config/snippets/api-instance.yaml >> "$out"
+    envsubst < assets/config/snippets/api-instance.yaml >> "$out"
   for p in "${plist[@]+"${plist[@]}"}"; do
-    API_INDEX=$i envsubst < "config/policies/${p}.yaml" >> "$out"
+    API_INDEX=$i envsubst < "assets/config/policies/${p}.yaml" >> "$out"
   done
 done
 

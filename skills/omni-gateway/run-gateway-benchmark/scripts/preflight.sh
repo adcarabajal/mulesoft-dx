@@ -10,6 +10,23 @@
 # run anytime.
 set -uo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: preflight.sh
+
+Read-only check of every CLI, daemon, credential, and one-time artifact the
+benchmark harness needs. Prints "ok" / "MISSING <name> — <remediation>" per
+check; exits 0 if all green, 1 otherwise.
+
+Never installs software, edits .env, or touches AWS resources. Reads .env (if
+present) for AWS_REGION / POLICIES / CLIENT_* so it can validate them.
+
+Takes no arguments.
+EOF
+    exit 0 ;;
+esac
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 1
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Open a port-forward to Grafana and print live dashboard URLs.
 #
-# Anonymous Viewer access is enabled in k8s/observability/values.yaml, so the
+# Anonymous Viewer access is enabled in assets/k8s/observability/values.yaml, so the
 # URLs open straight to the dashboards — no login, no forced-password-change
 # page. Useful while a benchmark run is in flight: watch k6 throughput and
 # Flex pod resource use update in real time.
@@ -10,6 +10,25 @@
 #   GRAFANA_PORT    — local port to forward to (default 3000)
 #   RUN_ID          — if set, k6 / Driver URL is filtered to this testid
 #   OPEN_BROWSER    — set to 0 to skip `open` (default: open the k6 dashboard)
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: watch-grafana.sh
+
+Open a port-forward to Grafana and print live dashboard URLs (anonymous
+Viewer — no login). Useful while a benchmark run is in flight. The tunnel
+outlives this script; stop it with the printed `kill <pid>` hint.
+
+Reads from .env / environment (all optional):
+  GRAFANA_PORT      local port to forward to              (default: 3000)
+  GRAFANA_NS        Grafana namespace                     (default: monitoring)
+  GRAFANA_SVC       Grafana service name                  (default: kps-grafana)
+  RUN_ID            filter the k6 / Driver URL to a testid
+  OPEN_BROWSER      set to 0 to skip auto-opening the dashboard (default: 1)
+EOF
+    exit 0 ;;
+esac
+
 set -euo pipefail
 
 PORT="${GRAFANA_PORT:-3000}"

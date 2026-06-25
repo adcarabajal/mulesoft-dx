@@ -17,6 +17,30 @@
 #                                   $ROOT/.run/last/.
 set -euo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: deploy-flex.sh [work-dir]
+
+Render the Flex declarative config + Helm values, then deploy (or hash-skip)
+the Flex Gateway Helm release and apply the gateway.mulesoft.com CRDs.
+
+Arguments:
+  work-dir          (optional)  dir for rendered files   (default: .run/last)
+
+Reads from .env / environment:
+  N_APIS                (required)  number of ApiInstance resources
+  FLEX_VERSION          (required)  Helm chart version
+  POLICIES              (optional)  comma-list of policies (may be empty)
+  FLEX_IMAGE_REPOSITORY (optional)  defaults to mulesoft/flex-gateway
+  FLEX_IMAGE_TAG        (optional)  defaults to FLEX_VERSION
+  REGISTRATION_FILE     (optional)  defaults to .run/registration/registration.yaml
+
+Idempotent: skips helm upgrade when the spec hash matches the live deployment.
+EOF
+    exit 0 ;;
+esac
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 NS="flex"
 NAME="flex-gateway"
@@ -38,7 +62,7 @@ N_APIS="$N_APIS" POLICIES="$POLICIES" \
   "$ROOT/scripts/render-flex-config.sh" "$work/flex-config.yaml"
 
 # 2. Render the per-run Helm values overlay (image repo/tag + ConfigMap mount).
-envsubst < "$ROOT/k8s/flex/values-run.yaml.tpl" > "$work/flex-values.yaml"
+envsubst < "$ROOT/assets/k8s/flex/values-run.yaml.tpl" > "$work/flex-values.yaml"
 
 # 3. Compute the spec hash. Anything that should trigger a rollout goes in.
 new_hash=$(
@@ -61,7 +85,7 @@ if [[ "$new_hash" == "$live_hash" && -n "$live_hash" ]]; then
 fi
 
 # 4. Namespace.
-kubectl apply -f "$ROOT/k8s/flex/namespace.yaml"
+kubectl apply -f "$ROOT/assets/k8s/flex/namespace.yaml"
 
 # 4b. Flex registration. The chart requires a registration secret to obtain
 # its gateway certificate from Anypoint. Generate it once (local mode) with:
@@ -93,7 +117,7 @@ helm repo update flex-gateway >/dev/null
 helm upgrade --install flex-gateway flex-gateway/flex-gateway \
   --version "$FLEX_VERSION" \
   -n "$NS" --create-namespace \
-  -f "$ROOT/k8s/flex/values.yaml" \
+  -f "$ROOT/assets/k8s/flex/values.yaml" \
   -f "$work/flex-values.yaml"
 
 # 6b. Apply the declarative API config. The chart runs Flex with

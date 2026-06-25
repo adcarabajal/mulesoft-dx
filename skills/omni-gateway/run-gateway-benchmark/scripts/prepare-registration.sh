@@ -17,6 +17,28 @@
 #   CLIENT_SECRET   — non-interactive override
 set -euo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: prepare-registration.sh
+
+Generate the local-mode Flex registration artifact at
+.run/registration/registration.yaml and, when POLICIES (in .env) contains
+client-id-enforcement, collect CLIENT_ID / CLIENT_SECRET and write them to .env.
+
+Idempotent: keeps an existing registration file and existing credentials
+unless FORCE=1.
+
+Reads from .env / environment:
+  FORCE=1           (optional)  rotate registration / overwrite credentials
+  CLIENT_ID         (optional)  non-interactive credential override
+  CLIENT_SECRET     (optional)  non-interactive credential override
+
+WARNING: FORCE=1 rotates the gateway identity and forces a Flex redeploy.
+EOF
+    exit 0 ;;
+esac
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT" || exit 1
 

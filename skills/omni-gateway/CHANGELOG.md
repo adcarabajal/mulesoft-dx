@@ -4,6 +4,20 @@ All notable changes to `@salesforce/omni-gateway-skills` are documented in this 
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Directory layout follows the [agentskills.io](https://agentskills.io/specification) convention.** `run-gateway-benchmark` static resources moved from ad-hoc top-level dirs (`terraform/`, `charts/`, `docker/`, `k8s/`, `config/`) into `assets/`, and the design doc moved to `references/ARCHITECTURE.md`. All Makefile targets and scripts updated to the new paths.
+- **Removed `package.json`.** The bundle is no longer packaged/published via npm; it is consumed directly as an agentskills skill directory.
+- **`install-omni-gateway` split per platform.** The platform walkthroughs moved into `references/linux.md`, `references/docker.md`, and `references/kubernetes.md`; `SKILL.md` is now a router that loads the matching reference on demand, bringing it under the 500-line progressive-disclosure budget. Shared sections (platform choice, Runtime Manager verification, troubleshooting) stay in `SKILL.md`.
+
+### Added
+
+- **`run-gateway-benchmark`: Available Scripts index.** New section in `SKILL.md` mapping every `scripts/*.sh` to its driving `make` target and one-line purpose.
+- **`run-gateway-benchmark`: `--help` on every script.** All harness scripts now accept `-h` / `--help` and print usage (arguments + the `.env` variables they read) without side effects.
+- **`evals/` scaffold.** Trigger-and-behavior evals at `evals/evals.json` with a methodology `README.md`. Covers per-skill activation, negative-trigger cases, and safety anti-assertions for the destructive benchmark operations (`make up` / `make down`).
+
 ## [0.1.1] - 2026-06-16
 
 ### Added

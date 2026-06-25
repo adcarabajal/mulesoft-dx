@@ -13,25 +13,26 @@ Work item: `W-21368048`
 ```
 run-gateway-benchmark/
 ├── SKILL.md                   # Skill prose (entry point for agents/users)
-├── docs/
-│   └── ARCHITECTURE.md        # This document
 ├── Makefile                   # Top-level orchestration
 ├── .env / .env.example        # Runtime configuration
-├── terraform/                 # AWS infrastructure (EKS, VPC, ECR)
-├── k8s/
-│   ├── flex/                  # Flex Gateway Helm values
-│   ├── k6/                    # k6 Operator TestRun templates
-│   ├── observability/         # kube-prometheus-stack values
-│   └── upstream/              # Upstream service manifests
-├── config/
-│   ├── flex-config-header.yaml
-│   ├── snippets/api-instance.yaml
-│   └── policies/              # rate-limit.yaml, client-id-enforcement.yaml
-├── charts/
-│   └── flex-bench-extras/     # Custom Helm chart: ServiceMonitor + Grafana dashboards
-├── docker/
-│   └── upstream/Dockerfile    # Upstream HTTP echo server
+├── references/
+│   └── ARCHITECTURE.md        # This document
 ├── scripts/                   # Shell scripts (deploy, render, run, report)
+├── assets/                    # Static resources consumed by the harness
+│   ├── terraform/             # AWS infrastructure (EKS, VPC, ECR)
+│   ├── k8s/
+│   │   ├── flex/              # Flex Gateway Helm values
+│   │   ├── k6/                # k6 Operator TestRun templates
+│   │   ├── observability/     # kube-prometheus-stack values
+│   │   └── upstream/          # Upstream service manifests
+│   ├── config/
+│   │   ├── flex-config-header.yaml
+│   │   ├── snippets/api-instance.yaml
+│   │   └── policies/          # rate-limit.yaml, client-id-enforcement.yaml
+│   ├── charts/
+│   │   └── flex-bench-extras/ # Custom Helm chart: ServiceMonitor + Grafana dashboards
+│   └── docker/
+│       └── upstream/Dockerfile # Upstream HTTP echo server
 └── reports/                   # Generated benchmark output (PNGs + Markdown)
 ```
 
@@ -43,7 +44,7 @@ run-gateway-benchmark/
 
 Terraform provisions a dedicated AWS environment with two Terraform configuration files:
 
-**`terraform/main.tf`** — creates:
+**`assets/terraform/main.tf`** — creates:
 - **VPC** (`10.20.0.0/16`) with 3 public + 3 private subnets across AZs, single NAT gateway.
 - **EKS cluster** (`flex-bench`, Kubernetes 1.30) with two managed node groups:
   - `system` — `t3.large` × 2, tainted `NoSchedule` for control-plane workloads only.
@@ -52,7 +53,7 @@ Terraform provisions a dedicated AWS environment with two Terraform configuratio
 - **EBS CSI IRSA** + EKS addon for persistent volume support.
 - **Metrics Server** EKS addon.
 
-**`terraform/helm.tf`** — installs three long-lived Helm releases into the cluster:
+**`assets/terraform/helm.tf`** — installs three long-lived Helm releases into the cluster:
 - `kube-prometheus-stack` (v65.5.0) in `monitoring` namespace — Prometheus, Alertmanager, Grafana, node exporters.
 - `flex-bench-extras` (local chart) — ServiceMonitor for Flex Envoy stats, PodMonitor for k6, three Grafana dashboard ConfigMaps.
 - `k6-operator` (v4.4.1) in `k6-operator-system` — manages `TestRun` CRDs as Kubernetes jobs.
@@ -145,7 +146,7 @@ Writes a static `scenario.js` k6 script to disk. The script reads all scenario p
 Idempotent Flex Gateway deployment.
 
 1. Renders `flex-config.yaml` via `render-flex-config.sh`.
-2. Renders `flex-values.yaml` from `k8s/flex/values-run.yaml.tpl` (image repository/tag).
+2. Renders `flex-values.yaml` from `assets/k8s/flex/values-run.yaml.tpl` (image repository/tag).
 3. Computes a SHA-256 hash over `flex-config.yaml` + image reference.
 4. Reads the live hash from the pod template annotation `bench/spec-hash`.
 5. **Skips** `helm upgrade` if hashes match.
@@ -159,7 +160,7 @@ Idempotent upstream service deployment.
 
 1. Reads `ecr_repository_url` from Terraform outputs.
 2. Checks ECR that the `latest` image tag exists (fails fast if not pushed yet).
-3. Renders `k8s/upstream/deployment.yaml.tpl` → YAML.
+3. Renders `assets/k8s/upstream/deployment.yaml.tpl` → YAML.
 4. Hashes the rendered YAML and compares to the `bench/spec-hash` label on the live Deployment.
 5. **Skips** if hashes match; otherwise applies Service + Deployment + stamps the hash label.
 
@@ -169,7 +170,7 @@ Per-run execution path. Assumes Flex + upstream are already deployed.
 
 1. Renders `scenario.js` via `render-k6-script.sh`.
 2. Creates a per-run ConfigMap `k6-script-<RUN_SLUG>` from `scenario.js`.
-3. Applies `k8s/k6/testrun-template.yaml` (with `envsubst`) to create a `TestRun` CRD object.
+3. Applies `assets/k8s/k6/testrun-template.yaml` (with `envsubst`) to create a `TestRun` CRD object.
 4. Waits for the TestRun to reach `finished` phase (via `wait-for-testrun.sh`).
 5. Exports Grafana snapshots (via `export-grafana-snapshot.sh`).
 6. Generates the Markdown run report (via `generate-report.sh`).
@@ -208,7 +209,7 @@ Removes per-run workloads (Flex Helm release, upstream Deployment/Service, all k
 
 ---
 
-### Upstream Container (`docker/upstream/Dockerfile`)
+### Upstream Container (`assets/docker/upstream/Dockerfile`)
 
 A two-stage Docker build:
 - **Stage 1:** Clones `asoorm/go-bench-suite` at a pinned commit (`d691810`), builds a static binary with CGO disabled.
@@ -217,7 +218,7 @@ A two-stage Docker build:
 
 ---
 
-### Flex Gateway Configuration (`config/`)
+### Flex Gateway Configuration (`assets/config/`)
 
 | File | Purpose |
 |---|---|
@@ -226,7 +227,7 @@ A two-stage Docker build:
 | `policies/rate-limit.yaml` | `PolicyBinding` template for `rate-limiting-flex` Extension |
 | `policies/client-id-enforcement.yaml` | `PolicyBinding` template for `client-id-enforcement` Extension |
 
-All templates use `envsubst` variable substitution. The schema for these CRDs is documented in `config/SCHEMA-NOTES.md` (verified against Flex Gateway 1.13.0 documentation).
+All templates use `envsubst` variable substitution. The schema for these CRDs is documented in `assets/config/SCHEMA-NOTES.md` (verified against Flex Gateway 1.13.0 documentation).
 
 ---
 
@@ -242,7 +243,7 @@ make benchmark
 │   └─ docker buildx build → ECR push
 │
 ├─ make deploy-upstream
-│   ├─ render k8s/upstream/deployment.yaml.tpl
+│   ├─ render assets/k8s/upstream/deployment.yaml.tpl
 │   └─ kubectl apply → bench-upstream Deployment + Service (ns: default)
 │
 ├─ make deploy-flex
@@ -285,7 +286,7 @@ make benchmark
 | `TEARDOWN` | `0` | Set to `1` to run `make down` after `benchmark` |
 | `REGISTRATION_FILE` | `.run/registration/registration.yaml` | Flex local-mode registration file |
 
-### Terraform Variables (`terraform/variables.tf`)
+### Terraform Variables (`assets/terraform/variables.tf`)
 
 | Variable | Default | Description |
 |---|---|---|

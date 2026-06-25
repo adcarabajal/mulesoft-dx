@@ -20,7 +20,7 @@ dedicated EKS cluster, deploys Flex + an upstream echo service, runs a k6 `TestR
 Grafana dashboards as PNGs, and emits a self-contained Markdown report per run.
 
 Detailed architecture, dashboards, idempotency design, and design rationale are documented
-in `docs/ARCHITECTURE.md`. Read it before extending the harness; this skill assumes it
+in `references/ARCHITECTURE.md`. Read it before extending the harness; this skill assumes it
 as background.
 
 ```mermaid
@@ -213,8 +213,8 @@ make deploy-upstream    # bench-upstream Service + Deployment in 'default' names
 make deploy-flex        # Flex Gateway Helm release + CRD resources in 'flex' namespace
 ```
 
-`deploy-flex` renders `flex-config.yaml` from `config/flex-config-header.yaml` +
-`config/snippets/api-instance.yaml` + `config/policies/<policy>.yaml`, hashes it together with
+`deploy-flex` renders `flex-config.yaml` from `assets/config/flex-config-header.yaml` +
+`assets/config/snippets/api-instance.yaml` + `assets/config/policies/<policy>.yaml`, hashes it together with
 the image reference, and skips `helm upgrade` if the hash matches the live deployment. Config
 changes apply via `kubectl apply` to CRDs without restarting Flex pods.
 
@@ -341,6 +341,31 @@ The k6 thresholds in the rendered scenario are hard failures: `http_req_failed <
 
 For deeper triage of the gateway itself (not the harness), invoke `inspect-gateway-logs` or
 `diagnose-gateway-error`.
+
+---
+
+## Available Scripts
+
+The `make` targets above are the supported entry points. They delegate to the scripts in
+`scripts/`, listed here for reference when debugging the harness or composing steps manually.
+Every script reads its configuration from `.env` and accepts `--help` for usage:
+
+| Script | Driven by | Purpose |
+|--------|-----------|---------|
+| `preflight.sh` | `make preflight` | Read-only check of every CLI, daemon, credential, and one-time artifact before any run |
+| `prepare-registration.sh` | `make prepare-registration` | Generate the local-mode Flex registration artifact; collect `CLIENT_ID`/`CLIENT_SECRET` when needed |
+| `push-upstream.sh` | `make push-upstream` | Build the upstream echo image for `linux/amd64` and push to ECR |
+| `deploy-upstream.sh` | `make deploy-upstream` | Deploy (or hash-skip) the `bench-upstream` Service + Deployment |
+| `deploy-flex.sh` | `make deploy-flex` | Render config, then deploy (or hash-skip) the Flex Gateway Helm release + CRDs |
+| `render-flex-config.sh` | `deploy-flex.sh` | Assemble `flex-config.yaml` from header + API-instance + policy snippets |
+| `wait-for-flex.sh` | `deploy-flex.sh` | Block until the Flex Gateway deployment finishes rolling out |
+| `render-k6-script.sh` | `run-bench.sh` | Render the k6 `scenario.js` from scenario knobs |
+| `run-bench.sh` | `make run` | Create the per-run k6 `TestRun`, wait for it, and export the Grafana snapshot |
+| `wait-for-testrun.sh` | `run-bench.sh` | Poll a k6 `TestRun` until it reaches `finished` (or times out) |
+| `export-grafana-snapshot.sh` | `run-bench.sh` | Port-forward Grafana and export dashboard PNGs for a time window |
+| `generate-report.sh` | `make run` | Parse k6 summary from runner logs and emit the per-run Markdown report |
+| `watch-grafana.sh` | `make watch` | Open a Grafana port-forward and print live dashboard URLs |
+| `clean-deployment.sh` | `make clean-deployment` | Tear down per-run workloads while keeping the cluster, observability, and k6-operator |
 
 ---
 

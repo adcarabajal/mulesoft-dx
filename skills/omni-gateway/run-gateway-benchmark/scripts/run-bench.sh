@@ -15,6 +15,32 @@
 #   FLEX_URL (optional — defaults to in-cluster service DNS)
 set -euo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: run-bench.sh
+
+Run a single k6 load test against the already-deployed Flex + upstream, wait
+for it to finish, export the Grafana snapshot, and generate the run report.
+Does NOT (re)deploy Flex or upstream.
+
+Reads from .env / environment:
+  RUN_ID            (required)  identifier for this run (e.g. a timestamp)
+  N_APIS            (required)  API fan-out passed to scenario.js
+  RPS               (required)  target requests per second
+  VUS               (required)  pre-allocated k6 virtual users
+  DURATION          (required)  k6 test duration (e.g. 2m)
+  CLIENT_ID         (optional)  empty unless client-id-enforcement is active
+  CLIENT_SECRET     (optional)  empty unless client-id-enforcement is active
+  FLEX_URL          (optional)  defaults to the in-cluster service DNS
+  GRAFANA_PORT      (optional)  port for the printed live URLs (default: 3000)
+
+Fails if a TestRun with this RUN_ID already exists — clean it up or pick a
+fresh RUN_ID first.
+EOF
+    exit 0 ;;
+esac
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 : "${RUN_ID:?required}"
@@ -67,7 +93,7 @@ if kubectl -n k6-operator-system get testrun "$testrun_name" >/dev/null 2>&1; th
   echo "  Delete it first or re-run with a fresh RUN_ID." >&2
   exit 1
 fi
-envsubst < "$ROOT/k8s/k6/testrun-template.yaml" | kubectl apply -f -
+envsubst < "$ROOT/assets/k8s/k6/testrun-template.yaml" | kubectl apply -f -
 
 # Print live Grafana URLs so the user can watch the run in flight. Requires
 # `make watch` (or any kubectl port-forward to kps-grafana) in another shell.

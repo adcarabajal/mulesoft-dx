@@ -16,8 +16,29 @@
 # `make up`.
 set -euo pipefail
 
+case "${1:-}" in
+  -h|--help)
+    cat <<'EOF'
+usage: deploy-upstream.sh [out-yaml]
+
+Render and deploy (or hash-skip) the bench-upstream Service + Deployment.
+
+Arguments:
+  out-yaml          (optional)  rendered manifest path
+                                 (default: .run/last/upstream-deployment.yaml)
+
+Reads from .env / environment:
+  AWS_REGION        (required)  region for the ECR describe-images preflight
+
+Requires `make up` (reads ecr_repository_url from terraform output) and
+`make push-upstream` (the :latest image must exist) to have run first.
+Idempotent: skips kubectl apply when the spec hash is unchanged.
+EOF
+    exit 0 ;;
+esac
+
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TF_DIR="$ROOT/terraform"
+TF_DIR="$ROOT/assets/terraform"
 NS="default"
 NAME="bench-upstream"
 HASH_LABEL="bench/spec-hash"
@@ -42,7 +63,7 @@ if ! aws ecr describe-images --region "$AWS_REGION" --repository-name "$REPO_NAM
   exit 1
 fi
 
-UPSTREAM_IMAGE="$REPO_URL:latest" envsubst < "$ROOT/k8s/upstream/deployment.yaml.tpl" > "$out"
+UPSTREAM_IMAGE="$REPO_URL:latest" envsubst < "$ROOT/assets/k8s/upstream/deployment.yaml.tpl" > "$out"
 
 new_hash=$(sha256sum "$out" | cut -c1-12)
 # jsonpath needs `/` in label keys escaped as `\.` (e.g. bench/spec-hash → bench\.spec-hash).
@@ -56,7 +77,7 @@ if [[ "$new_hash" == "$live_hash" && -n "$live_hash" ]]; then
 fi
 
 # Service is small + idempotent; always apply.
-kubectl apply -f "$ROOT/k8s/upstream/service.yaml"
+kubectl apply -f "$ROOT/assets/k8s/upstream/service.yaml"
 
 # Stamp the hash on the Deployment so future runs can compare.
 kubectl apply -f "$out"

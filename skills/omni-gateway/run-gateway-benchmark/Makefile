@@ -5,7 +5,7 @@ SHELL := /usr/bin/env bash
 ROOT := $(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 RUN_ID ?= $(shell date -u +%Y%m%dT%H%M%SZ)
 RUN_DIR := $(ROOT)/.run/$(RUN_ID)
-TF_DIR := $(ROOT)/terraform
+TF_DIR := $(ROOT)/assets/terraform
 
 # Load .env if present
 ifneq (,$(wildcard $(ROOT)/.env))
@@ -85,5 +85,5 @@ report: ## Export Grafana snapshots for the latest run
 test: ## Run renderer unit tests + shellcheck
 	bash $(ROOT)/scripts/test/run.sh
 	shellcheck $(ROOT)/scripts/*.sh $(ROOT)/scripts/test/*.sh
-	terraform -chdir=$(ROOT)/terraform fmt -check
-	terraform -chdir=$(ROOT)/terraform validate || (cd $(ROOT)/terraform && terraform init -backend=false && terraform validate)
+	terraform -chdir=$(ROOT)/assets/terraform fmt -check
+	terraform -chdir=$(ROOT)/assets/terraform validate || (cd $(ROOT)/assets/terraform && terraform init -backend=false && terraform validate)
